@@ -6,15 +6,15 @@
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_usart.h>
 #include <stm32f10x_dma.h>
+#include <stm32f10x_i2c.h>
 #include <misc.h>
 #include "display_handler.h"
 #include "command_handler.h"
 #include "usart_opts.h"
+#include "tea6420.h"
 
-extern uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
-extern uint8_t commandRxBuffer[COMMAND_BUFFER_SIZE];
-extern uint8_t displayTxBuffer[DISPLAY_BUFFER_SIZE];
-extern uint8_t commandTxBuffer[COMMAND_BUFFER_SIZE];
+extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
+extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 
 void SetupPeriph() {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -22,6 +22,7 @@ void SetupPeriph() {
 	NVIC_InitTypeDef NVIC_InitStructure;
 	TIM_TimeBaseInitTypeDef TIMER_InitStructure;
 	DMA_InitTypeDef DMA_InitStruct;
+	I2C_InitTypeDef I2C_InitStructure;
 
 	///-------------------------------------------------
 	///USART2 init
@@ -136,7 +137,7 @@ void SetupPeriph() {
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
 	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) & (USART2->DR);
-	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & displayTxBuffer[0];
+	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & displayBuffer[0];
 	DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralDST;
 	DMA_InitStruct.DMA_BufferSize = DISPLAY_BUFFER_SIZE;
 	DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -157,28 +158,63 @@ void SetupPeriph() {
 	///-------------------------------------------------
 
 	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) & (USART3->DR);
-	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & commandTxBuffer[0];
+	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & commandBuffer[0];
 	DMA_InitStruct.DMA_BufferSize = COMMAND_BUFFER_SIZE;
 	DMA_Init(DMA1_Channel2, &DMA_InitStruct);
 
 	USART_DMACmd(USART3, USART_DMAReq_Tx, ENABLE);
 	DMA_ITConfig(DMA1_Channel2, DMA_IT_TC, ENABLE);
 	NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+	///-------------------------------------------------
+	///I2C for Audio Matrix
+	///-------------------------------------------------
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* I2C configuration */
+	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+	I2C_InitStructure.I2C_OwnAddress1 = 0x38;
+	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+	I2C_InitStructure.I2C_ClockSpeed = 100000;
+
+	/* I2C Peripheral Enable */
+	I2C_Cmd(TEA6420_I2C, ENABLE);
+	/* Apply I2C configuration after enabling it */
+	I2C_Init(TEA6420_I2C, &I2C_InitStructure);
+
+	///-------------------------------------------------
+	///GPIOs for control
+	///-------------------------------------------------
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = BT_PLAY | BT_PREV | BT_NEXT;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 
 	/////////////////////////
 
 }
 
 void InitDisplay() {
-	GPIO_InitTypeDef GPIO_InitStructure;
-	GPIO_DeInit(GPIOA);
-	GPIO_DeInit(GPIOB);
-	USART_DeInit(USART2);
-	USART_DeInit(USART3);
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+//	GPIO_InitTypeDef GPIO_InitStructure;
+//	GPIO_DeInit(GPIOA);
+//	GPIO_DeInit(GPIOB);
+//	USART_DeInit(USART2);
+//	USART_DeInit(USART3);
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_2);
 	for (uint32_t i = 0; i < 1000000; i++) {
 		//Dummy delay for display initialization
@@ -191,17 +227,15 @@ void USART2_IRQHandler(void) {
 	if ((USART2->SR & (USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
 			!= (u16) RESET) // Error handler for display init detection
 			{
-
-
 		d_rcvcplt = 1;
 		USART_ReceiveData(USART2);
 		InitDisplay();
-		SetupPeriph();
+		//SetupPeriph();
 	}
 
 	else if ((USART2->SR & USART_FLAG_RXNE) != (u16) RESET) {
 		if (d_idx < DISPLAY_BUFFER_SIZE) {
-			displayRxBuffer[d_idx++] = USART_ReceiveData(USART2);
+			displayBuffer[d_idx++] = USART_ReceiveData(USART2);
 			TIM2->CNT = 0;
 			d_rcvcplt = 1;
 		}
@@ -213,8 +247,8 @@ uint8_t c_idx, c_rcvcplt = 0;
 void USART3_IRQHandler(void) {
 
 	if ((USART3->SR & USART_FLAG_RXNE) != (u16) RESET) {
-		if (c_idx < DISPLAY_BUFFER_SIZE) {
-			commandRxBuffer[c_idx++] = USART_ReceiveData(USART3);
+		if (c_idx < COMMAND_BUFFER_SIZE) {
+			commandBuffer[c_idx++] = USART_ReceiveData(USART3);
 			TIM3->CNT = 0;
 			c_rcvcplt = 1;
 		}
@@ -226,7 +260,6 @@ void TIM2_IRQHandler(void) {
 	if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
 		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 		if (d_rcvcplt) {
-			GPIOC->ODR ^= GPIO_Pin_13;
 			HandleDisplayData();
 			USART_ReceiveData(USART2); //For clear IDLE flag
 			d_rcvcplt = 0;
@@ -288,18 +321,9 @@ void SetupClock() {
 
 int main(void) {
 	SetupClock();
-	InitDisplay();
 	SetupPeriph();
+	InitDisplay();
 
-	GPIO_InitTypeDef GPIO_InitStructure;
-
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	while (1) {
 
 	}

@@ -8,17 +8,13 @@ extern uint8_t press_cnt;
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T',
 		'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x9D };
-//uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = {0x21, 0xFE, 
-//	'Y', 'E', 'A', 'H', ' ', 'B', 'I', 'T', 'C', 'H', '!', ' ', 
-//0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9D};
-uint8_t displayTxBuffer[DISPLAY_BUFFER_SIZE];
-uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
+uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 
 int greets_counter = 0;
 int cnt = 600;
 int cnt2 = 0;
 void HandleDisplayData() {
-	if (CheckChksum(displayRxBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
+	if (CheckChksum(displayBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
 
 
@@ -26,54 +22,54 @@ void HandleDisplayData() {
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
 		if (greets_counter < 30) {
 
-			displayTxBuffer[i] = defaultScreen[i];
+			displayBuffer[i] = defaultScreen[i];
 			continue;
 		}
-		if (i < 2 || i > 13) {
-			displayTxBuffer[i] = displayRxBuffer[i];
-			continue;
-		} else {
-			displayTxBuffer[i] = Translit(displayRxBuffer[i]);
+		if (i < 2 || i > 13) continue;
+		else {
+			// for future bluetooth metadata
+			// displayBuffer[i] = Translit(displayBuffer[i]);
+
 		}
 
 	}
 
-	if (displayTxBuffer[0] == 0x40) greets_counter = 0; // ACC OFF byte for dimm display
+	if (displayBuffer[0] == ACC_OFF) greets_counter = 0; // ACC OFF byte for dimm display
 	else greets_counter++;
 
 
 	if (mode == Bluetooth)
 	{
-		if (displayTxBuffer[6] == 'A' && displayTxBuffer[7] == 'U' && displayTxBuffer[8] == 'X')
+		if (displayBuffer[6] == 'A' && displayBuffer[7] == 'U' && displayBuffer[8] == 'X')
 		{
-			displayTxBuffer[2] = 0x86;
-			displayTxBuffer[3] = ' ';
-			displayTxBuffer[4] = 'B';
-			displayTxBuffer[5] = 'L';
-			displayTxBuffer[6] = 'U';
-			displayTxBuffer[7] = 'E';
-			displayTxBuffer[8] = 'T';
-			displayTxBuffer[9] = 'O';
-			displayTxBuffer[10] = 'O';
-			displayTxBuffer[11] = 'T';
-			displayTxBuffer[12] = 'H';
-			displayTxBuffer[13] = ' ';
+			displayBuffer[2] = BLUETOOTH_CHAR;
+			displayBuffer[3] = ' ';
+			displayBuffer[4] = 'B';
+			displayBuffer[5] = 'L';
+			displayBuffer[6] = 'U';
+			displayBuffer[7] = 'E';
+			displayBuffer[8] = 'T';
+			displayBuffer[9] = 'O';
+			displayBuffer[10] = 'O';
+			displayBuffer[11] = 'T';
+			displayBuffer[12] = 'H';
+			displayBuffer[13] = ' ';
 		}
 	}
 //	cnt++;
 //	cnt2 = cnt / 5;
-//	displayTxBuffer[2] = cnt2;
-//	displayTxBuffer[3] = cnt2 / 100 + 48;
-//	displayTxBuffer[4] = (cnt2 / 10) % 10 + 48;
-//	displayTxBuffer[5] = cnt2 % 10 + 48;
+//	displayBuffer[2] = cnt2;
+//	displayBuffer[3] = cnt2 / 100 + 48;
+//	displayBuffer[4] = (cnt2 / 10) % 10 + 48;
+//	displayBuffer[5] = cnt2 % 10 + 48;
 	SendDisplayData();
 }
 void SendDisplayData() {
 	uint8_t chksum = 0;
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE - 1; i++) {
-		chksum += displayTxBuffer[i];
+		chksum += displayBuffer[i];
 	}
-	displayTxBuffer[DISPLAY_BUFFER_SIZE - 1] = chksum;
+	displayBuffer[DISPLAY_BUFFER_SIZE - 1] = chksum;
 	USART2SendDMA();
 }
 

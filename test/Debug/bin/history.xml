@@ -1,20 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
    <processor signature="5.4.1 -mcpu=cortex-m3 -mthumb -g -nostartfiles -Map=test.map -O0 --gc-sections -LC:\CooCox\CoIDE\configuration\ProgramData\DY-6MW7U53-2-bluetooth -TC:\CooCox\CoIDE\configuration\ProgramData\DY-6MW7U53-2-bluetooth/arm-gcc-link.ld -g">
-      <target file="test.elf" lastModified="164ae7e3d6d">
-         <source file="..\obj\stm32f10x_tim.o" lastModified="164ae7e3923"/>
-         <source file="..\obj\system_stm32f10x.o" lastModified="164ae7e3951"/>
-         <source file="..\obj\startup_stm32f10x_md.o" lastModified="164ae7e3975"/>
-         <source file="..\obj\stm32f10x_gpio.o" lastModified="164ae7e39ad"/>
-         <source file="..\obj\main.o" lastModified="164ae7e39e5"/>
-         <source file="..\obj\stm32f10x_rcc.o" lastModified="164ae7e3a24"/>
-         <source file="..\obj\stm32f10x_usart.o" lastModified="164ae7e3a63"/>
-         <source file="..\obj\usart_opts.o" lastModified="164ae7e3a91"/>
-         <source file="..\obj\command_handler.o" lastModified="164ae7e3ac0"/>
-         <source file="..\obj\stm32f10x_dma.o" lastModified="164ae7e3af4"/>
-         <source file="..\obj\display_handler.o" lastModified="164ae7e3b2a"/>
-         <source file="..\obj\misc.o" lastModified="164ae7e3b59"/>
-         <source file="..\obj\stm32f10x_i2c.o" lastModified="164ae7e3b9b"/>
+      <target file="test.elf" lastModified="164aebdea9e">
+         <source file="..\obj\stm32f10x_tim.o" lastModified="164ae89bc38"/>
+         <source file="..\obj\system_stm32f10x.o" lastModified="164ae89bc63"/>
+         <source file="..\obj\startup_stm32f10x_md.o" lastModified="164ae89bc83"/>
+         <source file="..\obj\stm32f10x_gpio.o" lastModified="164ae89bcb7"/>
+         <source file="..\obj\main.o" lastModified="164aebde8d9"/>
+         <source file="..\obj\stm32f10x_rcc.o" lastModified="164ae89bd27"/>
+         <source file="..\obj\stm32f10x_usart.o" lastModified="164ae89bd63"/>
+         <source file="..\obj\tea6420.o" lastModified="164aeacb72d"/>
+         <source file="..\obj\usart_opts.o" lastModified="164aebdba51"/>
+         <source file="..\obj\command_handler.o" lastModified="164aebdba7e"/>
+         <source file="..\obj\stm32f10x_dma.o" lastModified="164ae89be01"/>
+         <source file="..\obj\display_handler.o" lastModified="164aea3dca0"/>
+         <source file="..\obj\misc.o" lastModified="164ae89be58"/>
+         <source file="..\obj\stm32f10x_i2c.o" lastModified="164ae89be97"/>
       </target>
    </processor>
 </history>

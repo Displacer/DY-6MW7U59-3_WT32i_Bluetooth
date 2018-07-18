@@ -1,0 +1,51 @@
+#include <stm32f10x_i2c.h>
+#include "tea6420.h"
+
+void tea6420_init() {
+
+}
+void tea6420_Bluetooth() {
+	I2C_GenerateSTART(TEA6420_I2C, ENABLE);
+	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_MODE_SELECT))
+		;
+	I2C_Send7bitAddress(TEA6420_I2C, TEA6420_ADDRESS,
+			I2C_Direction_Transmitter);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+		;
+
+	I2C_SendData(TEA6420_I2C, TEA6420_ADDRESS);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+		;
+
+	I2C_SendData(TEA6420_I2C, BT_IN | GAIN_0 | AUDIO_OUT);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+		;
+
+	I2C_GenerateSTOP(TEA6420_I2C, ENABLE);
+
+	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+		;
+}
+void tea6420_AUX() {
+	I2C_GenerateSTART(TEA6420_I2C, ENABLE);
+	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_MODE_SELECT))
+		;
+	I2C_Send7bitAddress(TEA6420_I2C, TEA6420_ADDRESS,
+			I2C_Direction_Transmitter);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+		;
+
+	I2C_SendData(TEA6420_I2C, TEA6420_ADDRESS);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+		;
+
+	I2C_SendData(TEA6420_I2C, AUX_IN | GAIN_0 | AUDIO_OUT);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+		;
+
+	I2C_GenerateSTOP(TEA6420_I2C, ENABLE);
+
+	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+		;
+}
+

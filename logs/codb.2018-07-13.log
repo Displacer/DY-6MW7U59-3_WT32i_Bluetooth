@@ -1,0 +1,372 @@
+01:32:38.082 [Worker-5] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+01:32:39.237 [Worker-7] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+01:52:55.752 [Worker-9] ERROR org.coocox.codb.common.log.ErrorLog - extraChecked  api exception!Connection timed out: connect
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getOutputStream(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doPut(URLConnUtil.java:147)
+org.coocox.codb.client.core.api.impl.ObjectExtraApiImpl.extraChecked(ObjectExtraApiImpl.java:57)
+org.coocox.component.internal.core.database.ComponentDBCmdHandler.countCheckedComponent(ComponentDBCmdHandler.java:133)
+org.coocox.integrate.component.table.listeners.ComponentItemCheckListener$1.run(ComponentItemCheckListener.java:224)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+01:52:58.248 [Worker-18] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+01:52:59.508 [Worker-17] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+15:56:26.794 [pool-1-thread-2] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+15:56:40.492 [pool-1-thread-1] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+15:56:45.504 [pool-1-thread-2] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+15:57:44.219 [pool-1-thread-1] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+15:57:48.922 [pool-1-thread-2] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+15:58:15.125 [pool-1-thread-1] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+15:58:18.999 [pool-1-thread-2] ERROR org.coocox.codb.common.log.ErrorLog - menuToolbarStat api exception!errorCode:2000
+PUT API FAILED! 
+org.coocox.codb.client.core.api.ClientBaseApi.putRespCheck(ClientBaseApi.java:55)
+org.coocox.codb.client.core.api.impl.StatApiImpl.menuToolbarStat(StatApiImpl.java:85)
+org.coocox.codb.client.core.task.StatisticsHandler$StatHandler.run(StatisticsHandler.java:78)
+java.util.concurrent.ThreadPoolExecutor$Worker.runTask(Unknown Source)
+java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+java.lang.Thread.run(Unknown Source)
+
+
+17:26:12.015 [Worker-27] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+17:26:13.411 [Worker-30] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+17:26:36.849 [Worker-30] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+17:26:40.130 [Worker-29] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+17:27:20.072 [Worker-30] ERROR org.coocox.codb.common.log.ErrorLog - extraChecked  api exception!Connection timed out: connect
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getOutputStream(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doPut(URLConnUtil.java:147)
+org.coocox.codb.client.core.api.impl.ObjectExtraApiImpl.extraChecked(ObjectExtraApiImpl.java:57)
+org.coocox.component.internal.core.database.ComponentDBCmdHandler.countCheckedComponent(ComponentDBCmdHandler.java:133)
+org.coocox.integrate.component.table.listeners.ComponentItemCheckListener$1.run(ComponentItemCheckListener.java:224)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+17:27:22.591 [Worker-31] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+
+17:27:23.984 [Worker-29] ERROR org.coocox.codb.common.log.ErrorLog - getExamplesOfCompByCompId API failed 
+Connection timed out: connect
+java.net.PlainSocketImpl.socketConnect(Native Method)
+java.net.PlainSocketImpl.doConnect(Unknown Source)
+java.net.PlainSocketImpl.connectToAddress(Unknown Source)
+java.net.PlainSocketImpl.connect(Unknown Source)
+java.net.SocksSocketImpl.connect(Unknown Source)
+java.net.Socket.connect(Unknown Source)
+sun.net.NetworkClient.doConnect(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.openServer(Unknown Source)
+sun.net.www.http.HttpClient.<init>(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.http.HttpClient.New(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)
+sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)
+org.coocox.codb.common.util.URLConnUtil.doGet(URLConnUtil.java:59)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.getExamplesOfCompByCompId(ExampleApiImpl.java:685)
+org.coocox.codb.client.core.api.impl.ExampleApiImpl.freshExamplesByCompId(ExampleApiImpl.java:232)
+org.coocox.example.core.impl.ExampleDBCmdHandler.freshExamplesByCompId(ExampleDBCmdHandler.java:51)
+org.coocox.integrate.component.views.ComponentView$4$1.run(ComponentView.java:346)
+org.eclipse.core.internal.jobs.Worker.run(Worker.java:54)
+
+

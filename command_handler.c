@@ -33,9 +33,9 @@
 #include <stm32f10x_usart.h>
 #include <stm32f10x_gpio.h>
 #include "command_handler.h"
+#include "display_handler.h"
 #include "usart_opts.h"
 #include "tea6420.h"
-
 extern enum Mode mode;
 
 uint8_t default_command[COMMAND_BUFFER_SIZE] = { 0x41, 0x00, 0x00, 0x00, 0x30,
@@ -45,7 +45,7 @@ uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 uint8_t press_cnt = 0, act_aux = 0;
 
 void ActivateAUX() {
-	act_aux = 1;
+	act_aux = !isAux;
 }
 
 void Bluetooth_on() {
@@ -56,7 +56,7 @@ void Bluetooth_off() {
 	mode = Normal;
 	tea6420_AUX();
 }
-
+//TODO: Delay for command send
 void HandleCommandData() {
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
 		return;
@@ -88,14 +88,16 @@ void HandleCommandData() {
 		if (commandBuffer[1] == 0x02) //power button
 				{
 			GPIO_SetBits(GPIOC, BT_PLAY);
+			commandBuffer[1] = 0x00;
 		} else if (commandBuffer[2] == 0x01) // prev
 				{
 			GPIO_SetBits(GPIOC, BT_PREV);
 		} else if (commandBuffer[2] == 0x02) // next
 				{
 			GPIO_SetBits(GPIOC, BT_NEXT);
-		} else
+		} else {
 			GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
+		}
 
 		SendCommand();
 		return;
@@ -114,7 +116,7 @@ void HandleCommandData() {
 			return;
 		}
 
-		if (press_cnt > 0) {
+		if (press_cnt > 0 && act_aux) {
 			commandBuffer[1] = FM_BUTTON;
 			press_cnt--;
 		}

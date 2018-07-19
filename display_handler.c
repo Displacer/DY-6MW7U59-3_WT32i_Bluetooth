@@ -13,10 +13,12 @@ uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 int greets_counter = 0;
 int cnt = 600;
 int cnt2 = 0;
+uint8_t isAux;
+
 void HandleDisplayData() {
 	if (CheckChksum(displayBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
-
+	isAux = displayBuffer[6] == 'A' && displayBuffer[7] == 'U' && displayBuffer[8] == 'X';
 
 
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
@@ -40,7 +42,7 @@ void HandleDisplayData() {
 
 	if (mode == Bluetooth)
 	{
-		if (displayBuffer[6] == 'A' && displayBuffer[7] == 'U' && displayBuffer[8] == 'X')
+		if (isAux)
 		{
 			displayBuffer[2] = BLUETOOTH_CHAR;
 			displayBuffer[3] = ' ';

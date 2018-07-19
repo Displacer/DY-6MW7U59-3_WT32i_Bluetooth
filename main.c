@@ -206,19 +206,23 @@ void SetupPeriph() {
 }
 
 void InitDisplay() {
-//	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitTypeDef GPIO_InitStructure;
 //	GPIO_DeInit(GPIOA);
 //	GPIO_DeInit(GPIOB);
 //	USART_DeInit(USART2);
 //	USART_DeInit(USART3);
-//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_2);
 	for (uint32_t i = 0; i < 1000000; i++) {
 		//Dummy delay for display initialization
 	}
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	if (mode == Normal) tea6420_AUX();
+	else tea6420_Bluetooth();
 	//SetupPeriph();
 }
 

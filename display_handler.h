@@ -7,6 +7,7 @@
 void HandleDisplayData(void);
 void SendDisplayData(void);
 uint8_t Translit(uint8_t);
+uint8_t isAux;
 
 
 

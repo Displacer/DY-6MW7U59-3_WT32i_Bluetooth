@@ -27,11 +27,21 @@
  * 41 10 00 00 30 00 81 load
  * 41 20 00 00 30 00 91 CD
  * 41 40 00 00 30 00 B1 FM
+ *
+ * Remote
+ * Mode - 800-900
+ * Next - 1000-1100
+ * Prev - 1200-1300
+ * Vol+ - 1500
+ * Vol- - 1700
+ * Not pressed 2800
+ *
  */
 
 #include <stm32f10x.h>
 #include <stm32f10x_usart.h>
 #include <stm32f10x_gpio.h>
+#include <stm32f10x_adc.h>
 #include "command_handler.h"
 #include "display_handler.h"
 #include "usart_opts.h"
@@ -50,12 +60,24 @@ void ActivateAUX() {
 
 void Bluetooth_on() {
 	mode = Bluetooth;
+	GPIO_SetBits(GPIOA, GPIO_Pin_4);
 	tea6420_Bluetooth();
 }
 void Bluetooth_off() {
 	mode = Normal;
+	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 	tea6420_AUX();
 }
+
+void SendCommand() {
+	uint8_t chksum = 0;
+	for (int i = 0; i < COMMAND_BUFFER_SIZE - 1; i++) {
+		chksum += commandBuffer[i];
+	}
+	commandBuffer[COMMAND_BUFFER_SIZE - 1] = chksum;
+	USART3SendDMA();
+}
+
 //TODO: Delay for command send
 void HandleCommandData() {
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
@@ -96,7 +118,29 @@ void HandleCommandData() {
 				{
 			GPIO_SetBits(GPIOC, BT_NEXT);
 		} else {
-			GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
+			///ADC handler
+
+			uint8_t adc_val = ADC_GetConversionValue(ADC1) / 100;
+			switch (adc_val) {
+			case 8:
+			case 9:
+				Bluetooth_off();
+				break;
+			case 10:
+			case 11:
+				GPIO_SetBits(GPIOC, BT_NEXT);
+				break;
+			case 12:
+			case 13:
+				GPIO_SetBits(GPIOC, BT_PREV);
+				break;
+
+			default:
+				GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
+				break;
+
+			}
+			//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 		}
 
 		SendCommand();
@@ -116,20 +160,15 @@ void HandleCommandData() {
 			return;
 		}
 
-		if (press_cnt > 0 && act_aux) {
+		if (press_cnt > 0 && !act_aux) {
 			commandBuffer[1] = FM_BUTTON;
 			press_cnt--;
 		}
+
+		//if (commandBuffer[1] == 0x02)commandBuffer[1] = 0x80;
 
 		SendCommand();
 	}
 
 }
-void SendCommand() {
-	uint8_t chksum = 0;
-	for (int i = 0; i < COMMAND_BUFFER_SIZE - 1; i++) {
-		chksum += commandBuffer[i];
-	}
-	commandBuffer[COMMAND_BUFFER_SIZE - 1] = chksum;
-	USART3SendDMA();
-}
+

@@ -9,7 +9,6 @@
 #define BT_NEXT GPIO_Pin_13
 
 void HandleCommandData(void);
-void SendCommand(void);
 
 
 

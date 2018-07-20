@@ -7,6 +7,7 @@
 #include <stm32f10x_usart.h>
 #include <stm32f10x_dma.h>
 #include <stm32f10x_i2c.h>
+#include <stm32f10x_adc.h>
 #include <misc.h>
 #include "display_handler.h"
 #include "command_handler.h"
@@ -23,6 +24,7 @@ void SetupPeriph() {
 	TIM_TimeBaseInitTypeDef TIMER_InitStructure;
 	DMA_InitTypeDef DMA_InitStruct;
 	I2C_InitTypeDef I2C_InitStructure;
+	ADC_InitTypeDef ADC_InitStructure;
 
 	///-------------------------------------------------
 	///USART2 init
@@ -179,7 +181,7 @@ void SetupPeriph() {
 	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
 	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
 	I2C_InitStructure.I2C_OwnAddress1 = 0x38;
-	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
+	I2C_InitStructure.I2C_Ack = I2C_Ack_Disable;
 	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
 	I2C_InitStructure.I2C_ClockSpeed = 100000;
 
@@ -201,6 +203,48 @@ void SetupPeriph() {
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+	///-------------------------------------------------
+	///ADC for remote
+	///-------------------------------------------------
+
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+
+	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE; // we work in continuous sampling mode
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+	ADC_InitStructure.ADC_NbrOfChannel = 1;
+
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_28Cycles5); // define regular conversion config
+	ADC_Init(ADC1, &ADC_InitStructure); //set config of ADC1
+
+// enable ADC
+	ADC_Cmd(ADC1, ENABLE); //enable ADC1
+
+//	ADC calibration (optional, but recommended at power on)
+	ADC_ResetCalibration(ADC1); // Reset previous calibration
+	while (ADC_GetResetCalibrationStatus(ADC1))
+		;
+	ADC_StartCalibration(ADC1); // Start new calibration (ADC must be off at that time)
+	while (ADC_GetCalibrationStatus(ADC1))
+		;
+
+// start conversion
+	ADC_Cmd(ADC1, ENABLE); //enable ADC1
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE); // start conversion (will be endless as we are in continuous mode)
+
 	/////////////////////////
 
 }
@@ -221,8 +265,10 @@ void InitDisplay() {
 	}
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	if (mode == Normal) tea6420_AUX();
-	else tea6420_Bluetooth();
+	if (mode == Normal)
+		tea6420_AUX();
+	else
+		tea6420_Bluetooth();
 	//SetupPeriph();
 }
 

@@ -1,5 +1,6 @@
 #include <stm32f10x.h>
 #include <stm32f10x_usart.h>
+#include <stm32f10x_adc.h>
 #include "display_handler.h"
 #include "usart_opts.h"
 
@@ -60,10 +61,12 @@ void HandleDisplayData() {
 	}
 //	cnt++;
 //	cnt2 = cnt / 5;
-//	displayBuffer[2] = cnt2;
-//	displayBuffer[3] = cnt2 / 100 + 48;
-//	displayBuffer[4] = (cnt2 / 10) % 10 + 48;
-//	displayBuffer[5] = cnt2 % 10 + 48;
+//	displayBuffer[2] = ADC_GetConversionValue(ADC1) / 100000 + 48;
+//	displayBuffer[3] = (ADC_GetConversionValue(ADC1) / 10000) % 10 + 48;
+//	displayBuffer[4] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
+//	displayBuffer[5] = (ADC_GetConversionValue(ADC1) / 100) % 10 + 48;
+//	displayBuffer[6] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
+//	displayBuffer[7] = ADC_GetConversionValue(ADC1) % 10 + 48;
 	SendDisplayData();
 }
 void SendDisplayData() {

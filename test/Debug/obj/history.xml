@@ -13,20 +13,20 @@
       <target file="tea6420.o" lastModified="164b364faca">
          <source file="..\..\..\tea6420.c" lastModified="164b343e600"/>
       </target>
-      <target file="command_handler.o" lastModified="164b7626087">
-         <source file="..\..\..\command_handler.c" lastModified="164b7625ebc"/>
+      <target file="command_handler.o" lastModified="164b7e87472">
+         <source file="..\..\..\command_handler.c" lastModified="164b7e8724c"/>
       </target>
       <target file="stm32f10x_i2c.o" lastModified="164b364ff3c">
          <source file="..\..\..\stm_lib\src\stm32f10x_i2c.c" lastModified="164b33710b8"/>
       </target>
-      <target file="usart_opts.o" lastModified="164b731d7f8">
-         <source file="..\..\..\usart_opts.c" lastModified="164b33710c4"/>
+      <target file="usart_opts.o" lastModified="164b7cd0f69">
+         <source file="..\..\..\usart_opts.c" lastModified="164b7cb8663"/>
       </target>
       <target file="system_stm32f10x.o" lastModified="164b364f825">
          <source file="..\..\..\cmsis_boot\system_stm32f10x.c" lastModified="164b33710ab"/>
       </target>
-      <target file="main.o" lastModified="164b7640875">
-         <source file="..\..\..\main.c" lastModified="164b763a9d2"/>
+      <target file="main.o" lastModified="164b7eb4b9e">
+         <source file="..\..\..\main.c" lastModified="164b7eb49d4"/>
       </target>
       <target file="stm32f10x_usart.o" lastModified="164b364fa91">
          <source file="..\..\..\stm_lib\src\stm32f10x_usart.c" lastModified="164b33710bb"/>

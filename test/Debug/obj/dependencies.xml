@@ -62,7 +62,7 @@
          <include file="..\..\..\cmsis\core_cmInstr.h"/>
          <include file="..\..\..\cmsis\core_cmFunc.h"/>
       </source>
-      <source file="..\..\..\command_handler.c" lastModified="164b7625ebc">
+      <source file="..\..\..\command_handler.c" lastModified="164b7e8724c">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_usart.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_gpio.h"/>
@@ -97,7 +97,7 @@
          <include file="..\..\..\stm_lib\inc\stm32f10x_i2c.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_rcc.h"/>
       </source>
-      <source file="..\..\..\usart_opts.c" lastModified="164b33710c4">
+      <source file="..\..\..\usart_opts.c" lastModified="164b7cb8663">
          <include file="..\..\..\usart_opts.h"/>
          <include file="..\..\..\display_handler.h"/>
          <include file="..\..\..\command_handler.h"/>

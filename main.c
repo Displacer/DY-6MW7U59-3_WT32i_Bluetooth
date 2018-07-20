@@ -181,7 +181,7 @@ void SetupPeriph() {
 	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
 	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
 	I2C_InitStructure.I2C_OwnAddress1 = 0x38;
-	I2C_InitStructure.I2C_Ack = I2C_Ack_Disable;
+	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;
 	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
 	I2C_InitStructure.I2C_ClockSpeed = 100000;
 
@@ -251,10 +251,13 @@ void SetupPeriph() {
 
 void InitDisplay() {
 	GPIO_InitTypeDef GPIO_InitStructure;
-//	GPIO_DeInit(GPIOA);
-//	GPIO_DeInit(GPIOB);
-//	USART_DeInit(USART2);
-//	USART_DeInit(USART3);
+	GPIO_DeInit(GPIOA);
+	GPIO_DeInit(GPIOB);
+	USART_DeInit(USART2);
+	USART_DeInit(USART3);
+
+
+
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -263,13 +266,15 @@ void InitDisplay() {
 	for (uint32_t i = 0; i < 1000000; i++) {
 		//Dummy delay for display initialization
 	}
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	//GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	//GPIO_Init(GPIOA, &GPIO_InitStructure);
+	SetupPeriph();
+
 	if (mode == Normal)
 		tea6420_AUX();
 	else
 		tea6420_Bluetooth();
-	//SetupPeriph();
+
 }
 
 uint8_t d_idx, d_rcvcplt = 0;
@@ -279,6 +284,8 @@ void USART2_IRQHandler(void) {
 			{
 		d_rcvcplt = 1;
 		USART_ReceiveData(USART2);
+		//GPIO_SetBits(GPIOC, GPIO_Pin_13);
+		NVIC_SystemReset();
 		InitDisplay();
 		//SetupPeriph();
 	}
@@ -288,6 +295,8 @@ void USART2_IRQHandler(void) {
 			displayBuffer[d_idx++] = USART_ReceiveData(USART2);
 			TIM2->CNT = 0;
 			d_rcvcplt = 1;
+			//GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+			//GPIOC->ODR ^= ~GPIO_ODR_ODR13;
 		}
 	}
 

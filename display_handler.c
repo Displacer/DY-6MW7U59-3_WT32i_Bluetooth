@@ -1,7 +1,25 @@
+/*
+ * idx	16			17			18			19			20			21
+ * 01 - SAT			FM			NAME		RPT			DISC IN		C
+ * 02 - XM			1 (FM)		TRACK		D. (RPT)	1			D
+ * 04 - MD			2			ST			RDM			2			C
+ * 08 - AUTO.P		3			RDS			D. (RDM)	3			I
+ * 10 - CD			4			PTY			REG			4			R
+ * 20 - MP3			LP			DISC		TAG			5			C
+ * 40 - HD RADIO	2 (LP)		FOLDER		TP			6			L
+ * 80 - CT			4			WMA			NAME		LOAD (LED)	E
+ *
+ *
+ *
+ *
+ */
+
 #include <stm32f10x.h>
 #include <stm32f10x_usart.h>
 #include <stm32f10x_adc.h>
+#include <stm32f10x_gpio.h>
 #include "display_handler.h"
+#include "command_handler.h"
 #include "usart_opts.h"
 
 extern enum Mode mode;
@@ -15,12 +33,47 @@ int greets_counter = 0;
 int cnt = 600;
 int cnt2 = 0;
 uint8_t isAux;
+uint8_t btLastState = 0;
+
+void GetMode() {
+	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_4)) // if bt module activated
+		return;
+	if ((displayBuffer[16] & 0x10) == 0x10) {
+		mode = CD;
+		return;
+	}
+	if ((displayBuffer[17] & 0x01) == 0x01) {
+		mode = FM;
+		return;
+	}
+	if (displayBuffer[3] == 'W') {
+		if (displayBuffer[2] == 'M') {
+			mode = MW;
+			return;
+		}
+		if (displayBuffer[2] == 'L') {
+			mode = LW;
+			return;
+		}
+	}
+	if (displayBuffer[6] == 'A' && displayBuffer[7] == 'U'
+			&& displayBuffer[8] == 'X') {
+		mode = AUX;
+		return;
+	}
+	//mode = Normal;
+}
 
 void HandleDisplayData() {
 	if (CheckChksum(displayBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
-	isAux = displayBuffer[6] == 'A' && displayBuffer[7] == 'U' && displayBuffer[8] == 'X';
 
+	//CD change ' on : (for details see table)
+	if (displayBuffer[16] && 0x10 == 0x10 && displayBuffer[11] == '\'')
+		displayBuffer[11] = ':';
+
+	isAux = displayBuffer[6] == 'A' && displayBuffer[7] == 'U'
+			&& displayBuffer[8] == 'X';
 
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
 		if (greets_counter < 30) {
@@ -28,7 +81,8 @@ void HandleDisplayData() {
 			displayBuffer[i] = defaultScreen[i];
 			continue;
 		}
-		if (i < 2 || i > 13) continue;
+		if (i < 2 || i > 13)
+			continue;
 		else {
 			// for future bluetooth metadata
 			// displayBuffer[i] = Translit(displayBuffer[i]);
@@ -37,14 +91,18 @@ void HandleDisplayData() {
 
 	}
 
-	if (displayBuffer[0] == ACC_OFF) greets_counter = 0; // ACC OFF byte for dimm display
-	else greets_counter++;
+	if (displayBuffer[0] == ACC_OFF) {
+		greets_counter = 0; // ACC OFF byte for dimm display
+		if (mode == Bluetooth) {
+			btLastState = 1;
+			Bluetooth_off();
+		}
+		mode = PowerOff;
+	} else
+		greets_counter++;
 
-
-	if (mode == Bluetooth)
-	{
-		if (isAux)
-		{
+	if (mode == Bluetooth) {
+		if (isAux) {
 			displayBuffer[2] = BLUETOOTH_CHAR;
 			displayBuffer[3] = ' ';
 			displayBuffer[4] = 'B';
@@ -61,12 +119,13 @@ void HandleDisplayData() {
 	}
 //	cnt++;
 //	cnt2 = cnt / 5;
-//	displayBuffer[2] = ADC_GetConversionValue(ADC1) / 100000 + 48;
-//	displayBuffer[3] = (ADC_GetConversionValue(ADC1) / 10000) % 10 + 48;
+//	displayBuffer[2] = mode + 48;
+	//displayBuffer[3] = btLastState + 48;
 //	displayBuffer[4] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
 //	displayBuffer[5] = (ADC_GetConversionValue(ADC1) / 100) % 10 + 48;
 //	displayBuffer[6] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
 //	displayBuffer[7] = ADC_GetConversionValue(ADC1) % 10 + 48;
+	//displayBuffer[14] = 0x00;
 	SendDisplayData();
 }
 void SendDisplayData() {

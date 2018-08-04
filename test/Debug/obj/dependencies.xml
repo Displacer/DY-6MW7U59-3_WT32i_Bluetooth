@@ -14,18 +14,20 @@
       <source file="..\..\..\stm_lib\inc\stm32f10x_adc.h" lastModified="164b732f2cb">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
       </source>
-      <source file="..\..\..\display_handler.h" lastModified="164b36c8c53">
+      <source file="..\..\..\display_handler.h" lastModified="16505c28ed3">
       </source>
       <source file="..\..\..\cmsis_boot\stm32f10x_conf.h" lastModified="164b33710aa">
       </source>
       <source file="..\..\..\stm_lib\inc\stm32f10x_dma.h" lastModified="164b33710b1">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
       </source>
-      <source file="..\..\..\display_handler.c" lastModified="164b74751ac">
+      <source file="..\..\..\display_handler.c" lastModified="16505ec803f">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_usart.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_adc.h"/>
+         <include file="..\..\..\stm_lib\inc\stm32f10x_gpio.h"/>
          <include file="..\..\..\display_handler.h"/>
+         <include file="..\..\..\command_handler.h"/>
          <include file="..\..\..\usart_opts.h"/>
       </source>
       <source file="..\..\..\stm_lib\src\stm32f10x_tim.c" lastModified="164b33710ba">
@@ -50,7 +52,7 @@
          <include file="..\..\..\stm_lib\inc\stm32f10x_gpio.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_rcc.h"/>
       </source>
-      <source file="..\..\..\command_handler.h" lastModified="164b731d5e9">
+      <source file="..\..\..\command_handler.h" lastModified="16505c3e284">
       </source>
       <source file="..\..\..\stm_lib\inc\stm32f10x_gpio.h" lastModified="164b33710b2">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
@@ -62,7 +64,7 @@
          <include file="..\..\..\cmsis\core_cmInstr.h"/>
          <include file="..\..\..\cmsis\core_cmFunc.h"/>
       </source>
-      <source file="..\..\..\command_handler.c" lastModified="164b7e8724c">
+      <source file="..\..\..\command_handler.c" lastModified="16505eac414">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_usart.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_gpio.h"/>
@@ -81,7 +83,7 @@
       <source file="..\..\..\stm_lib\inc\stm32f10x_i2c.h" lastModified="164b33710b3">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
       </source>
-      <source file="..\..\..\usart_opts.h" lastModified="164b33710c5">
+      <source file="..\..\..\usart_opts.h" lastModified="16505a864ec">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_usart.h"/>
       </source>

@@ -16,6 +16,8 @@
 
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
+extern uint8_t Mode_itterupt;
+
 
 void SetupPeriph() {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -256,8 +258,6 @@ void InitDisplay() {
 	USART_DeInit(USART2);
 	USART_DeInit(USART3);
 
-
-
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -268,12 +268,14 @@ void InitDisplay() {
 	}
 	//GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	//GPIO_Init(GPIOA, &GPIO_InitStructure);
+	Mode_itterupt = MODE_ITTERUPT_CYCLES * 4;
 	SetupPeriph();
-
-	if (mode == Normal)
+//return;
+	if (mode != Bluetooth)
 		tea6420_AUX();
 	else
 		tea6420_Bluetooth();
+
 
 }
 
@@ -285,7 +287,7 @@ void USART2_IRQHandler(void) {
 		d_rcvcplt = 1;
 		USART_ReceiveData(USART2);
 		//GPIO_SetBits(GPIOC, GPIO_Pin_13);
-		NVIC_SystemReset();
+		//NVIC_SystemReset();
 		InitDisplay();
 		//SetupPeriph();
 	}

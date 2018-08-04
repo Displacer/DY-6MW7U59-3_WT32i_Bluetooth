@@ -47,6 +47,9 @@
 #include "usart_opts.h"
 #include "tea6420.h"
 extern enum Mode mode;
+extern uint8_t btLastState;
+
+uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES; // will check for 1 second for mode changes
 
 uint8_t default_command[COMMAND_BUFFER_SIZE] = { 0x41, 0x00, 0x00, 0x00, 0x30,
 		0x00, 0x71 };
@@ -64,7 +67,7 @@ void Bluetooth_on() {
 	tea6420_Bluetooth();
 }
 void Bluetooth_off() {
-	mode = Normal;
+	//mode = Normal;
 	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 	tea6420_AUX();
 }
@@ -78,15 +81,32 @@ void SendCommand() {
 	USART3SendDMA();
 }
 
+uint8_t fm_button_released = 1;
+
 //TODO: Delay for command send
 void HandleCommandData() {
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
 		return;
 
+	if (commandBuffer[1] == POWER_BUTTON || commandBuffer[1] == CD_BUTTON
+			|| commandBuffer[1] == FM_BUTTON)
+		Mode_itterupt = MODE_ITTERUPT_CYCLES; // if power/cd/fm pressed
+
+	if (Mode_itterupt > 0) {
+		Mode_itterupt--;
+		if (Mode_itterupt == 0) {
+			GetMode();
+			if (btLastState == 1) {
+				if (mode == AUX) Bluetooth_on();
+				btLastState = 0;
+			}
+		}
+	}
+
 	if (act_aux && press_cnt < PRESS_DELAY) {
 		for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
 			commandBuffer[i] = default_command[i];
-		commandBuffer[1] = 0x20;
+		commandBuffer[1] = CD_BUTTON;
 		press_cnt++;
 		SendCommand();
 		return;
@@ -95,8 +115,9 @@ void HandleCommandData() {
 		press_cnt = PRESS_DELAY;
 	}
 	if (mode == Bluetooth) {
-		if (press_cnt > 0) //block input for press delay
+		if (press_cnt > 0 || !fm_button_released) //block input for press delay
 				{
+			if (commandBuffer[1] != FM_BUTTON) fm_button_released = 1;
 			press_cnt--;
 			for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
 				commandBuffer[i] = default_command[i];
@@ -107,8 +128,8 @@ void HandleCommandData() {
 		if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON) // return to normal state
 			Bluetooth_off();
 
-		if (commandBuffer[1] == 0x02) //power button
-				{
+		if (commandBuffer[1] == POWER_BUTTON) //power button
+		{
 			GPIO_SetBits(GPIOC, BT_PLAY);
 			commandBuffer[1] = 0x00;
 		} else if (commandBuffer[2] == 0x01) // prev
@@ -146,14 +167,16 @@ void HandleCommandData() {
 		SendCommand();
 		return;
 	}
-	if (mode == Normal) {
+	if (mode != Bluetooth) {
 
 		if (commandBuffer[1] == FM_BUTTON) { // Hold FM button
 			commandBuffer[1] = 0x00; // dummy
+			fm_button_released = 0;
 			press_cnt++;
 			if (press_cnt > PRESS_DELAY) {
 				press_cnt = 0;
-				ActivateAUX();
+				if (mode != AUX)
+					ActivateAUX();
 				Bluetooth_on();
 			}
 			SendCommand();
@@ -161,6 +184,7 @@ void HandleCommandData() {
 		}
 
 		if (press_cnt > 0 && !act_aux) {
+			fm_button_released = 1;
 			commandBuffer[1] = FM_BUTTON;
 			press_cnt--;
 		}

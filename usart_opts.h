@@ -5,8 +5,10 @@
 #include <stm32f10x_usart.h>
 
 enum Mode {
-	Normal, Bluetooth
+	CD, FM, MW, LW, AUX, Bluetooth, Normal, PowerOff //normal for capability, in future will be deleted
 } mode;
+
+
 
 void UARTSend(USART_TypeDef* usart, const unsigned char *pucBuffer,
 		unsigned long ulCount);

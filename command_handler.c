@@ -55,7 +55,7 @@ uint8_t default_command[COMMAND_BUFFER_SIZE] = { 0x41, 0x00, 0x00, 0x00, 0x30,
 		0x00, 0x71 };
 uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 
-uint8_t press_cnt = 0, act_aux = 0;
+uint8_t press_cnt = 0, act_aux = 0, bt_play_button_delay = 0;
 
 void ActivateAUX() {
 	act_aux = !isAux;
@@ -63,6 +63,7 @@ void ActivateAUX() {
 
 void Bluetooth_on() {
 	mode = Bluetooth;
+	bt_play_button_delay = 0;
 	GPIO_SetBits(GPIOA, GPIO_Pin_4);
 	tea6420_Bluetooth();
 }
@@ -97,7 +98,9 @@ void HandleCommandData() {
 		if (Mode_itterupt == 0) {
 			GetMode();
 			if (btLastState == 1) {
-				if (mode == AUX) Bluetooth_on();
+				if (mode != AUX)
+					ActivateAUX();
+				Bluetooth_on();
 				btLastState = 0;
 			}
 		}
@@ -117,7 +120,8 @@ void HandleCommandData() {
 	if (mode == Bluetooth) {
 		if (press_cnt > 0 || !fm_button_released) //block input for press delay
 				{
-			if (commandBuffer[1] != FM_BUTTON) fm_button_released = 1;
+			if (commandBuffer[1] != FM_BUTTON)
+				fm_button_released = 1;
 			press_cnt--;
 			for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
 				commandBuffer[i] = default_command[i];
@@ -128,7 +132,7 @@ void HandleCommandData() {
 		if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON) // return to normal state
 			Bluetooth_off();
 
-		if (commandBuffer[1] == POWER_BUTTON) //power button
+		if (commandBuffer[1] == POWER_BUTTON || (bt_play_button_delay > 150 && bt_play_button_delay < 180)) //power button or autoplay
 		{
 			GPIO_SetBits(GPIOC, BT_PLAY);
 			commandBuffer[1] = 0x00;
@@ -163,6 +167,8 @@ void HandleCommandData() {
 			}
 			//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 		}
+
+		if (bt_play_button_delay < 250) bt_play_button_delay++;
 
 		SendCommand();
 		return;

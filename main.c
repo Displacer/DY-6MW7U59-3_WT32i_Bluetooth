@@ -14,10 +14,11 @@
 #include "usart_opts.h"
 #include "tea6420.h"
 
+#define USART_BREAK_DETECTION_LBD  //if defined, break on rx line will detect via LBD iterrupt, otherwise via ERROR on line.
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
+extern uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 extern uint8_t Mode_itterupt;
-
 
 void SetupPeriph() {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -61,8 +62,15 @@ void SetupPeriph() {
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
 
+	USART_LINBreakDetectLengthConfig(USART2, USART_LINBreakDetectLength_11b);
+
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+
+#ifdef USART_BREAK_DETECTION_LBD
+	USART_ITConfig(USART2, USART_IT_LBD, ENABLE);
+#else
 	USART_ITConfig(USART2, USART_IT_ERR, ENABLE);
+#endif
 
 	///-------------------------------------------------
 	///USART3 init
@@ -224,34 +232,28 @@ void SetupPeriph() {
 
 	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;
 	ADC_InitStructure.ADC_ScanConvMode = DISABLE;
-	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE; // we work in continuous sampling mode
+	ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
 	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfChannel = 1;
 
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_28Cycles5); // define regular conversion config
-	ADC_Init(ADC1, &ADC_InitStructure); //set config of ADC1
-
-// enable ADC
-	ADC_Cmd(ADC1, ENABLE); //enable ADC1
-
-//	ADC calibration (optional, but recommended at power on)
-	ADC_ResetCalibration(ADC1); // Reset previous calibration
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_28Cycles5);
+	ADC_Init(ADC1, &ADC_InitStructure);
+	ADC_Cmd(ADC1, ENABLE);
+	ADC_ResetCalibration(ADC1);
 	while (ADC_GetResetCalibrationStatus(ADC1))
 		;
-	ADC_StartCalibration(ADC1); // Start new calibration (ADC must be off at that time)
+	ADC_StartCalibration(ADC1);
 	while (ADC_GetCalibrationStatus(ADC1))
 		;
 
-// start conversion
-	ADC_Cmd(ADC1, ENABLE); //enable ADC1
-	ADC_SoftwareStartConvCmd(ADC1, ENABLE); // start conversion (will be endless as we are in continuous mode)
-
-	/////////////////////////
+	ADC_Cmd(ADC1, ENABLE);
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 
 }
 
 void InitDisplay() {
+
 	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_DeInit(GPIOA);
 	GPIO_DeInit(GPIOB);
@@ -263,43 +265,48 @@ void InitDisplay() {
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 	GPIO_ResetBits(GPIOA, GPIO_Pin_2);
-	for (uint32_t i = 0; i < 1000000; i++) {
+	for (uint32_t i = 0; i < 900000; i++) {
 		//Dummy delay for display initialization
 	}
-	//GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-	//GPIO_Init(GPIOA, &GPIO_InitStructure);
-	Mode_itterupt = MODE_ITTERUPT_CYCLES * 4;
+	Mode_itterupt = MODE_ITTERUPT_CYCLES;
 	SetupPeriph();
-//return;
+
 	if (mode != Bluetooth)
 		tea6420_AUX();
 	else
 		tea6420_Bluetooth();
 
-
 }
 
 uint8_t d_idx, d_rcvcplt = 0;
 void USART2_IRQHandler(void) {
-	if ((USART2->SR & (USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
-			!= (u16) RESET) // Error handler for display init detection
+
+#ifdef USART_BREAK_DETECTION_LBD
+	if ((USART2->SR & USART_FLAG_LBD) != (u16) RESET) // Break detection handler for display init detection
 			{
+		USART_ClearFlag(USART2, USART_FLAG_LBD);
 		d_rcvcplt = 1;
 		USART_ReceiveData(USART2);
-		//GPIO_SetBits(GPIOC, GPIO_Pin_13);
-		//NVIC_SystemReset();
 		InitDisplay();
-		//SetupPeriph();
-	}
 
-	else if ((USART2->SR & USART_FLAG_RXNE) != (u16) RESET) {
+#else
+		if ((USART2->SR & (USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
+				!= (u16) RESET) // Error handler for display init detection
+		{
+			d_rcvcplt = 1;
+			USART_ReceiveData(USART2);
+			InitDisplay();
+		}
+#endif
+
+	}
+	if ((USART2->SR & USART_FLAG_RXNE) != (u16) RESET) {
 		if (d_idx < DISPLAY_BUFFER_SIZE) {
-			displayBuffer[d_idx++] = USART_ReceiveData(USART2);
+			displayRxBuffer[d_idx++] = USART_ReceiveData(USART2);
 			TIM2->CNT = 0;
 			d_rcvcplt = 1;
-			//GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-			//GPIOC->ODR ^= ~GPIO_ODR_ODR13;
 		}
+
 	}
 
 }
@@ -351,31 +358,21 @@ void DMA1_Channel2_IRQHandler(void) {
 }
 
 void SetupClock() {
-	RCC_DeInit(); /* RCC system reset(for debug purpose)*/
-	RCC_HSEConfig(RCC_HSE_ON); /* Enable HSE                         */
-
-	/* Wait till HSE is ready                                               */
+	RCC_DeInit();
+	RCC_HSEConfig(RCC_HSE_ON);
 	while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET)
 		;
+	RCC_HCLKConfig(RCC_SYSCLK_Div1); // HCLK   = SYSCLK
+	RCC_PCLK2Config(RCC_HCLK_Div1); // PCLK2  = HCLK
+	RCC_PCLK1Config(RCC_HCLK_Div2); // PCLK1  = HCLK/2
+	RCC_ADCCLKConfig(RCC_PCLK2_Div4); // ADCCLK = PCLK2/4
 
-	RCC_HCLKConfig(RCC_SYSCLK_Div1); /* HCLK   = SYSCLK                */
-	RCC_PCLK2Config(RCC_HCLK_Div1); /* PCLK2  = HCLK                  */
-	RCC_PCLK1Config(RCC_HCLK_Div2); /* PCLK1  = HCLK/2                */
-	RCC_ADCCLKConfig(RCC_PCLK2_Div4); /* ADCCLK = PCLK2/4               */
-
-	/* PLLCLK = 8MHz * 9 = 72 MHz                                           */
+	// PLLCLK = 8MHz * 9 = 72 MHz
 	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
-
-	RCC_PLLCmd(ENABLE); /* Enable PLL                     */
-
-	/* Wait till PLL is ready                                               */
+	RCC_PLLCmd(ENABLE);
 	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET)
 		;
-
-	/* Select PLL as system clock source                                    */
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
-
-	/* Wait till PLL is used as system clock source                         */
 	while (RCC_GetSYSCLKSource() != 0x08)
 		;
 }

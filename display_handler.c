@@ -23,41 +23,39 @@
 #include "usart_opts.h"
 
 extern enum Mode mode;
-extern uint8_t press_cnt;
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T',
 		'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x9D };
 uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
+uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 
 int greets_counter = 0;
-int cnt = 600;
-int cnt2 = 0;
 uint8_t isAux;
 uint8_t btLastState = 0;
 
 void GetMode() {
 	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_4)) // if bt module activated
 		return;
-	if ((displayBuffer[16] & 0x10) == 0x10) {
+	if (displayRxBuffer[16] & 0x10) { //All magic constants - for details see table
 		mode = CD;
 		return;
 	}
-	if ((displayBuffer[17] & 0x01) == 0x01) {
+	if (displayRxBuffer[17] & 0x01) {
 		mode = FM;
 		return;
 	}
-	if (displayBuffer[3] == 'W') {
-		if (displayBuffer[2] == 'M') {
+	if (displayRxBuffer[3] == 'W') {
+		if (displayRxBuffer[2] == 'M') {
 			mode = MW;
 			return;
 		}
-		if (displayBuffer[2] == 'L') {
+		if (displayRxBuffer[2] == 'L') {
 			mode = LW;
 			return;
 		}
 	}
-	if (displayBuffer[6] == 'A' && displayBuffer[7] == 'U'
-			&& displayBuffer[8] == 'X') {
+	if (displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
+			&& displayRxBuffer[8] == 'X') {
 		mode = AUX;
 		return;
 	}
@@ -65,15 +63,36 @@ void GetMode() {
 }
 
 void HandleDisplayData() {
-	if (CheckChksum(displayBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
+	if (CheckChksum(displayRxBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
 
+	for (uint8_t i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
+		displayBuffer[i] = displayRxBuffer[i];
+	}
+
 	//CD change ' on : (for details see table)
-	if (displayBuffer[16] && 0x10 == 0x10 && displayBuffer[11] == '\'')
+	if (displayBuffer[16] && 0x10 && displayBuffer[11] == '\'')
 		displayBuffer[11] = ':';
 
-	isAux = displayBuffer[6] == 'A' && displayBuffer[7] == 'U'
-			&& displayBuffer[8] == 'X';
+	isAux = displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
+			&& displayRxBuffer[8] == 'X';
+
+	if (mode == Bluetooth) {
+		if (isAux) {
+			displayBuffer[2] = BLUETOOTH_CHAR;
+			displayBuffer[3] = ' ';
+			displayBuffer[4] = 'B';
+			displayBuffer[5] = 'L';
+			displayBuffer[6] = 'U';
+			displayBuffer[7] = 'E';
+			displayBuffer[8] = 'T';
+			displayBuffer[9] = 'O';
+			displayBuffer[10] = 'O';
+			displayBuffer[11] = 'T';
+			displayBuffer[12] = 'H';
+			displayBuffer[13] = ' ';
+		}
+	}
 
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
 		if (greets_counter < 30) {
@@ -101,22 +120,6 @@ void HandleDisplayData() {
 	} else
 		greets_counter++;
 
-	if (mode == Bluetooth) {
-		if (isAux) {
-			displayBuffer[2] = BLUETOOTH_CHAR;
-			displayBuffer[3] = ' ';
-			displayBuffer[4] = 'B';
-			displayBuffer[5] = 'L';
-			displayBuffer[6] = 'U';
-			displayBuffer[7] = 'E';
-			displayBuffer[8] = 'T';
-			displayBuffer[9] = 'O';
-			displayBuffer[10] = 'O';
-			displayBuffer[11] = 'T';
-			displayBuffer[12] = 'H';
-			displayBuffer[13] = ' ';
-		}
-	}
 //	cnt++;
 //	cnt2 = cnt / 5;
 //	displayBuffer[2] = mode + 48;

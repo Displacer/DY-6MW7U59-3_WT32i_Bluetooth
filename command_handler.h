@@ -1,6 +1,6 @@
 #ifndef __COMMANDHANDLER_H__
 #define __COMMANDHANDLER_H__
-#define MODE_ITTERUPT_CYCLES 30
+#define MODE_ITTERUPT_CYCLES 30 // 15 * 30ms = 0.5 sec
 #define COMMAND_BUFFER_SIZE 7
 #define PRESS_DELAY 66 // 2 sec = 30ms * 66
 #define POWER_BUTTON 0x02

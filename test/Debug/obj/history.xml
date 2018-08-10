@@ -4,35 +4,35 @@
       <target file="stm32f10x_adc.o" lastModified="164b73aacbf">
          <source file="..\..\..\stm_lib\src\stm32f10x_adc.c" lastModified="164b732f2cc"/>
       </target>
+      <target file="display_handler.o" lastModified="16524adbb30">
+         <source file="..\..\..\display_handler.c" lastModified="16524a8ffaf"/>
+      </target>
       <target file="stm32f10x_tim.o" lastModified="164b364f7bb">
          <source file="..\..\..\stm_lib\src\stm32f10x_tim.c" lastModified="164b33710ba"/>
       </target>
-      <target file="display_handler.o" lastModified="16505eca3a0">
-         <source file="..\..\..\display_handler.c" lastModified="16505ec803f"/>
+      <target file="command_handler.o" lastModified="16524adbaeb">
+         <source file="..\..\..\command_handler.c" lastModified="165248a94a5"/>
       </target>
       <target file="tea6420.o" lastModified="164b364faca">
          <source file="..\..\..\tea6420.c" lastModified="164b343e600"/>
       </target>
-      <target file="command_handler.o" lastModified="16505ead911">
-         <source file="..\..\..\command_handler.c" lastModified="16505eac414"/>
-      </target>
       <target file="stm32f10x_i2c.o" lastModified="164b364ff3c">
          <source file="..\..\..\stm_lib\src\stm32f10x_i2c.c" lastModified="164b33710b8"/>
       </target>
-      <target file="usart_opts.o" lastModified="16505c420c9">
+      <target file="usart_opts.o" lastModified="16524adbaa7">
          <source file="..\..\..\usart_opts.c" lastModified="164b7cb8663"/>
       </target>
       <target file="system_stm32f10x.o" lastModified="164b364f825">
          <source file="..\..\..\cmsis_boot\system_stm32f10x.c" lastModified="164b33710ab"/>
       </target>
-      <target file="main.o" lastModified="16505f53115">
-         <source file="..\..\..\main.c" lastModified="16505f52f2b"/>
+      <target file="main.o" lastModified="16524adba69">
+         <source file="..\..\..\main.c" lastModified="165249dc75a"/>
+      </target>
+      <target file="stm32f10x_usart.o" lastModified="1651f8eac9e">
+         <source file="..\..\..\stm_lib\src\stm32f10x_usart.c" lastModified="1651f8dcb31"/>
       </target>
       <target file="stm32f10x_gpio.o" lastModified="164b364f92a">
          <source file="..\..\..\stm_lib\src\stm32f10x_gpio.c" lastModified="164b33710b7"/>
-      </target>
-      <target file="stm32f10x_usart.o" lastModified="164b364fa91">
-         <source file="..\..\..\stm_lib\src\stm32f10x_usart.c" lastModified="164b33710bb"/>
       </target>
       <target file="stm32f10x_rcc.o" lastModified="164b364fa31">
          <source file="..\..\..\stm_lib\src\stm32f10x_rcc.c" lastModified="164b33710b9"/>
@@ -40,11 +40,11 @@
       <target file="startup_stm32f10x_md.o" lastModified="164b364f878">
          <source file="..\..\..\cmsis_boot\startup\startup_stm32f10x_md.c" lastModified="164b33710a5"/>
       </target>
-      <target file="misc.o" lastModified="164b364fe35">
-         <source file="..\..\..\stm_lib\src\misc.c" lastModified="164b33710b6"/>
-      </target>
       <target file="stm32f10x_dma.o" lastModified="164b364fc6f">
          <source file="..\..\..\stm_lib\src\stm32f10x_dma.c" lastModified="164b33710b6"/>
+      </target>
+      <target file="misc.o" lastModified="164b364fe35">
+         <source file="..\..\..\stm_lib\src\misc.c" lastModified="164b33710b6"/>
       </target>
    </processor>
 </history>

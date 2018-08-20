@@ -2,12 +2,19 @@
 Allocating common symbols
 Common symbol       size              file
 
+text_flag           0x1               ..\obj\parser.o
+argv                0x78              ..\obj\parser.o
 commandBuffer       0x7               ..\obj\command_handler.o
 c_idx               0x1               ..\obj\main.o
+token_lenght        0x2               ..\obj\parser.o
+argc                0x1               ..\obj\parser.o
+str_idx             0x2               ..\obj\parser.o
 mode                0x1               ..\obj\main.o
 isAux               0x1               ..\obj\main.o
+buf                 0x12c             ..\obj\parser.o
 displayBuffer       0x17              ..\obj\display_handler.o
 displayRxBuffer     0x17              ..\obj\display_handler.o
+songInfo            0xc               ..\obj\parser.o
 d_idx               0x1               ..\obj\main.o
 
 Discarded input sections
@@ -224,6 +231,14 @@ Discarded input sections
                 0x00000000       0x1c ..\obj\stm32f10x_gpio.o
  .text          0x00000000        0x0 ..\obj\main.o
  .data          0x00000000        0x0 ..\obj\main.o
+ .text          0x00000000        0x0 ..\obj\iwrap.o
+ .data          0x00000000        0x0 ..\obj\iwrap.o
+ .bss           0x00000000        0x0 ..\obj\iwrap.o
+ .debug_line    0x00000000        0x0 ..\obj\iwrap.o
+ .debug_str     0x00000000       0xb9 ..\obj\iwrap.o
+ .comment       0x00000000       0x6f ..\obj\iwrap.o
+ .ARM.attributes
+                0x00000000       0x33 ..\obj\iwrap.o
  .text          0x00000000        0x0 ..\obj\stm32f10x_rcc.o
  .bss           0x00000000        0x0 ..\obj\stm32f10x_rcc.o
  .text.RCC_WaitForHSEStartUp
@@ -400,6 +415,33 @@ Discarded input sections
                 0x00000000       0x40 ..\obj\misc.o
  .text.SysTick_CLKSourceConfig
                 0x00000000       0x38 ..\obj\misc.o
+ .text          0x00000000        0x0 ..\obj\parser.o
+ .data          0x00000000        0x0 ..\obj\parser.o
+ .bss           0x00000000        0x0 ..\obj\parser.o
+ .text._atoi    0x00000000       0x50 ..\obj\parser.o
+ .text.findIndexOfToken
+                0x00000000       0x50 ..\obj\parser.o
+ .rodata        0x00000000       0x1e ..\obj\parser.o
+ .text.getSongInfo
+                0x00000000       0x58 ..\obj\parser.o
+ .text.Show     0x00000000       0x40 ..\obj\parser.o
+ .text.Parse_init
+                0x00000000       0x38 ..\obj\parser.o
+ .text.Parse    0x00000000      0x154 ..\obj\parser.o
+ .text.isStrEqual
+                0x00000000       0x6c ..\obj\parser.o
+ .debug_info    0x00000000      0x2e2 ..\obj\parser.o
+ .debug_abbrev  0x00000000      0x17d ..\obj\parser.o
+ .debug_aranges
+                0x00000000       0x50 ..\obj\parser.o
+ .debug_ranges  0x00000000       0x40 ..\obj\parser.o
+ .debug_line    0x00000000      0x266 ..\obj\parser.o
+ .debug_str     0x00000000      0x234 ..\obj\parser.o
+ .comment       0x00000000       0x6f ..\obj\parser.o
+ .debug_frame   0x00000000      0x108 ..\obj\parser.o
+ .ARM.attributes
+                0x00000000       0x33 ..\obj\parser.o
+ COMMON         0x00000000      0x1bc ..\obj\parser.o
  .text          0x00000000        0x0 ..\obj\stm32f10x_i2c.o
  .data          0x00000000        0x0 ..\obj\stm32f10x_i2c.o
  .bss           0x00000000        0x0 ..\obj\stm32f10x_i2c.o
@@ -901,6 +943,7 @@ LOAD ..\obj\system_stm32f10x.o
 LOAD ..\obj\startup_stm32f10x_md.o
 LOAD ..\obj\stm32f10x_gpio.o
 LOAD ..\obj\main.o
+LOAD ..\obj\iwrap.o
 LOAD ..\obj\stm32f10x_rcc.o
 LOAD ..\obj\stm32f10x_adc.o
 LOAD ..\obj\stm32f10x_usart.o
@@ -910,6 +953,7 @@ LOAD ..\obj\command_handler.o
 LOAD ..\obj\stm32f10x_dma.o
 LOAD ..\obj\display_handler.o
 LOAD ..\obj\misc.o
+LOAD ..\obj\parser.o
 LOAD ..\obj\stm32f10x_i2c.o
 START GROUP
 LOAD c:/program files (x86)/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm-none-eabi/5.4.1/armv7-m\libgcc.a
@@ -1001,54 +1045,54 @@ OUTPUT(test.elf elf32-littlearm)
  .debug_ranges  0x00000838       0x30 ..\obj\misc.o
  .debug_ranges  0x00000868      0x110 ..\obj\stm32f10x_i2c.o
 
-.debug_line     0x00000000     0x3cd3
- .debug_line    0x00000000      0xb98 ..\obj\stm32f10x_tim.o
- .debug_line    0x00000b98      0x246 ..\obj\system_stm32f10x.o
- .debug_line    0x00000dde       0xb3 ..\obj\startup_stm32f10x_md.o
- .debug_line    0x00000e91      0x418 ..\obj\stm32f10x_gpio.o
- .debug_line    0x000012a9      0x477 ..\obj\main.o
- .debug_line    0x00001720      0x513 ..\obj\stm32f10x_rcc.o
- .debug_line    0x00001c33      0x582 ..\obj\stm32f10x_adc.o
- .debug_line    0x000021b5      0x4fa ..\obj\stm32f10x_usart.o
- .debug_line    0x000026af      0x24b ..\obj\tea6420.o
- .debug_line    0x000028fa      0x252 ..\obj\usart_opts.o
- .debug_line    0x00002b4c      0x306 ..\obj\command_handler.o
- .debug_line    0x00002e52      0x380 ..\obj\stm32f10x_dma.o
- .debug_line    0x000031d2      0x349 ..\obj\display_handler.o
- .debug_line    0x0000351b      0x28b ..\obj\misc.o
- .debug_line    0x000037a6      0x52d ..\obj\stm32f10x_i2c.o
+.debug_line     0x00000000     0x3ca0
+ .debug_line    0x00000000      0xb94 ..\obj\stm32f10x_tim.o
+ .debug_line    0x00000b94      0x244 ..\obj\system_stm32f10x.o
+ .debug_line    0x00000dd8       0xb2 ..\obj\startup_stm32f10x_md.o
+ .debug_line    0x00000e8a      0x414 ..\obj\stm32f10x_gpio.o
+ .debug_line    0x0000129e      0x473 ..\obj\main.o
+ .debug_line    0x00001711      0x50f ..\obj\stm32f10x_rcc.o
+ .debug_line    0x00001c20      0x57e ..\obj\stm32f10x_adc.o
+ .debug_line    0x0000219e      0x4f6 ..\obj\stm32f10x_usart.o
+ .debug_line    0x00002694      0x248 ..\obj\tea6420.o
+ .debug_line    0x000028dc      0x24f ..\obj\usart_opts.o
+ .debug_line    0x00002b2b      0x303 ..\obj\command_handler.o
+ .debug_line    0x00002e2e      0x37c ..\obj\stm32f10x_dma.o
+ .debug_line    0x000031aa      0x346 ..\obj\display_handler.o
+ .debug_line    0x000034f0      0x287 ..\obj\misc.o
+ .debug_line    0x00003777      0x529 ..\obj\stm32f10x_i2c.o
 
-.debug_str      0x00000000     0x2f7b
- .debug_str     0x00000000      0xd33 ..\obj\stm32f10x_tim.o
-                                0xdf6 (size before relaxing)
- .debug_str     0x00000d33      0x183 ..\obj\system_stm32f10x.o
-                                0x308 (size before relaxing)
- .debug_str     0x00000eb6       0xc1 ..\obj\startup_stm32f10x_md.o
-                                0x158 (size before relaxing)
- .debug_str     0x00000f77      0x38f ..\obj\stm32f10x_gpio.o
-                                0x532 (size before relaxing)
- .debug_str     0x00001306      0x7fe ..\obj\main.o
-                                0xc3b (size before relaxing)
- .debug_str     0x00001b04      0x3f9 ..\obj\stm32f10x_rcc.o
-                                0x633 (size before relaxing)
- .debug_str     0x00001efd      0x47d ..\obj\stm32f10x_adc.o
-                                0x714 (size before relaxing)
- .debug_str     0x0000237a      0x3b3 ..\obj\stm32f10x_usart.o
-                                0x6a9 (size before relaxing)
- .debug_str     0x0000272d       0x6b ..\obj\tea6420.o
-                                0x252 (size before relaxing)
- .debug_str     0x00002798       0x9d ..\obj\usart_opts.o
-                                0x2c9 (size before relaxing)
- .debug_str     0x00002835       0xeb ..\obj\command_handler.o
-                                0x317 (size before relaxing)
- .debug_str     0x00002920      0x141 ..\obj\stm32f10x_dma.o
-                                0x3d0 (size before relaxing)
- .debug_str     0x00002a61       0x98 ..\obj\display_handler.o
-                                0x27a (size before relaxing)
- .debug_str     0x00002af9      0x132 ..\obj\misc.o
-                                0x3d7 (size before relaxing)
- .debug_str     0x00002c2b      0x350 ..\obj\stm32f10x_i2c.o
-                                0x67f (size before relaxing)
+.debug_str      0x00000000     0x2f6c
+ .debug_str     0x00000000      0xd32 ..\obj\stm32f10x_tim.o
+                                0xdf5 (size before relaxing)
+ .debug_str     0x00000d32      0x182 ..\obj\system_stm32f10x.o
+                                0x307 (size before relaxing)
+ .debug_str     0x00000eb4       0xc0 ..\obj\startup_stm32f10x_md.o
+                                0x157 (size before relaxing)
+ .debug_str     0x00000f74      0x38e ..\obj\stm32f10x_gpio.o
+                                0x531 (size before relaxing)
+ .debug_str     0x00001302      0x7fd ..\obj\main.o
+                                0xc3a (size before relaxing)
+ .debug_str     0x00001aff      0x3f8 ..\obj\stm32f10x_rcc.o
+                                0x632 (size before relaxing)
+ .debug_str     0x00001ef7      0x47c ..\obj\stm32f10x_adc.o
+                                0x713 (size before relaxing)
+ .debug_str     0x00002373      0x3b2 ..\obj\stm32f10x_usart.o
+                                0x6a8 (size before relaxing)
+ .debug_str     0x00002725       0x6a ..\obj\tea6420.o
+                                0x251 (size before relaxing)
+ .debug_str     0x0000278f       0x9c ..\obj\usart_opts.o
+                                0x2c8 (size before relaxing)
+ .debug_str     0x0000282b       0xea ..\obj\command_handler.o
+                                0x316 (size before relaxing)
+ .debug_str     0x00002915      0x140 ..\obj\stm32f10x_dma.o
+                                0x3cf (size before relaxing)
+ .debug_str     0x00002a55       0x97 ..\obj\display_handler.o
+                                0x279 (size before relaxing)
+ .debug_str     0x00002aec      0x131 ..\obj\misc.o
+                                0x3d6 (size before relaxing)
+ .debug_str     0x00002c1d      0x34f ..\obj\stm32f10x_i2c.o
+                                0x67e (size before relaxing)
 
 .comment        0x00000000       0x6e
  .comment       0x00000000       0x6e ..\obj\stm32f10x_tim.o

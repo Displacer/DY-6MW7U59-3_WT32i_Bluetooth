@@ -27,7 +27,7 @@
       </source>
       <source file="..\..\..\cmsis_boot\system_stm32f10x.h" lastModified="1648ecb1030">
       </source>
-      <source file="..\..\..\iwrap.h" lastModified="1654383488a">
+      <source file="..\..\..\iwrap.h" lastModified="1655cdb0956">
       </source>
       <source file="..\..\..\cmsis_boot\system_stm32f10x.c" lastModified="1648ecb1030">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
@@ -76,8 +76,6 @@
       <source file="..\..\..\stm_lib\inc\stm32f10x_i2c.h" lastModified="1648ecb6df0">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
       </source>
-      <source file="..\..\..\parser.h" lastModified="1655834676f">
-      </source>
       <source file="..\..\..\usart_opts.c" lastModified="1649c193ca8">
          <include file="..\..\..\usart_opts.h"/>
          <include file="..\..\..\display_handler.h"/>
@@ -85,16 +83,18 @@
          <include file="..\..\..\stm_lib\inc\stm32f10x_usart.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_dma.h"/>
       </source>
-      <source file="..\..\..\parser.c" lastModified="1655834d392">
-         <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
-         <include file="..\..\..\parser.h"/>
+      <source file="..\..\..\parser.h" lastModified="1655834676f">
       </source>
       <source file="..\..\..\stm_lib\inc\misc.h" lastModified="1648f522250">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
       </source>
-      <source file="..\..\..\command_handler.h" lastModified="1653ed694c5">
+      <source file="..\..\..\parser.c" lastModified="1655834d392">
+         <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
+         <include file="..\..\..\parser.h"/>
       </source>
-      <source file="..\..\..\main.c" lastModified="1655834607a">
+      <source file="..\..\..\command_handler.h" lastModified="1655ce8d573">
+      </source>
+      <source file="..\..\..\main.c" lastModified="1655ce75d26">
          <include file="..\..\..\cmsis_boot\stm32f10x.h"/>
          <include file="..\..\..\cmsis_boot\stm32f10x_conf.h"/>
          <include file="..\..\..\stm_lib\inc\stm32f10x_rcc.h"/>

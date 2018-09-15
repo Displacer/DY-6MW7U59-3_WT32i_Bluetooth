@@ -134,14 +134,14 @@ void HandleCommandData() {
 
 		if (commandBuffer[1] == POWER_BUTTON || (bt_play_button_delay > 150 && bt_play_button_delay < 180)) //power button or autoplay
 		{
-			GPIO_SetBits(GPIOC, BT_PLAY);
+			//GPIO_SetBits(GPIOC, BT_PLAY);
 			commandBuffer[1] = 0x00;
 		} else if (commandBuffer[2] == 0x01) // prev
 				{
-			GPIO_SetBits(GPIOC, BT_PREV);
+			//GPIO_SetBits(GPIOC, BT_PREV);
 		} else if (commandBuffer[2] == 0x02) // next
 				{
-			GPIO_SetBits(GPIOC, BT_NEXT);
+			//GPIO_SetBits(GPIOC, BT_NEXT);
 		} else {
 			///ADC handler
 
@@ -153,15 +153,15 @@ void HandleCommandData() {
 				break;
 			case 10:
 			case 11:
-				GPIO_SetBits(GPIOC, BT_NEXT);
+				//GPIO_SetBits(GPIOC, BT_NEXT);
 				break;
 			case 12:
 			case 13:
-				GPIO_SetBits(GPIOC, BT_PREV);
+				//GPIO_SetBits(GPIOC, BT_PREV);
 				break;
 
 			default:
-				GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
+				//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 				break;
 
 			}

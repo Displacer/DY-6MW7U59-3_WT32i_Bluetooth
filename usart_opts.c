@@ -1,6 +1,7 @@
 #include <usart_opts.h>
 #include <display_handler.h>
 #include <command_handler.h>
+#include <stm32f10x.h>
 #include <stm32f10x_usart.h>
 #include <stm32f10x_dma.h>
 
@@ -15,6 +16,15 @@ void UARTSend(USART_TypeDef* usart, const unsigned char *pucBuffer,
 		while (USART_GetFlagStatus(usart, USART_FLAG_TC) == RESET) {
 		}
 	}
+}
+
+void USART1Send(const unsigned char *buf) {
+	while (*buf != '\0') {
+		USART_SendData(USART1, *buf++);
+		while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET) {
+		}
+	}
+
 }
 
 void USART2SendDMA() {

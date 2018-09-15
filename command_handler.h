@@ -6,9 +6,11 @@
 #define POWER_BUTTON 0x02
 #define CD_BUTTON 0x20
 #define FM_BUTTON 0x40
+/*
 #define BT_PLAY GPIO_Pin_15
 #define BT_PREV GPIO_Pin_14
 #define BT_NEXT GPIO_Pin_13
+*/
 
 void HandleCommandData(void);
 void Bluetooth_on(void);

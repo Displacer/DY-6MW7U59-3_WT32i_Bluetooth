@@ -60,7 +60,7 @@
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="2390"/>
 </editor>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.c" partName="parser.c" path="C:/Users/Nick/Documents/GitHub/DY-6MW7U53-2-bluetooth/parser.c" title="parser.c" tooltip="C:/Users/Nick/Documents/GitHub/DY-6MW7U53-2-bluetooth/parser.c" workbook="DefaultEditorWorkbook">
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.c" partName="parser.c" path="C:/Users/MSI/Documents/GitHub/DY-6MW7U53-2-bluetooth/parser.c" title="parser.c" tooltip="C:/Users/MSI/Documents/GitHub/DY-6MW7U53-2-bluetooth/parser.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/stm_lib/src/parser.c"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1824" selectionTopPixel="830"/>
 </editor>
@@ -70,7 +70,7 @@
 <viewState/>
 </view>
 <view id="org.coocox.builder.ui.views.ProjectView" partName="Project">
-<viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="6">
+<viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="3">
 <expanded>
 <element path="/DY-6MW7U53-2-bluetooth"/>
 <element path="/DY-6MW7U53-2-bluetooth/cmsis_boot"/>
@@ -237,51 +237,36 @@
 <view id="org.coocox.builder.ui.views.ProjectView"/>
 <fastViewBars/>
 <viewLayoutRec closeable="false" id="org.eclipse.debug.ui.DebugView"/>
-<layout>
-<mainWindow>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@1f3c981">
-<folder activePageID="org.coocox.builder.ui.views.ProjectView" appearance="2" expanded="2">
-<page content="org.coocox.builder.ui.views.ProjectView" label="Project"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
+<layout>&#x0A;<mainWindow>&#x0A;<info folder="true" part="org.eclipse.ui.internal.ViewStack@1f3c981">&#x0A;<folder activePageID="org.coocox.builder.ui.views.ProjectView" appearance="2" expanded="2">&#x0A;<page content="org.coocox.builder.ui.views.ProjectView" label="Project"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="1434" ratioRight="478" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1f3c981">
-<folder appearance="2" expanded="2">
-<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="1434" ratioRight="478" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1f3c981">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@168822a" ratio="0.6992561" ratioLeft="658" ratioRight="283" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1f3c981">
-<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">
-<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@168822a" ratio="0.6992561" ratioLeft="658" ratioRight="283" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1f3c981">&#x0A;<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
 <page content="org.eclipse.debug.ui.BreakpointView" label="LabelNotFound"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 <part id="1"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@14fd12a" ratio="0.5" ratioLeft="956" ratioRight="956" relationship="2" relative="org.eclipse.ui.internal.ViewStack@168822a">
-<folder activePageID="org.eclipse.debug.ui.VariableView" appearance="2" expanded="2">
-<page content="org.coocox.codebugger.trace.ui.traceview" label="Semihosting"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@14fd12a" ratio="0.5" ratioLeft="956" ratioRight="956" relationship="2" relative="org.eclipse.ui.internal.ViewStack@168822a">&#x0A;<folder activePageID="org.eclipse.debug.ui.VariableView" appearance="2" expanded="2">&#x0A;<page content="org.coocox.codebugger.trace.ui.traceview" label="Semihosting"/>
 <page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
 <page content="org.eclipse.ui.views.PropertySheet" label="Properties"/>
 <page content="org.eclipse.debug.ui.ExpressionView" label="LabelNotFound"/>
 <page content="org.eclipse.debug.ui.MemoryView" label="LabelNotFound"/>
 <page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="LabelNotFound"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 <part id="1"/>
 <part id="2"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d3eec" ratio="0.75" ratioLeft="1434" ratioRight="478" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1f3c981">
-<folder appearance="2" expanded="2">
-<page content="org.eclipse.cdt.dsf.debug.ui.disassembly.view" label="LabelNotFound"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@12d3eec" ratio="0.75" ratioLeft="1434" ratioRight="478" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1f3c981">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.cdt.dsf.debug.ui.disassembly.view" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
 <page content="org.eclipse.debug.ui.RegisterView" label="LabelNotFound"/>
 <page content="org.coocox.coassistant.view.CoAssistantView_debug" label="LabelNotFound"/>
@@ -461,44 +446,48 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x.h" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="system_stm32f10x.h" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/system_stm32f10x.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/system_stm32f10x.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="misc.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/misc.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/misc.h"/>
+</file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/parser.c">
 <persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/parser.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="command_handler.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/parser.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/parser.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c"/>
+<file factoryID="org.coocox.component.ui.editors.repository.RepositoryElementFactory" id="org.coocox.builder.ui.editors.repository.RepositoryBrowser" name="Repository" tooltip="Repository">
+<persistable>&#x0A;<subPage/>
+</persistable>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="iwrap.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/iwrap.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/iwrap.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="iwrap.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/iwrap.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/iwrap.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_gpio.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_gpio.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_gpio.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_gpio.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/stm32f10x_gpio.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/stm32f10x_gpio.c"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="tea6420.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/tea6420.h">
 <persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/tea6420.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="tea6420.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/tea6420.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/tea6420.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x.h" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_conf.h" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x_conf.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x_conf.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_dma.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_dma.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_dma.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_usart.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_usart.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_usart.h"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="usart_opts.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/usart_opts.c">
 <persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/usart_opts.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_usart.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/stm32f10x_usart.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/stm32f10x_usart.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="display_handler.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/display_handler.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/display_handler.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="command_handler.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/command_handler.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/command_handler.h"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="misc.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/misc.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/misc.c"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="usart_opts.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/usart_opts.h">
 <persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/usart_opts.h"/>

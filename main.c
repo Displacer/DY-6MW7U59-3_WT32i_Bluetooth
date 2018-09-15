@@ -13,12 +13,14 @@
 #include "command_handler.h"
 #include "usart_opts.h"
 #include "tea6420.h"
+#include "parser.h"
 
 #define USART_BREAK_DETECTION_LBD  //if defined, break on rx line will detect via LBD iterrupt, otherwise via ERROR on line.
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 extern uint8_t Mode_itterupt;
+extern uint8_t parsing;
 
 void SetupPeriph() {
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -31,7 +33,6 @@ void SetupPeriph() {
 
 	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 	//GPIO_PinRemapConfig()
-
 
 	///-------------------------------------------------
 	///USART1 init for WT32
@@ -65,7 +66,6 @@ void SetupPeriph() {
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
-
 
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
@@ -245,12 +245,12 @@ void SetupPeriph() {
 
 	/*RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 
-	GPIO_InitStructure.GPIO_Pin = BT_PLAY | BT_PREV | BT_NEXT;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	 GPIO_InitStructure.GPIO_Pin = BT_PLAY | BT_PREV | BT_NEXT;
+	 GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	 GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);*/
+	 GPIO_Init(GPIOC, &GPIO_InitStructure);
+	 GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);*/
 
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
@@ -317,7 +317,16 @@ void InitDisplay() {
 
 }
 
+void USART1_IRQHandler(void) {
+	if ((USART1->SR & USART_FLAG_RXNE) != (u16) RESET) {
+
+		if (!parsing) Parse_init();
+		Parse(USART_ReceiveData(USART1));
+	}
+}
+
 uint8_t d_idx, d_rcvcplt = 0;
+
 void USART2_IRQHandler(void) {
 
 #ifdef USART_BREAK_DETECTION_LBD
@@ -327,18 +336,18 @@ void USART2_IRQHandler(void) {
 		d_rcvcplt = 1;
 		USART_ReceiveData(USART2);
 		InitDisplay();
+	}
 
 #else
-		if ((USART2->SR & (USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
-				!= (u16) RESET) // Error handler for display init detection
-		{
-			d_rcvcplt = 1;
-			USART_ReceiveData(USART2);
-			InitDisplay();
-		}
+	if ((USART2->SR & (USART_FLAG_NE | USART_FLAG_FE | USART_FLAG_PE))
+			!= (u16) RESET) // Error handler for display init detection
+	{
+		d_rcvcplt = 1;
+		USART_ReceiveData(USART2);
+		InitDisplay();
+	}
 #endif
 
-	}
 	if ((USART2->SR & USART_FLAG_RXNE) != (u16) RESET) {
 		if (d_idx < DISPLAY_BUFFER_SIZE) {
 			displayRxBuffer[d_idx++] = USART_ReceiveData(USART2);
@@ -406,7 +415,7 @@ void SetupClock() {
 	RCC_PCLK1Config(RCC_HCLK_Div2); // PCLK1  = HCLK/2
 	RCC_ADCCLKConfig(RCC_PCLK2_Div4); // ADCCLK = PCLK2/4
 
-	// PLLCLK = 8MHz * 9 = 72 MHz
+// PLLCLK = 8MHz * 9 = 72 MHz
 	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
 	RCC_PLLCmd(ENABLE);
 	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET)

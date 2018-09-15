@@ -5,6 +5,7 @@ void tea6420_init() {
 
 }
 void tea6420_Bluetooth() {
+
 	I2C_GenerateSTART(TEA6420_I2C, ENABLE);
 	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_MODE_SELECT))
 		;
@@ -17,7 +18,7 @@ void tea6420_Bluetooth() {
 	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
 		;
 
-	I2C_SendData(TEA6420_I2C, BT_IN | GAIN_6 | AUDIO_OUT);
+	I2C_SendData(TEA6420_I2C, BT_IN | GAIN_0 | AUDIO_OUT);
 	while (!I2C_CheckEvent(TEA6420_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
 		;
 

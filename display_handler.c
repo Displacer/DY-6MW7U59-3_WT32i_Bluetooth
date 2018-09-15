@@ -23,15 +23,23 @@
 #include "usart_opts.h"
 
 extern enum Mode mode;
+extern struct SongInfo;
+
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T',
 		'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x00, 0x9D };
 uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
+uint8_t displayStringBuffer[DISPLAY_STRING_SIZE];
+uint8_t displayDataBuffer[DISPLAY_DATA_SIZE];
 
 int greets_counter = 0;
 uint8_t isAux;
 uint8_t btLastState = 0;
+
+enum displayState {
+	begin, scroll, end
+} display_state;
 
 void GetMode() {
 	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_4)) // if bt module activated
@@ -62,6 +70,18 @@ void GetMode() {
 	//mode = Normal;
 }
 
+int offset;
+uint8_t offset_step;
+uint8_t delay;
+uint8_t DISPLAY_STRING_DELAY = 30;
+uint8_t OFFSET_STEP_DELAY = 2;
+
+void resetDisplayState() {
+	display_state = begin;
+	offset = 0;
+	delay = 0;
+}
+
 void HandleDisplayData() {
 	if (CheckChksum(displayRxBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
@@ -78,19 +98,71 @@ void HandleDisplayData() {
 			&& displayRxBuffer[8] == 'X';
 
 	if (mode == Bluetooth) {
+
+		if (*displayDataBuffer != 0) {
+
+			switch (display_state) {
+
+			case begin:
+				if (delay < DISPLAY_STRING_DELAY)
+					delay++;
+				else
+					display_state = scroll;
+				break;
+			case scroll:
+				if (displayDataBuffer[offset + DISPLAY_STRING_SIZE] != 0) {
+					if (offset_step++ == OFFSET_STEP_DELAY) {
+						offset++;
+						offset_step = 0;
+					}
+
+				}
+
+				else {
+					display_state = end;
+				}
+				break;
+			case end:
+				if (delay > 0)
+					delay--;
+				else {
+					display_state = begin;
+					offset = 0;
+				}
+				break;
+			}
+
+			for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
+
+					displayStringBuffer[i] = displayDataBuffer[i + offset];
+			}
+		}
+
 		if (isAux) {
-			displayBuffer[2] = BLUETOOTH_CHAR;
-			displayBuffer[3] = ' ';
-			displayBuffer[4] = 'B';
-			displayBuffer[5] = 'L';
-			displayBuffer[6] = 'U';
-			displayBuffer[7] = 'E';
-			displayBuffer[8] = 'T';
-			displayBuffer[9] = 'O';
-			displayBuffer[10] = 'O';
-			displayBuffer[11] = 'T';
-			displayBuffer[12] = 'H';
-			displayBuffer[13] = ' ';
+
+			if (*displayStringBuffer == 0) {
+				displayBuffer[2] = BLUETOOTH_CHAR;
+				displayBuffer[3] = ' ';
+				displayBuffer[4] = 'B';
+				displayBuffer[5] = 'L';
+				displayBuffer[6] = 'U';
+				displayBuffer[7] = 'E';
+				displayBuffer[8] = 'T';
+				displayBuffer[9] = 'O';
+				displayBuffer[10] = 'O';
+				displayBuffer[11] = 'T';
+				displayBuffer[12] = 'H';
+				displayBuffer[13] = ' ';
+			} else {
+
+				for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
+					if (displayStringBuffer[i] == 0)
+						displayBuffer[i + 2] = ' ';
+					else
+						displayBuffer[i + 2] = displayStringBuffer[i];
+				}
+			}
+
 		}
 	}
 

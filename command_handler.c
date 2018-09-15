@@ -46,6 +46,7 @@
 #include "display_handler.h"
 #include "usart_opts.h"
 #include "tea6420.h"
+#include "iwrap.h"
 extern enum Mode mode;
 extern uint8_t btLastState;
 
@@ -83,7 +84,7 @@ void SendCommand() {
 }
 
 uint8_t fm_button_released = 1;
-
+uint8_t avrcp_trig = 0;
 //TODO: Delay for command send
 void HandleCommandData() {
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
@@ -132,16 +133,26 @@ void HandleCommandData() {
 		if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON) // return to normal state
 			Bluetooth_off();
 
-		if (commandBuffer[1] == POWER_BUTTON || (bt_play_button_delay > 150 && bt_play_button_delay < 180)) //power button or autoplay
-		{
-			//GPIO_SetBits(GPIOC, BT_PLAY);
+		if (commandBuffer[1] == POWER_BUTTON
+				|| (bt_play_button_delay > 150 && bt_play_button_delay < 152)) //power button or autoplay
+				{
+			if (avrcp_trig == 0) {
+				bt_Play();
+				avrcp_trig = 1;
+			}
 			commandBuffer[1] = 0x00;
 		} else if (commandBuffer[2] == 0x01) // prev
 				{
-			//GPIO_SetBits(GPIOC, BT_PREV);
+			if (avrcp_trig == 0) {
+				bt_Prev();
+				avrcp_trig = 1;
+			}
 		} else if (commandBuffer[2] == 0x02) // next
 				{
-			//GPIO_SetBits(GPIOC, BT_NEXT);
+			if (avrcp_trig == 0) {
+				bt_Next();
+				avrcp_trig = 1;
+			}
 		} else {
 			///ADC handler
 
@@ -153,22 +164,31 @@ void HandleCommandData() {
 				break;
 			case 10:
 			case 11:
-				//GPIO_SetBits(GPIOC, BT_NEXT);
+				if (avrcp_trig == 0) {
+					bt_Next();
+					avrcp_trig = 1;
+				}
 				break;
 			case 12:
 			case 13:
-				//GPIO_SetBits(GPIOC, BT_PREV);
+				if (avrcp_trig == 0) {
+					bt_Prev();
+					avrcp_trig = 1;
+				}
 				break;
 
 			default:
+				avrcp_trig = 0;
 				//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 				break;
 
 			}
+			avrcp_trig = 0;
 			//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 		}
 
-		if (bt_play_button_delay < 250) bt_play_button_delay++;
+		if (bt_play_button_delay < 250)
+			bt_play_button_delay++;
 
 		SendCommand();
 		return;

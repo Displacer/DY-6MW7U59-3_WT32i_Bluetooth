@@ -19,11 +19,11 @@ void UARTSend(USART_TypeDef* usart, const unsigned char *pucBuffer,
 }
 
 void USART1Send(const unsigned char *buf) {
-	while (*buf != '\0') {
+	do {
 		USART_SendData(USART1, *buf++);
 		while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET) {
 		}
-	}
+	} while (*buf != '\0');
 
 }
 

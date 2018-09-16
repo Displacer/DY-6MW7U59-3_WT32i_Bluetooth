@@ -49,6 +49,8 @@
 #include "iwrap.h"
 extern enum Mode mode;
 extern uint8_t btLastState;
+extern void ClearDisplayString();
+extern enum PlaybackState playbackState;
 
 uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES; // will check for 1 second for mode changes
 
@@ -70,6 +72,7 @@ void Bluetooth_on() {
 }
 void Bluetooth_off() {
 	//mode = Normal;
+	ClearDisplayString();
 	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 	tea6420_AUX();
 }
@@ -134,10 +137,11 @@ void HandleCommandData() {
 			Bluetooth_off();
 
 		if (commandBuffer[1] == POWER_BUTTON
-				|| (bt_play_button_delay > 150 && bt_play_button_delay < 152)) //power button or autoplay
+				/*|| (bt_play_button_delay > 150 && bt_play_button_delay < 152)*/) //power button or autoplay
 				{
 			if (avrcp_trig == 0) {
-				bt_Play();
+				if (playbackState == play) bt_Pause();
+				else bt_Play();
 				avrcp_trig = 1;
 			}
 			commandBuffer[1] = 0x00;
@@ -183,7 +187,7 @@ void HandleCommandData() {
 				break;
 
 			}
-			avrcp_trig = 0;
+			//avrcp_trig = 0;
 			//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 		}
 

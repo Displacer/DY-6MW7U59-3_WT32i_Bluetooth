@@ -8,7 +8,7 @@
 
 void Show();
 void Parse_init();
-void getSongInfo();
+uint8_t getSongInfo();
 void Parse(uint8_t);
 
 

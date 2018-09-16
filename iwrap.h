@@ -30,6 +30,7 @@
 #ifndef __IWRAP_H
 #define __IWRAP_H
 
+#define EVENT_PLAYBACK_STATUS_CHANGED "AVRCP PDU 31 1 \r\n"
 #define EVENT_TRACK_CHANGED "AVRCP PDU 31 2 \r\n"
 #define AVRCP_GET_ARTIST_TITLE "AVRCP PDU 20 2 1 2 \r\n"
 #define AVRCP_PLAY "AVRCP PLAY \r\n"
@@ -39,11 +40,19 @@
 #define AVRCP_GET_PLAY_STATUS "AVRCP PDU 30 \r\n"
 
 
+
+enum PlaybackState {
+	stop, pause, play
+} playbackState;
+
+
 void bt_Play();
 void bt_Pause();
 void bt_Next();
 void bt_Prev();
 void bt_TrackChangedEventSubscribe();
+void bt_PlaybackStatusEventSubscribe();
 void bt_GetAVRCP_metadata();
+
 
 #endif

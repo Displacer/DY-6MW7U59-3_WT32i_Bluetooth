@@ -47,6 +47,8 @@
 #include "usart_opts.h"
 #include "tea6420.h"
 #include "iwrap.h"
+#include "config.h"
+
 extern enum Mode mode;
 extern uint8_t btLastState;
 extern void ClearDisplayString();
@@ -58,22 +60,20 @@ uint8_t default_command[COMMAND_BUFFER_SIZE] = { 0x41, 0x00, 0x00, 0x00, 0x30,
 		0x00, 0x71 };
 uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 
-uint8_t press_cnt = 0, act_aux = 0, bt_play_button_delay = 0;
+uint8_t press_cnt = 0, act_aux = 0;
 
 void ActivateAUX() {
 	act_aux = !isAux;
 }
 
 void Bluetooth_on() {
+	ClearDisplayString();
 	mode = Bluetooth;
-	bt_play_button_delay = 0;
-	GPIO_SetBits(GPIOA, GPIO_Pin_4);
+	GPIO_SetBits(GPIOA, BT_STBY_PIN);
 	tea6420_Bluetooth();
 }
 void Bluetooth_off() {
-	//mode = Normal;
-	ClearDisplayString();
-	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
 	tea6420_AUX();
 }
 
@@ -136,23 +136,21 @@ void HandleCommandData() {
 		if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON) // return to normal state
 			Bluetooth_off();
 
-		if (commandBuffer[1] == POWER_BUTTON
-				/*|| (bt_play_button_delay > 150 && bt_play_button_delay < 152)*/) //power button or autoplay
-				{
+		if (commandBuffer[1] == POWER_BUTTON) {
 			if (avrcp_trig == 0) {
-				if (playbackState == play) bt_Pause();
-				else bt_Play();
+				if (playbackState == play)
+					bt_Pause();
+				else
+					bt_Play();
 				avrcp_trig = 1;
 			}
 			commandBuffer[1] = 0x00;
-		} else if (commandBuffer[2] == 0x01) // prev
-				{
+		} else if (commandBuffer[2] == BACKWARD_BUTTON) {
 			if (avrcp_trig == 0) {
 				bt_Prev();
 				avrcp_trig = 1;
 			}
-		} else if (commandBuffer[2] == 0x02) // next
-				{
+		} else if (commandBuffer[2] == FORWARD_BUTTON) {
 			if (avrcp_trig == 0) {
 				bt_Next();
 				avrcp_trig = 1;
@@ -183,16 +181,10 @@ void HandleCommandData() {
 
 			default:
 				avrcp_trig = 0;
-				//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 				break;
 
 			}
-			//avrcp_trig = 0;
-			//GPIO_ResetBits(GPIOC, BT_PLAY | BT_PREV | BT_NEXT);
 		}
-
-		if (bt_play_button_delay < 250)
-			bt_play_button_delay++;
 
 		SendCommand();
 		return;
@@ -200,7 +192,7 @@ void HandleCommandData() {
 	if (mode != Bluetooth) {
 
 		if (commandBuffer[1] == FM_BUTTON) { // Hold FM button
-			commandBuffer[1] = 0x00; // dummy
+			commandBuffer[1] = NOTHING;
 			fm_button_released = 0;
 			press_cnt++;
 			if (press_cnt > PRESS_DELAY) {
@@ -218,8 +210,6 @@ void HandleCommandData() {
 			commandBuffer[1] = FM_BUTTON;
 			press_cnt--;
 		}
-
-		//if (commandBuffer[1] == 0x02)commandBuffer[1] = 0x80;
 
 		SendCommand();
 	}

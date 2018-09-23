@@ -4,9 +4,6 @@
 #define BUFF_SIZE 300
 #define ARGS_COUNT 30
 
-
-
-void Show();
 void Parse_init();
 uint8_t getSongInfo();
 void Parse(uint8_t);

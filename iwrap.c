@@ -5,9 +5,6 @@
 
 void bt_Play() {
 	USART1Send(AVRCP_PLAY);
-	//bt_TrackChangedEventSubscribe();
-	//bt_PlaybackStatusEventSubscribe();
-	//bt_GetAVRCP_metadata();
 }
 void bt_Pause()
 {

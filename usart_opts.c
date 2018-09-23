@@ -7,18 +7,14 @@
 
 void UARTSend(USART_TypeDef* usart, const unsigned char *pucBuffer,
 		unsigned long ulCount) {
-	//
-	// Loop while there are more characters to send.
-	//
 	while (ulCount--) {
 		USART_SendData(usart, *pucBuffer++);
-		/* Loop until the end of transmission */
 		while (USART_GetFlagStatus(usart, USART_FLAG_TC) == RESET) {
 		}
 	}
 }
 
-void USART1Send(const unsigned char *buf) {
+void USART1Send(char *buf) {
 	do {
 		USART_SendData(USART1, *buf++);
 		while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET) {
@@ -28,14 +24,12 @@ void USART1Send(const unsigned char *buf) {
 }
 
 void USART2SendDMA() {
-	/* Restart DMA Channel*/
 	DMA_Cmd(DMA1_Channel7, DISABLE);
 	DMA1_Channel7->CNDTR = DISPLAY_BUFFER_SIZE;
 	DMA_Cmd(DMA1_Channel7, ENABLE);
 }
 
 void USART3SendDMA() {
-	/* Restart DMA Channel*/
 	DMA_Cmd(DMA1_Channel2, DISABLE);
 	DMA1_Channel2->CNDTR = COMMAND_BUFFER_SIZE;
 	DMA_Cmd(DMA1_Channel2, ENABLE);

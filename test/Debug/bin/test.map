@@ -11,6 +11,7 @@ token_lenght        0x2               ..\obj\parser.o
 argc                0x1               ..\obj\parser.o
 str_idx             0x2               ..\obj\parser.o
 mode                0x1               ..\obj\main.o
+dbgstr              0x30              ..\obj\main.o
 display_state       0x1               ..\obj\display_handler.o
 displayStringBuffer
                     0xc               ..\obj\display_handler.o
@@ -481,7 +482,7 @@ Linker script and memory map
 
                 0x20005000                _eram = 0x20005000
 
-.text           0x08000000     0x3bf2
+.text           0x08000000     0x396a
  *(.isr_vector)
  .isr_vector    0x08000000      0x10c ..\obj\startup_stm32f10x_md.o
                 0x08000000                g_pfnVectors
@@ -757,87 +758,87 @@ Linker script and memory map
                 0x08001f30       0x28 ..\obj\command_handler.o
                 0x08001f30                ActivateAUX
  .text.Bluetooth_on
-                0x08001f58       0x2c ..\obj\command_handler.o
+                0x08001f58       0x28 ..\obj\command_handler.o
                 0x08001f58                Bluetooth_on
  .text.Bluetooth_off
-                0x08001f84       0x1c ..\obj\command_handler.o
-                0x08001f84                Bluetooth_off
+                0x08001f80       0x18 ..\obj\command_handler.o
+                0x08001f80                Bluetooth_off
  .text.SendCommand
-                0x08001fa0       0x40 ..\obj\command_handler.o
-                0x08001fa0                SendCommand
+                0x08001f98       0x40 ..\obj\command_handler.o
+                0x08001f98                SendCommand
  .text.HandleCommandData
-                0x08001fe0      0x308 ..\obj\command_handler.o
-                0x08001fe0                HandleCommandData
+                0x08001fd8      0x2f0 ..\obj\command_handler.o
+                0x08001fd8                HandleCommandData
  .text.DMA_Init
-                0x080022e8       0x7c ..\obj\stm32f10x_dma.o
-                0x080022e8                DMA_Init
- .text.DMA_Cmd  0x08002364       0x38 ..\obj\stm32f10x_dma.o
-                0x08002364                DMA_Cmd
+                0x080022c8       0x7c ..\obj\stm32f10x_dma.o
+                0x080022c8                DMA_Init
+ .text.DMA_Cmd  0x08002344       0x38 ..\obj\stm32f10x_dma.o
+                0x08002344                DMA_Cmd
  .text.DMA_ITConfig
-                0x0800239c       0x3c ..\obj\stm32f10x_dma.o
-                0x0800239c                DMA_ITConfig
+                0x0800237c       0x3c ..\obj\stm32f10x_dma.o
+                0x0800237c                DMA_ITConfig
  .text.DMA_ClearITPendingBit
-                0x080023d8       0x34 ..\obj\stm32f10x_dma.o
-                0x080023d8                DMA_ClearITPendingBit
- .text.GetMode  0x0800240c       0x94 ..\obj\display_handler.o
-                0x0800240c                GetMode
+                0x080023b8       0x34 ..\obj\stm32f10x_dma.o
+                0x080023b8                DMA_ClearITPendingBit
+ .text.GetMode  0x080023ec       0x94 ..\obj\display_handler.o
+                0x080023ec                GetMode
  .text.resetDisplayState
-                0x080024a0       0x2c ..\obj\display_handler.o
-                0x080024a0                resetDisplayState
+                0x08002480       0x2c ..\obj\display_handler.o
+                0x08002480                resetDisplayState
  .text.ClearDisplayString
-                0x080024cc       0x20 ..\obj\display_handler.o
-                0x080024cc                ClearDisplayString
+                0x080024ac       0x20 ..\obj\display_handler.o
+                0x080024ac                ClearDisplayString
  .text.HandleDisplayData
-                0x080024ec      0x284 ..\obj\display_handler.o
-                0x080024ec                HandleDisplayData
+                0x080024cc      0x308 ..\obj\display_handler.o
+                0x080024cc                HandleDisplayData
  .text.SendDisplayData
-                0x08002770       0x40 ..\obj\display_handler.o
-                0x08002770                SendDisplayData
+                0x080027d4       0x40 ..\obj\display_handler.o
+                0x080027d4                SendDisplayData
  .text.NVIC_Init
-                0x080027b0       0xc4 ..\obj\misc.o
-                0x080027b0                NVIC_Init
- .text._atoi    0x08002874       0x50 ..\obj\parser.o
-                0x08002874                _atoi
+                0x08002814       0xc4 ..\obj\misc.o
+                0x08002814                NVIC_Init
+ .text._atoi    0x080028d8       0x50 ..\obj\parser.o
+                0x080028d8                _atoi
  .text.findIndexOfToken
-                0x080028c4       0x50 ..\obj\parser.o
-                0x080028c4                findIndexOfToken
+                0x08002928       0x50 ..\obj\parser.o
+                0x08002928                findIndexOfToken
  .text.getSongInfo
-                0x08002914       0xb4 ..\obj\parser.o
-                0x08002914                getSongInfo
+                0x08002978       0xec ..\obj\parser.o
+                0x08002978                getSongInfo
  .text.unicodeToChar
-                0x080029c8      0x81c ..\obj\parser.o
-                0x080029c8                unicodeToChar
+                0x08002a64      0x494 ..\obj\parser.o
+                0x08002a64                unicodeToChar
  .text.HandleParseData
-                0x080031e4      0x3a0 ..\obj\parser.o
-                0x080031e4                HandleParseData
+                0x08002ef8      0x3d0 ..\obj\parser.o
+                0x08002ef8                HandleParseData
  .text.Parse_init
-                0x08003584       0x44 ..\obj\parser.o
-                0x08003584                Parse_init
- .text.Parse    0x080035c8      0x16c ..\obj\parser.o
-                0x080035c8                Parse
+                0x080032c8       0x44 ..\obj\parser.o
+                0x080032c8                Parse_init
+ .text.Parse    0x0800330c      0x1a8 ..\obj\parser.o
+                0x0800330c                Parse
  .text.isStrEqual
-                0x08003734       0x6c ..\obj\parser.o
-                0x08003734                isStrEqual
+                0x080034b4       0x6c ..\obj\parser.o
+                0x080034b4                isStrEqual
  .text.I2C_Init
-                0x080037a0      0x184 ..\obj\stm32f10x_i2c.o
-                0x080037a0                I2C_Init
- .text.I2C_Cmd  0x08003924       0x40 ..\obj\stm32f10x_i2c.o
-                0x08003924                I2C_Cmd
+                0x08003520      0x184 ..\obj\stm32f10x_i2c.o
+                0x08003520                I2C_Init
+ .text.I2C_Cmd  0x080036a4       0x40 ..\obj\stm32f10x_i2c.o
+                0x080036a4                I2C_Cmd
  .text.I2C_GenerateSTART
-                0x08003964       0x40 ..\obj\stm32f10x_i2c.o
-                0x08003964                I2C_GenerateSTART
+                0x080036e4       0x40 ..\obj\stm32f10x_i2c.o
+                0x080036e4                I2C_GenerateSTART
  .text.I2C_GenerateSTOP
-                0x080039a4       0x40 ..\obj\stm32f10x_i2c.o
-                0x080039a4                I2C_GenerateSTOP
+                0x08003724       0x40 ..\obj\stm32f10x_i2c.o
+                0x08003724                I2C_GenerateSTOP
  .text.I2C_SendData
-                0x080039e4       0x20 ..\obj\stm32f10x_i2c.o
-                0x080039e4                I2C_SendData
+                0x08003764       0x20 ..\obj\stm32f10x_i2c.o
+                0x08003764                I2C_SendData
  .text.I2C_Send7bitAddress
-                0x08003a04       0x3c ..\obj\stm32f10x_i2c.o
-                0x08003a04                I2C_Send7bitAddress
+                0x08003784       0x3c ..\obj\stm32f10x_i2c.o
+                0x08003784                I2C_Send7bitAddress
  .text.I2C_CheckEvent
-                0x08003a40       0x60 ..\obj\stm32f10x_i2c.o
-                0x08003a40                I2C_CheckEvent
+                0x080037c0       0x60 ..\obj\stm32f10x_i2c.o
+                0x080037c0                I2C_CheckEvent
  *(.init)
  *(.fini)
  *crtbegin.o(.ctors)
@@ -851,40 +852,40 @@ Linker script and memory map
  *(SORT(.dtors.*))
  *(.dtors)
  *(.rodata*)
- .rodata        0x08003aa0       0x86 ..\obj\iwrap.o
- *fill*         0x08003b26        0x2 
- .rodata        0x08003b28       0xca ..\obj\parser.o
+ .rodata        0x08003820       0x86 ..\obj\iwrap.o
+ *fill*         0x080038a6        0x2 
+ .rodata        0x080038a8       0xc2 ..\obj\parser.o
  *(.eh_fram e*)
 
-.glue_7         0x08003bf4        0x0
- .glue_7        0x08003bf4        0x0 linker stubs
+.glue_7         0x0800396c        0x0
+ .glue_7        0x0800396c        0x0 linker stubs
 
-.glue_7t        0x08003bf4        0x0
- .glue_7t       0x08003bf4        0x0 linker stubs
+.glue_7t        0x0800396c        0x0
+ .glue_7t       0x0800396c        0x0 linker stubs
 
-.vfp11_veneer   0x08003bf4        0x0
- .vfp11_veneer  0x08003bf4        0x0 linker stubs
+.vfp11_veneer   0x0800396c        0x0
+ .vfp11_veneer  0x0800396c        0x0 linker stubs
 
-.v4_bx          0x08003bf4        0x0
- .v4_bx         0x08003bf4        0x0 linker stubs
+.v4_bx          0x0800396c        0x0
+ .v4_bx         0x0800396c        0x0 linker stubs
 
-.iplt           0x08003bf4        0x0
- .iplt          0x08003bf4        0x0 ..\obj\stm32f10x_tim.o
+.iplt           0x0800396c        0x0
+ .iplt          0x0800396c        0x0 ..\obj\stm32f10x_tim.o
 
-.rel.dyn        0x08003bf4        0x0
- .rel.iplt      0x08003bf4        0x0 ..\obj\stm32f10x_tim.o
+.rel.dyn        0x0800396c        0x0
+ .rel.iplt      0x0800396c        0x0 ..\obj\stm32f10x_tim.o
 
 .ARM.extab
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x08003bf4                __exidx_start = .
+                0x0800396c                __exidx_start = .
 
 .ARM.exidx
  *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-                0x08003bf4                __exidx_end = .
-                0x08003bf4                __etext = .
-                0x08003bf2                _sidata = __etext
+                0x0800396c                __exidx_end = .
+                0x0800396c                __etext = .
+                0x0800396a                _sidata = __etext
 
-.data           0x20000000       0x3c load address 0x08003bf2
+.data           0x20000000       0x3c load address 0x0800396a
                 0x20000000                __data_start__ = .
                 0x20000000                _sdata = __data_start__
  *(vtable)
@@ -918,10 +919,10 @@ Linker script and memory map
                 0x2000003c                __data_end__ = .
                 0x2000003c                _edata = __data_end__
 
-.igot.plt       0x2000003c        0x0 load address 0x08003c30
+.igot.plt       0x2000003c        0x0 load address 0x080039a8
  .igot.plt      0x2000003c        0x0 ..\obj\stm32f10x_tim.o
 
-.bss            0x2000003c      0x34c load address 0x08003c30
+.bss            0x2000003c      0x380 load address 0x080039a8
                 0x2000003c                . = ALIGN (0x4)
                 0x2000003c                __bss_start__ = .
                 0x2000003c                _sbss = __bss_start__
@@ -929,65 +930,67 @@ Linker script and memory map
  .bss           0x2000003c        0x2 ..\obj\main.o
                 0x2000003c                d_rcvcplt
                 0x2000003d                c_rcvcplt
- .bss           0x2000003e        0x4 ..\obj\command_handler.o
+ .bss           0x2000003e        0x3 ..\obj\command_handler.o
                 0x2000003e                press_cnt
                 0x2000003f                act_aux
-                0x20000040                bt_play_button_delay
-                0x20000041                avrcp_trig
- *fill*         0x20000042        0x2 
+                0x20000040                avrcp_trig
+ *fill*         0x20000041        0x3 
  .bss           0x20000044        0x5 ..\obj\display_handler.o
                 0x20000044                greets_counter
                 0x20000048                btLastState
  .bss           0x20000049        0x1 ..\obj\parser.o
                 0x20000049                parsing
  *(COMMON)
- COMMON         0x2000004a        0x4 ..\obj\main.o
-                0x2000004a                c_idx
-                0x2000004b                mode
-                0x2000004c                isAux
-                0x2000004d                d_idx
- COMMON         0x2000004e        0x1 ..\obj\iwrap.o
-                0x2000004e                playbackState
- *fill*         0x2000004f        0x1 
- COMMON         0x20000050        0x7 ..\obj\command_handler.o
-                0x20000050                commandBuffer
- *fill*         0x20000057        0x1 
- COMMON         0x20000058      0x173 ..\obj\display_handler.o
-                0x20000058                offset_step
-                0x20000059                display_state
-                0x2000005c                displayStringBuffer
-                0x20000068                delay
-                0x2000006c                displayDataBuffer
-                0x20000198                offset
-                0x2000019c                displayBuffer
-                0x200001b4                displayRxBuffer
- *fill*         0x200001cb        0x1 
- COMMON         0x200001cc      0x1bc ..\obj\parser.o
-                0x200001cc                text_flag
-                0x200001d0                argv
-                0x20000248                token_lenght
-                0x2000024a                argc
-                0x2000024c                str_idx
-                0x20000250                buf
-                0x2000037c                songInfo
-                0x20000388                . = ALIGN (0x4)
-                0x20000388                __bss_end__ = .
-                0x20000388                _ebss = __bss_end__
+ *fill*         0x2000004a        0x2 
+ COMMON         0x2000004c       0x36 ..\obj\main.o
+                0x2000004c                c_idx
+                0x2000004d                mode
+                0x20000050                dbgstr
+                0x20000080                isAux
+                0x20000081                d_idx
+ COMMON         0x20000082        0x1 ..\obj\iwrap.o
+                0x20000082                playbackState
+ *fill*         0x20000083        0x1 
+ COMMON         0x20000084        0x7 ..\obj\command_handler.o
+                0x20000084                commandBuffer
+ *fill*         0x2000008b        0x1 
+ COMMON         0x2000008c      0x173 ..\obj\display_handler.o
+                0x2000008c                offset_step
+                0x2000008d                display_state
+                0x20000090                displayStringBuffer
+                0x2000009c                delay
+                0x200000a0                displayDataBuffer
+                0x200001cc                offset
+                0x200001d0                displayBuffer
+                0x200001e8                displayRxBuffer
+ *fill*         0x200001ff        0x1 
+ COMMON         0x20000200      0x1bc ..\obj\parser.o
+                0x20000200                text_flag
+                0x20000204                argv
+                0x2000027c                token_lenght
+                0x2000027e                argc
+                0x20000280                str_idx
+                0x20000284                buf
+                0x200003b0                songInfo
+                0x200003bc                . = ALIGN (0x4)
+                0x200003bc                __bss_end__ = .
+                0x200003bc                _ebss = __bss_end__
 
-.heap           0x20000388        0x0
-                0x20000388                __end__ = .
-                0x20000388                _end = __end__
-                0x20000388                end = __end__
+.heap           0x200003bc        0x0
+                0x200003bc                __end__ = .
+                0x200003bc                _end = __end__
+                0x200003bc                end = __end__
  *(.heap*)
-                0x20000388                __HeapLimit = .
+                0x200003bc                __HeapLimit = .
 
-.co_stack       0x20000388      0x400 load address 0x08003f7c
-                0x20000388                . = ALIGN (0x8)
+.co_stack       0x200003bc      0x404 load address 0x08003d28
+                0x200003c0                . = ALIGN (0x8)
+ *fill*         0x200003bc        0x4 
  *(.co_stack .co_stack.*)
- .co_stack      0x20000388      0x400 ..\obj\startup_stm32f10x_md.o
-                0x20000388                pulStack
+ .co_stack      0x200003c0      0x400 ..\obj\startup_stm32f10x_md.o
+                0x200003c0                pulStack
                 0x20005000                __StackTop = (ORIGIN (ram) + LENGTH (ram))
-                0x20004c00                __StackLimit = (__StackTop - SIZEOF (.co_stack))
+                0x20004bfc                __StackLimit = (__StackTop - SIZEOF (.co_stack))
                 [!provide]                PROVIDE (__stack, __StackTop)
                 0x00000001                ASSERT ((__StackLimit >= __HeapLimit), region ram  overflowed with stack)
 LOAD ..\obj\stm32f10x_tim.o
@@ -1014,43 +1017,43 @@ LOAD c:/program files (x86)/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm
 END GROUP
 OUTPUT(test.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x7e5c
+.debug_info     0x00000000     0x7f05
  .debug_info    0x00000000     0x1c60 ..\obj\stm32f10x_tim.o
  .debug_info    0x00001c60      0x49c ..\obj\system_stm32f10x.o
  .debug_info    0x000020fc       0xee ..\obj\startup_stm32f10x_md.o
  .debug_info    0x000021ea      0x6f6 ..\obj\stm32f10x_gpio.o
- .debug_info    0x000028e0      0xede ..\obj\main.o
- .debug_info    0x000037be      0x18f ..\obj\iwrap.o
- .debug_info    0x0000394d      0x8a3 ..\obj\stm32f10x_rcc.o
- .debug_info    0x000041f0      0xb7c ..\obj\stm32f10x_adc.o
- .debug_info    0x00004d6c      0x9f0 ..\obj\stm32f10x_usart.o
- .debug_info    0x0000575c      0x229 ..\obj\tea6420.o
- .debug_info    0x00005985      0x39a ..\obj\usart_opts.o
- .debug_info    0x00005d1f      0x485 ..\obj\command_handler.o
- .debug_info    0x000061a4      0x47b ..\obj\stm32f10x_dma.o
- .debug_info    0x0000661f      0x3df ..\obj\display_handler.o
- .debug_info    0x000069fe      0x556 ..\obj\misc.o
- .debug_info    0x00006f54      0x3fc ..\obj\parser.o
- .debug_info    0x00007350      0xb0c ..\obj\stm32f10x_i2c.o
+ .debug_info    0x000028e0      0xf0c ..\obj\main.o
+ .debug_info    0x000037ec      0x18f ..\obj\iwrap.o
+ .debug_info    0x0000397b      0x8a3 ..\obj\stm32f10x_rcc.o
+ .debug_info    0x0000421e      0xb7c ..\obj\stm32f10x_adc.o
+ .debug_info    0x00004d9a      0x9f0 ..\obj\stm32f10x_usart.o
+ .debug_info    0x0000578a      0x229 ..\obj\tea6420.o
+ .debug_info    0x000059b3      0x376 ..\obj\usart_opts.o
+ .debug_info    0x00005d29      0x4a2 ..\obj\command_handler.o
+ .debug_info    0x000061cb      0x47b ..\obj\stm32f10x_dma.o
+ .debug_info    0x00006646      0x447 ..\obj\display_handler.o
+ .debug_info    0x00006a8d      0x556 ..\obj\misc.o
+ .debug_info    0x00006fe3      0x416 ..\obj\parser.o
+ .debug_info    0x000073f9      0xb0c ..\obj\stm32f10x_i2c.o
 
-.debug_abbrev   0x00000000     0x183e
+.debug_abbrev   0x00000000     0x1859
  .debug_abbrev  0x00000000      0x1b2 ..\obj\stm32f10x_tim.o
  .debug_abbrev  0x000001b2      0x14e ..\obj\system_stm32f10x.o
  .debug_abbrev  0x00000300       0xa7 ..\obj\startup_stm32f10x_md.o
  .debug_abbrev  0x000003a7      0x1cc ..\obj\stm32f10x_gpio.o
- .debug_abbrev  0x00000573      0x246 ..\obj\main.o
- .debug_abbrev  0x000007b9       0x97 ..\obj\iwrap.o
- .debug_abbrev  0x00000850      0x1bc ..\obj\stm32f10x_rcc.o
- .debug_abbrev  0x00000a0c      0x19a ..\obj\stm32f10x_adc.o
- .debug_abbrev  0x00000ba6      0x164 ..\obj\stm32f10x_usart.o
- .debug_abbrev  0x00000d0a       0xc9 ..\obj\tea6420.o
- .debug_abbrev  0x00000dd3      0x169 ..\obj\usart_opts.o
- .debug_abbrev  0x00000f3c      0x17d ..\obj\command_handler.o
- .debug_abbrev  0x000010b9      0x157 ..\obj\stm32f10x_dma.o
- .debug_abbrev  0x00001210      0x15d ..\obj\display_handler.o
- .debug_abbrev  0x0000136d      0x147 ..\obj\misc.o
- .debug_abbrev  0x000014b4      0x224 ..\obj\parser.o
- .debug_abbrev  0x000016d8      0x166 ..\obj\stm32f10x_i2c.o
+ .debug_abbrev  0x00000573      0x24f ..\obj\main.o
+ .debug_abbrev  0x000007c2       0x97 ..\obj\iwrap.o
+ .debug_abbrev  0x00000859      0x1bc ..\obj\stm32f10x_rcc.o
+ .debug_abbrev  0x00000a15      0x19a ..\obj\stm32f10x_adc.o
+ .debug_abbrev  0x00000baf      0x164 ..\obj\stm32f10x_usart.o
+ .debug_abbrev  0x00000d13       0xc9 ..\obj\tea6420.o
+ .debug_abbrev  0x00000ddc      0x169 ..\obj\usart_opts.o
+ .debug_abbrev  0x00000f45      0x186 ..\obj\command_handler.o
+ .debug_abbrev  0x000010cb      0x157 ..\obj\stm32f10x_dma.o
+ .debug_abbrev  0x00001222      0x166 ..\obj\display_handler.o
+ .debug_abbrev  0x00001388      0x147 ..\obj\misc.o
+ .debug_abbrev  0x000014cf      0x224 ..\obj\parser.o
+ .debug_abbrev  0x000016f3      0x166 ..\obj\stm32f10x_i2c.o
 
 .debug_aranges  0x00000000      0xb28
  .debug_aranges
@@ -1107,26 +1110,26 @@ OUTPUT(test.elf elf32-littlearm)
  .debug_ranges  0x000008c0       0x48 ..\obj\parser.o
  .debug_ranges  0x00000908      0x110 ..\obj\stm32f10x_i2c.o
 
-.debug_line     0x00000000     0x42e5
+.debug_line     0x00000000     0x438f
  .debug_line    0x00000000      0xb98 ..\obj\stm32f10x_tim.o
  .debug_line    0x00000b98      0x246 ..\obj\system_stm32f10x.o
  .debug_line    0x00000dde       0xb3 ..\obj\startup_stm32f10x_md.o
  .debug_line    0x00000e91      0x418 ..\obj\stm32f10x_gpio.o
- .debug_line    0x000012a9      0x4a5 ..\obj\main.o
- .debug_line    0x0000174e      0x203 ..\obj\iwrap.o
- .debug_line    0x00001951      0x513 ..\obj\stm32f10x_rcc.o
- .debug_line    0x00001e64      0x582 ..\obj\stm32f10x_adc.o
- .debug_line    0x000023e6      0x4fa ..\obj\stm32f10x_usart.o
- .debug_line    0x000028e0      0x24b ..\obj\tea6420.o
- .debug_line    0x00002b2b      0x26c ..\obj\usart_opts.o
- .debug_line    0x00002d97      0x31a ..\obj\command_handler.o
- .debug_line    0x000030b1      0x380 ..\obj\stm32f10x_dma.o
- .debug_line    0x00003431      0x30c ..\obj\display_handler.o
- .debug_line    0x0000373d      0x28b ..\obj\misc.o
- .debug_line    0x000039c8      0x3f0 ..\obj\parser.o
- .debug_line    0x00003db8      0x52d ..\obj\stm32f10x_i2c.o
+ .debug_line    0x000012a9      0x4d7 ..\obj\main.o
+ .debug_line    0x00001780      0x203 ..\obj\iwrap.o
+ .debug_line    0x00001983      0x513 ..\obj\stm32f10x_rcc.o
+ .debug_line    0x00001e96      0x582 ..\obj\stm32f10x_adc.o
+ .debug_line    0x00002418      0x4fa ..\obj\stm32f10x_usart.o
+ .debug_line    0x00002912      0x24b ..\obj\tea6420.o
+ .debug_line    0x00002b5d      0x27d ..\obj\usart_opts.o
+ .debug_line    0x00002dda      0x344 ..\obj\command_handler.o
+ .debug_line    0x0000311e      0x380 ..\obj\stm32f10x_dma.o
+ .debug_line    0x0000349e      0x32c ..\obj\display_handler.o
+ .debug_line    0x000037ca      0x28b ..\obj\misc.o
+ .debug_line    0x00003a55      0x40d ..\obj\parser.o
+ .debug_line    0x00003e62      0x52d ..\obj\stm32f10x_i2c.o
 
-.debug_str      0x00000000     0x324b
+.debug_str      0x00000000     0x3241
  .debug_str     0x00000000      0xd33 ..\obj\stm32f10x_tim.o
                                 0xdf6 (size before relaxing)
  .debug_str     0x00000d33      0x183 ..\obj\system_stm32f10x.o
@@ -1135,31 +1138,31 @@ OUTPUT(test.elf elf32-littlearm)
                                 0x158 (size before relaxing)
  .debug_str     0x00000f77      0x38f ..\obj\stm32f10x_gpio.o
                                 0x532 (size before relaxing)
- .debug_str     0x00001306      0x818 ..\obj\main.o
-                                0xc55 (size before relaxing)
- .debug_str     0x00001b1e       0xd9 ..\obj\iwrap.o
+ .debug_str     0x00001306      0x81f ..\obj\main.o
+                                0xc61 (size before relaxing)
+ .debug_str     0x00001b25       0xd9 ..\obj\iwrap.o
                                 0x22a (size before relaxing)
- .debug_str     0x00001bf7      0x3f9 ..\obj\stm32f10x_rcc.o
+ .debug_str     0x00001bfe      0x3f9 ..\obj\stm32f10x_rcc.o
                                 0x633 (size before relaxing)
- .debug_str     0x00001ff0      0x47d ..\obj\stm32f10x_adc.o
+ .debug_str     0x00001ff7      0x47d ..\obj\stm32f10x_adc.o
                                 0x714 (size before relaxing)
- .debug_str     0x0000246d      0x3b3 ..\obj\stm32f10x_usart.o
+ .debug_str     0x00002474      0x3b3 ..\obj\stm32f10x_usart.o
                                 0x6a9 (size before relaxing)
- .debug_str     0x00002820       0x6b ..\obj\tea6420.o
+ .debug_str     0x00002827       0x6b ..\obj\tea6420.o
                                 0x252 (size before relaxing)
- .debug_str     0x0000288b       0xa8 ..\obj\usart_opts.o
-                                0x2d4 (size before relaxing)
- .debug_str     0x00002933       0xf6 ..\obj\command_handler.o
-                                0x34e (size before relaxing)
- .debug_str     0x00002a29      0x141 ..\obj\stm32f10x_dma.o
+ .debug_str     0x00002892       0xa8 ..\obj\usart_opts.o
+                                0x2ca (size before relaxing)
+ .debug_str     0x0000293a       0xe1 ..\obj\command_handler.o
+                                0x345 (size before relaxing)
+ .debug_str     0x00002a1b      0x141 ..\obj\stm32f10x_dma.o
                                 0x3d0 (size before relaxing)
- .debug_str     0x00002b6a      0x13c ..\obj\display_handler.o
-                                0x324 (size before relaxing)
+ .debug_str     0x00002b5c      0x14a ..\obj\display_handler.o
+                                0x36b (size before relaxing)
  .debug_str     0x00002ca6      0x132 ..\obj\misc.o
                                 0x3d7 (size before relaxing)
- .debug_str     0x00002dd8      0x123 ..\obj\parser.o
-                                0x2db (size before relaxing)
- .debug_str     0x00002efb      0x350 ..\obj\stm32f10x_i2c.o
+ .debug_str     0x00002dd8      0x119 ..\obj\parser.o
+                                0x2dd (size before relaxing)
+ .debug_str     0x00002ef1      0x350 ..\obj\stm32f10x_i2c.o
                                 0x67f (size before relaxing)
 
 .comment        0x00000000       0x6e

@@ -42,19 +42,26 @@ int8_t findIndexOfToken(uint8_t* token) {
 	return -1;
 }
 
+extern char* dbgstr[12];
+
 uint8_t getSongInfo() {
 	int8_t artist_idx = findIndexOfToken((uint8_t*) "ARTIST");
-	int8_t album_idx = findIndexOfToken((uint8_t*) "ALBUM");
+	//int8_t album_idx = findIndexOfToken((uint8_t*) "ALBUM");
 	int8_t title_idx = findIndexOfToken((uint8_t*) "TITLE");
-	if (artist_idx == -1 || title_idx == -1)
+
+	if (artist_idx == -1 && title_idx == -1)
 		return ERROR;
 
-	if (argv[artist_idx + 2][0] == 0 || argv[title_idx + 2][0] == 0)
+	if (_atoi(argv[artist_idx + 1]) == 0 && _atoi(argv[title_idx + 1]) == 0)
 		return ERROR;
 
-	songInfo.Artist = argv[artist_idx + 2];
-	songInfo.Album = argv[album_idx + 2];
-	songInfo.Title = argv[title_idx + 2];
+	songInfo.Artist =
+			(artist_idx == -1 || _atoi(argv[artist_idx + 1]) == 0) ?
+					0x00 : argv[artist_idx + 2];
+	//songInfo.Album = argv[album_idx + 2];
+	songInfo.Title =
+			(title_idx == -1 || _atoi(argv[title_idx + 1]) == 0) ?
+					0x00 : argv[title_idx + 2];
 	return SUCCESS;
 }
 
@@ -81,7 +88,7 @@ uint16_t unicodeToChar(uint16_t w_char) {
 		ch = (uint16_t) 'E';
 		break;
 	case 0xD096:
-		ch = ((uint16_t) 'Z' << 8) | 'H';
+		ch = ((uint16_t) 'Z' << 8) | 'h';
 		break;
 	case 0xD097:
 		ch = (uint16_t) 'Z';
@@ -132,19 +139,19 @@ uint16_t unicodeToChar(uint16_t w_char) {
 		ch = (uint16_t) 'C';
 		break;
 	case 0xD0A7:
-		ch = ((uint16_t) 'C') << 8 | 'H';
+		ch = ((uint16_t) 'C') << 8 | 'h';
 		break;
 	case 0xD0A8:
-		ch = ((uint16_t) 'S') << 8 | 'H';
+		ch = ((uint16_t) 'S') << 8 | 'h';
 		break;
 	case 0xD0A9:
-		ch = ((uint16_t) 'S') << 8 | 'H';
+		ch = ((uint16_t) 'S') << 8 | 'h';
 		break;
 	case 0xD0AA:
 		ch = (uint16_t) '\'';
 		break;
 	case 0xD0AB:
-		ch = (uint16_t) 'I';
+		ch = (uint16_t) 'Y';
 		break;
 	case 0xD0AC:
 		ch = (uint16_t) '\'';
@@ -156,7 +163,7 @@ uint16_t unicodeToChar(uint16_t w_char) {
 		ch = (uint16_t) 'U';
 		break;
 	case 0xD0AF:
-		ch = ((uint16_t) 'Y' << 8) | 'A';
+		ch = ((uint16_t) 'Y' << 8) | 'a';
 		break;
 	case 0xD0B0:
 		ch = (uint16_t) 'a';
@@ -240,7 +247,7 @@ uint16_t unicodeToChar(uint16_t w_char) {
 		ch = (uint16_t) '\'';
 		break;
 	case 0xD18B:
-		ch = (uint16_t) 'i';
+		ch = (uint16_t) 'y';
 		break;
 	case 0xD18C:
 		ch = (uint16_t) '\'';
@@ -260,6 +267,9 @@ uint16_t unicodeToChar(uint16_t w_char) {
 	case 0xD191:
 		ch = ((uint16_t) 'y' << 8) | 'o';
 		break;
+	case 0xE280:
+		ch = (uint16_t) '-';
+		break;
 	default:
 		ch = (uint16_t) ' ';
 	}
@@ -272,12 +282,8 @@ void HandleParseData() {
 	uint16_t cnt = 0;
 	uint8_t idx = 0;
 	uint16_t unicode_char;
-	/*do {
-	 displayStringBuffer[cnt] = argv[0][cnt];
-	 } while (argv[0][cnt] != 0 && cnt++ < DISPLAY_STRING_SIZE);*/
 
 	if (isStrEqual(argv[0], (uint8_t*) "AVRCP")) {
-		//displayStringBuffer[0] = 'A';
 		if (isStrEqual(argv[2], (uint8_t*) "GET_ELEMENT_ATTRIBUTES_RSP")) {
 
 			if (getSongInfo() != SUCCESS) {
@@ -286,66 +292,60 @@ void HandleParseData() {
 				return;
 			}
 			cnt = 0;
-			/*idx = 0;
-			 do {
+			idx = 0;
+			if (songInfo.Title) {
+				do {
 
-			 if (*songInfo.Artist & 0xC0
-			 && *(songInfo.Artist + sizeof(uint8_t)) & 0x80) { // unicode mask
-			 unicode_char = ((uint16_t) * songInfo.Artist << 8)
-			 | *(songInfo.Artist + sizeof(uint8_t));
-			 displayDataBuffer[cnt] = unicodeToChar(unicode_char);
-			 *songInfo.Artist++;
-			 *songInfo.Artist++;
-			 } else
-			 displayDataBuffer[cnt] = *songInfo.Artist++;
-			 } while (*songInfo.Artist != 0 && cnt++ < DISPLAY_DATA_SIZE);
-			 idx = 0;*/
+					if (songInfo.Title[idx] & 0x80
+							&& songInfo.Title[idx + 1] & 0x80) { // unicode mask
+						unicode_char = ((uint16_t) songInfo.Title[idx] << 8)
+								| songInfo.Title[idx + 1];
+
+						unicode_char = unicodeToChar(unicode_char);
+						if (unicode_char & 0xFF00) {
+							displayDataBuffer[cnt] = (uint8_t)(
+									unicode_char >> 8);
+							cnt++;
+							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+						} else
+							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+						idx++;
+					} else
+
+						displayDataBuffer[cnt] = songInfo.Title[idx];
+				} while (songInfo.Title[idx++] != 0 && cnt++ < DISPLAY_DATA_SIZE);
+
+				if (songInfo.Artist) {
+					displayDataBuffer[cnt++] = ' ';
+					displayDataBuffer[cnt++] = '-';
+					displayDataBuffer[cnt++] = ' ';
+				}
+			}
 
 			idx = 0;
-			do {
+			if (songInfo.Artist) {
+				do {
 
-				if (songInfo.Artist[idx] & 0x80
-						&& songInfo.Artist[idx + 1] & 0x80) { // unicode mask
-					unicode_char = ((uint16_t) songInfo.Artist[idx] << 8)
-							| songInfo.Artist[idx + 1];
+					if (songInfo.Artist[idx] & 0x80
+							&& songInfo.Artist[idx + 1] & 0x80) { // unicode mask
+						unicode_char = ((uint16_t) songInfo.Artist[idx] << 8)
+								| songInfo.Artist[idx + 1];
 
-					unicode_char = unicodeToChar(unicode_char);
-					if (unicode_char & 0xFF00) {
-						displayDataBuffer[cnt] = (uint8_t)(unicode_char >> 8);
-						cnt++;
-						displayDataBuffer[cnt] = (uint8_t) unicode_char;
+						unicode_char = unicodeToChar(unicode_char);
+						if (unicode_char & 0xFF00) {
+							displayDataBuffer[cnt] = (uint8_t)(
+									unicode_char >> 8);
+							cnt++;
+							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+						} else
+							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+						idx++;
 					} else
-						displayDataBuffer[cnt] = (uint8_t) unicode_char;
-					idx++;
-				} else
-					displayDataBuffer[cnt] = songInfo.Artist[idx];
-			} while (songInfo.Artist[idx++] != 0 && cnt++ < DISPLAY_DATA_SIZE);
-			idx = 0;
+						displayDataBuffer[cnt] = songInfo.Artist[idx];
+				} while (songInfo.Artist[idx++] != 0
+						&& cnt++ < DISPLAY_DATA_SIZE);
+			}
 
-			//cnt++;
-			displayDataBuffer[cnt++] = ' ';
-			displayDataBuffer[cnt++] = '-';
-			displayDataBuffer[cnt++] = ' ';
-
-			do {
-
-				if (songInfo.Title[idx] & 0x80
-						&& songInfo.Title[idx + 1] & 0x80) { // unicode mask
-					unicode_char = ((uint16_t) songInfo.Title[idx] << 8)
-							| songInfo.Title[idx + 1];
-
-					unicode_char = unicodeToChar(unicode_char);
-					if (unicode_char & 0xFF00) {
-						displayDataBuffer[cnt] = (uint8_t)(unicode_char >> 8);
-						cnt++;
-						displayDataBuffer[cnt] = (uint8_t) unicode_char;
-					} else
-						displayDataBuffer[cnt] = (uint8_t) unicode_char;
-					idx++;
-				} else
-
-					displayDataBuffer[cnt] = songInfo.Title[idx];
-			} while (songInfo.Title[idx++] != 0 && cnt++ < DISPLAY_DATA_SIZE);
 			idx = 0;
 			cnt++;
 			for (int i = cnt; i < DISPLAY_DATA_SIZE; i++) {
@@ -386,15 +386,12 @@ void HandleParseData() {
 	}
 
 	if (isStrEqual(argv[0], (uint8_t*) "CONNECT")) {
-		//displayStringBuffer[0] = 'A';
 		if (isStrEqual(argv[2], (uint8_t*) "AVRCP")) {
-			//displayStringBuffer[0] = 'P';
 			bt_TrackChangedEventSubscribe();
 			bt_PlaybackStatusEventSubscribe();
 			bt_GetAVRCP_metadata();
 			bt_Play();
 		}
-
 		return;
 	}
 
@@ -405,15 +402,16 @@ void HandleParseData() {
 				//resetDisplayState();
 			}
 			if (isStrEqual(argv[2], (uint8_t*) "START")) {
-				//bt_GetAVRCP_metadata();
+				bt_TrackChangedEventSubscribe();
+				bt_PlaybackStatusEventSubscribe();
+				bt_GetAVRCP_metadata();
+				bt_Play();
 			}
 		}
-		//displayStringBuffer[0] = 'B';
 		return;
 	}
-
 }
-
+uint16_t token_lenght;
 void Parse_init() {
 	parsing = 1;
 	str_idx = 0;
@@ -422,12 +420,12 @@ void Parse_init() {
 	text_flag = 0;
 }
 
-uint16_t token_lenght;
-
 void Parse(uint8_t ch) {
+
 	if (str_idx >= BUFF_SIZE || argc >= ARGS_COUNT)
 		return;
-	if (ch == '\r') return;
+	if (ch == '\r')
+		return;
 	buf[str_idx] = ch;
 
 	if (buf[str_idx] == '\n') {
@@ -453,6 +451,10 @@ void Parse(uint8_t ch) {
 		argv[argc - 1] = &buf[str_idx + 1];
 		str_idx++;
 		token_lenght = _atoi(argv[argc - 2]);
+
+		dbgstr[0] = token_lenght / 10 + '0';
+		dbgstr[1] = token_lenght % 10 + '0';
+
 		text_flag = 1;
 		return;
 	}
@@ -468,12 +470,7 @@ void Parse(uint8_t ch) {
 uint8_t isStrEqual(uint8_t* s1, uint8_t* s2) {
 	uint8_t i = 0;
 	while (s1[i] == s2[i] && s1[i] != '\0' && s2[i] != '\0') {
-		/*if (s1[i] == '\r' || s1[i] == '\n')
-			s1[i] = 0;
-		if (s2[i] == '\r' || s2[i] == '\n')
-			s1[i] = 0;*/
 		i++;
-
 	}
 	if (s1[i] == '\0' && s2[i] == '\0')
 		return 1;

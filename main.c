@@ -14,8 +14,8 @@
 #include "usart_opts.h"
 #include "tea6420.h"
 #include "parser.h"
+#include "config.h"
 
-#define USART_BREAK_DETECTION_LBD  //if defined, break on rx line will detect via LBD iterrupt, otherwise via ERROR on line.
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
@@ -31,11 +31,8 @@ void SetupPeriph() {
 	I2C_InitTypeDef I2C_InitStructure;
 	ADC_InitTypeDef ADC_InitStructure;
 
-	//RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-	//GPIO_PinRemapConfig()
-
 	///-------------------------------------------------
-	///USART1 init for WT32
+	///USART1 for WT32i
 	///-------------------------------------------------
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -70,7 +67,7 @@ void SetupPeriph() {
 	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
 
 	///-------------------------------------------------
-	///USART2 init for Display
+	///USART2 for Display
 	///-------------------------------------------------
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
@@ -113,7 +110,7 @@ void SetupPeriph() {
 #endif
 
 	///-------------------------------------------------
-	///USART3 init for Commands
+	///USART3 for Commands
 	///-------------------------------------------------
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -152,8 +149,6 @@ void SetupPeriph() {
 	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM2, ENABLE);
 
-	/* NVIC Configuration */
-	/* Enable the TIM2_IRQn Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -174,8 +169,6 @@ void SetupPeriph() {
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM3, ENABLE);
 
-	/* NVIC Configuration */
-	/* Enable the TIM3_IRQn Interrupt */
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
@@ -188,8 +181,8 @@ void SetupPeriph() {
 
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) & (USART2->DR);
-	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & displayBuffer[0];
+	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) &(USART2->DR);
+	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) &displayBuffer[0];
 	DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralDST;
 	DMA_InitStruct.DMA_BufferSize = DISPLAY_BUFFER_SIZE;
 	DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -209,8 +202,8 @@ void SetupPeriph() {
 	///DMA Tx for USART3
 	///-------------------------------------------------
 
-	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) & (USART3->DR);
-	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & commandBuffer[0];
+	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) &(USART3->DR);
+	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) &commandBuffer[0];
 	DMA_InitStruct.DMA_BufferSize = COMMAND_BUFFER_SIZE;
 	DMA_Init(DMA1_Channel2, &DMA_InitStruct);
 
@@ -227,7 +220,6 @@ void SetupPeriph() {
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	/* I2C configuration */
 	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
 	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
 	I2C_InitStructure.I2C_OwnAddress1 = 0x38;
@@ -235,7 +227,6 @@ void SetupPeriph() {
 	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
 	I2C_InitStructure.I2C_ClockSpeed = 100000;
 
-	/* I2C Peripheral Enable */
 	I2C_Cmd(TEA6420_I2C, ENABLE);
 	I2C_Init(TEA6420_I2C, &I2C_InitStructure);
 
@@ -243,18 +234,18 @@ void SetupPeriph() {
 	///GPIOs for control
 	///-------------------------------------------------
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Pin = BT_STBY_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
 	///-------------------------------------------------
 	///ADC for remote
 	///-------------------------------------------------
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Pin = REMOTE_ADC_IN_PIN;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
@@ -290,11 +281,11 @@ void InitDisplay() {
 	USART_DeInit(USART2);
 	USART_DeInit(USART3);
 
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Pin = DISPLAY_BREAK_SIGNAL_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+	GPIO_ResetBits(GPIOA, DISPLAY_BREAK_SIGNAL_PIN);
 	for (uint32_t i = 0; i < 900000; i++) {
 		//Dummy delay for display initialization
 	}

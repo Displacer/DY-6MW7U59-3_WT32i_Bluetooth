@@ -21,8 +21,15 @@
 #include "display_handler.h"
 #include "command_handler.h"
 #include "usart_opts.h"
+#include "config.h"
+#include "iwrap.h"
 
 extern enum Mode mode;
+
+
+extern char* dbgstr[12];
+
+
 
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T',
 		'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00,
@@ -37,13 +44,13 @@ uint8_t isAux;
 uint8_t btLastState = 0;
 
 enum displayState {
-	begin, scroll, end
+	begin, scroll, end, reverse_scroll
 } display_state;
 
 void GetMode() {
-	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_4)) // if bt module activated
+	if (GPIO_ReadOutputDataBit(GPIOA, BT_STBY_PIN)) // if bt module activated
 		return;
-	if (displayRxBuffer[16] & 0x10) { //All magic constants - for details see table
+	if (displayRxBuffer[16] & 0x10) { //All magic constants - for details see table above
 		mode = CD;
 		return;
 	}
@@ -69,11 +76,11 @@ void GetMode() {
 	//mode = Normal;
 }
 
-int offset;
+int offset; // in future will be moved to constants
 uint8_t offset_step;
 uint8_t delay;
-uint8_t DISPLAY_STRING_DELAY = 30;
-uint8_t OFFSET_STEP_DELAY = 2;
+uint8_t DISPLAY_STRING_DELAY = 10;
+uint8_t OFFSET_STEP_DELAY = 1;
 
 void resetDisplayState() {
 	display_state = begin;
@@ -92,8 +99,8 @@ void HandleDisplayData() {
 		displayBuffer[i] = displayRxBuffer[i];
 	}
 
-	//CD change ' on : (for details see table)
-	if (displayBuffer[16] && 0x10 && displayBuffer[11] == '\'')
+	//CD mode change ' on : (for details see table)
+	if (mode == CD && displayBuffer[11] == '\'')
 		displayBuffer[11] = ':';
 
 	isAux = displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
@@ -128,14 +135,21 @@ void HandleDisplayData() {
 				if (delay > 0)
 					delay--;
 				else {
-					display_state = begin;
-					offset = 0;
+					display_state = reverse_scroll;
+					//offset = 0;
 				}
+				break;
+			case reverse_scroll:
+				if (offset != 0)
+					offset--;
+
+				else
+					display_state = begin;
+
 				break;
 			}
 
 			for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
-
 				displayStringBuffer[i] = displayDataBuffer[i + offset];
 			}
 
@@ -143,7 +157,7 @@ void HandleDisplayData() {
 
 		if (isAux) {
 
-			if (*displayStringBuffer == 0) {
+			if (*displayStringBuffer == 0 || playbackState == stop) {
 				displayBuffer[2] = BLUETOOTH_CHAR;
 				displayBuffer[3] = ' ';
 				displayBuffer[4] = 'B';
@@ -160,11 +174,27 @@ void HandleDisplayData() {
 
 				for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
 					if (displayStringBuffer[i] == 0)
-						displayBuffer[i + 2] = ' ';
+						displayBuffer[i + 2] = '!';
 					else
 						displayBuffer[i + 2] = displayStringBuffer[i];
-					displayBuffer[18] |= 0x03; //track name sign
+					//SdisplayBuffer[18] |= 0x03; //track name sign
 				}
+			}
+
+			if (playbackState == pause) {
+				displayBuffer[2] = BLUETOOTH_CHAR;
+				displayBuffer[3] = ' ';
+				displayBuffer[4] = 'P';
+				displayBuffer[5] = 'a';
+				displayBuffer[6] = 'u';
+				displayBuffer[7] = 's';
+				displayBuffer[8] = 'e';
+				displayBuffer[9] = 'd';
+				displayBuffer[10] = '.';
+				displayBuffer[11] = '.';
+				displayBuffer[12] = '.';
+				displayBuffer[13] = ' ';
+				resetDisplayState();
 			}
 
 		} else
@@ -201,6 +231,10 @@ void HandleDisplayData() {
 }
 void SendDisplayData() {
 	uint8_t chksum = 0;
+
+	//displayBuffer[2] = dbgstr[0];
+	//displayBuffer[3] = dbgstr[1];
+
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE - 1; i++) {
 		chksum += displayBuffer[i];
 	}

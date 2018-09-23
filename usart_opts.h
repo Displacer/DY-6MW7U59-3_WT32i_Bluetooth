@@ -12,7 +12,7 @@ enum Mode {
 
 void UARTSend(USART_TypeDef* usart, const unsigned char *pucBuffer,
 		unsigned long ulCount);
-void USART1Send(const unsigned char *buf);
+void USART1Send(char *buf);
 void USART2SendDMA();
 void USART3SendDMA();
 uint8_t CheckChksum(uint8_t* buff, uint8_t size);

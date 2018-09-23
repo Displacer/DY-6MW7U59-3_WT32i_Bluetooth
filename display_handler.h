@@ -11,7 +11,4 @@ void SendDisplayData(void);
 void GetMode(void);
 uint8_t isAux;
 
-
-
-
 #endif

@@ -1017,7 +1017,7 @@ LOAD c:/program files (x86)/gnu tools arm embedded/5.4 2016q3/bin/../lib/gcc/arm
 END GROUP
 OUTPUT(test.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x7f05
+.debug_info     0x00000000     0x7f36
  .debug_info    0x00000000     0x1c60 ..\obj\stm32f10x_tim.o
  .debug_info    0x00001c60      0x49c ..\obj\system_stm32f10x.o
  .debug_info    0x000020fc       0xee ..\obj\startup_stm32f10x_md.o
@@ -1028,13 +1028,13 @@ OUTPUT(test.elf elf32-littlearm)
  .debug_info    0x0000421e      0xb7c ..\obj\stm32f10x_adc.o
  .debug_info    0x00004d9a      0x9f0 ..\obj\stm32f10x_usart.o
  .debug_info    0x0000578a      0x229 ..\obj\tea6420.o
- .debug_info    0x000059b3      0x376 ..\obj\usart_opts.o
- .debug_info    0x00005d29      0x4a2 ..\obj\command_handler.o
- .debug_info    0x000061cb      0x47b ..\obj\stm32f10x_dma.o
- .debug_info    0x00006646      0x447 ..\obj\display_handler.o
- .debug_info    0x00006a8d      0x556 ..\obj\misc.o
- .debug_info    0x00006fe3      0x416 ..\obj\parser.o
- .debug_info    0x000073f9      0xb0c ..\obj\stm32f10x_i2c.o
+ .debug_info    0x000059b3      0x3a7 ..\obj\usart_opts.o
+ .debug_info    0x00005d5a      0x4a2 ..\obj\command_handler.o
+ .debug_info    0x000061fc      0x47b ..\obj\stm32f10x_dma.o
+ .debug_info    0x00006677      0x447 ..\obj\display_handler.o
+ .debug_info    0x00006abe      0x556 ..\obj\misc.o
+ .debug_info    0x00007014      0x416 ..\obj\parser.o
+ .debug_info    0x0000742a      0xb0c ..\obj\stm32f10x_i2c.o
 
 .debug_abbrev   0x00000000     0x1859
  .debug_abbrev  0x00000000      0x1b2 ..\obj\stm32f10x_tim.o
@@ -1110,24 +1110,24 @@ OUTPUT(test.elf elf32-littlearm)
  .debug_ranges  0x000008c0       0x48 ..\obj\parser.o
  .debug_ranges  0x00000908      0x110 ..\obj\stm32f10x_i2c.o
 
-.debug_line     0x00000000     0x438f
+.debug_line     0x00000000     0x4332
  .debug_line    0x00000000      0xb98 ..\obj\stm32f10x_tim.o
  .debug_line    0x00000b98      0x246 ..\obj\system_stm32f10x.o
  .debug_line    0x00000dde       0xb3 ..\obj\startup_stm32f10x_md.o
  .debug_line    0x00000e91      0x418 ..\obj\stm32f10x_gpio.o
- .debug_line    0x000012a9      0x4d7 ..\obj\main.o
- .debug_line    0x00001780      0x203 ..\obj\iwrap.o
- .debug_line    0x00001983      0x513 ..\obj\stm32f10x_rcc.o
- .debug_line    0x00001e96      0x582 ..\obj\stm32f10x_adc.o
- .debug_line    0x00002418      0x4fa ..\obj\stm32f10x_usart.o
- .debug_line    0x00002912      0x24b ..\obj\tea6420.o
- .debug_line    0x00002b5d      0x27d ..\obj\usart_opts.o
- .debug_line    0x00002dda      0x344 ..\obj\command_handler.o
- .debug_line    0x0000311e      0x380 ..\obj\stm32f10x_dma.o
- .debug_line    0x0000349e      0x32c ..\obj\display_handler.o
- .debug_line    0x000037ca      0x28b ..\obj\misc.o
- .debug_line    0x00003a55      0x40d ..\obj\parser.o
- .debug_line    0x00003e62      0x52d ..\obj\stm32f10x_i2c.o
+ .debug_line    0x000012a9      0x4b1 ..\obj\main.o
+ .debug_line    0x0000175a      0x203 ..\obj\iwrap.o
+ .debug_line    0x0000195d      0x513 ..\obj\stm32f10x_rcc.o
+ .debug_line    0x00001e70      0x582 ..\obj\stm32f10x_adc.o
+ .debug_line    0x000023f2      0x4fa ..\obj\stm32f10x_usart.o
+ .debug_line    0x000028ec      0x24b ..\obj\tea6420.o
+ .debug_line    0x00002b37      0x26c ..\obj\usart_opts.o
+ .debug_line    0x00002da3      0x31e ..\obj\command_handler.o
+ .debug_line    0x000030c1      0x380 ..\obj\stm32f10x_dma.o
+ .debug_line    0x00003441      0x32c ..\obj\display_handler.o
+ .debug_line    0x0000376d      0x28b ..\obj\misc.o
+ .debug_line    0x000039f8      0x40d ..\obj\parser.o
+ .debug_line    0x00003e05      0x52d ..\obj\stm32f10x_i2c.o
 
 .debug_str      0x00000000     0x3241
  .debug_str     0x00000000      0xd33 ..\obj\stm32f10x_tim.o
@@ -1151,7 +1151,7 @@ OUTPUT(test.elf elf32-littlearm)
  .debug_str     0x00002827       0x6b ..\obj\tea6420.o
                                 0x252 (size before relaxing)
  .debug_str     0x00002892       0xa8 ..\obj\usart_opts.o
-                                0x2ca (size before relaxing)
+                                0x2d9 (size before relaxing)
  .debug_str     0x0000293a       0xe1 ..\obj\command_handler.o
                                 0x345 (size before relaxing)
  .debug_str     0x00002a1b      0x141 ..\obj\stm32f10x_dma.o

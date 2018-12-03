@@ -18,6 +18,7 @@
 #include <stm32f10x_usart.h>
 #include <stm32f10x_adc.h>
 #include <stm32f10x_gpio.h>
+#include <string.h>
 #include "display_handler.h"
 #include "command_handler.h"
 #include "usart_opts.h"
@@ -25,11 +26,7 @@
 #include "iwrap.h"
 
 extern enum Mode mode;
-
-
-extern char* dbgstr[12];
-
-
+extern uint8_t Mode_itterupt;
 
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T',
 		'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00,
@@ -49,7 +46,11 @@ enum displayState {
 
 void GetMode() {
 	if (GPIO_ReadOutputDataBit(GPIOA, BT_STBY_PIN)) // if bt module activated
+			{
+		if (!isAux)
+			Bluetooth_off();
 		return;
+	}
 	if (displayRxBuffer[16] & 0x10) { //All magic constants - for details see table above
 		mode = CD;
 		return;
@@ -68,8 +69,9 @@ void GetMode() {
 			return;
 		}
 	}
-	if (displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
-			&& displayRxBuffer[8] == 'X') {
+	if (/*displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
+	 && displayRxBuffer[8] == 'X'*/memcmp(&displayRxBuffer[6], (uint8_t*) "AUX",
+			3) == 0) {
 		mode = AUX;
 		return;
 	}
@@ -88,23 +90,25 @@ void resetDisplayState() {
 	delay = 0;
 }
 void ClearDisplayString() {
-	displayDataBuffer[0] = 0;
-	displayStringBuffer[0] = 0;
+	displayDataBuffer[0] = 0x00;
+	displayStringBuffer[0] = 0x00;
 }
 void HandleDisplayData() {
 	if (CheckChksum(displayRxBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
 
-	for (uint8_t i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
-		displayBuffer[i] = displayRxBuffer[i];
-	}
+	memcpy(displayBuffer, displayRxBuffer, DISPLAY_BUFFER_SIZE);
+	/*for (uint8_t i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
+	 displayBuffer[i] = displayRxBuffer[i];
+	 }*/
 
 	//CD mode change ' on : (for details see table)
 	if (mode == CD && displayBuffer[11] == '\'')
 		displayBuffer[11] = ':';
 
-	isAux = displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
-			&& displayRxBuffer[8] == 'X';
+	isAux = memcmp(&displayRxBuffer[6], (uint8_t*) "AUX", 3) == 0;
+	/*displayRxBuffer[6] == 'A' && displayRxBuffer[7] == 'U'
+	 && displayRxBuffer[8] == 'X';*/
 
 	if (mode == Bluetooth) {
 
@@ -142,16 +146,17 @@ void HandleDisplayData() {
 			case reverse_scroll:
 				if (offset != 0)
 					offset--;
-
 				else
 					display_state = begin;
-
 				break;
 			}
 
-			for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
-				displayStringBuffer[i] = displayDataBuffer[i + offset];
-			}
+			memcpy(displayStringBuffer, &displayDataBuffer[offset],
+					DISPLAY_STRING_SIZE);
+
+			/*for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
+			 displayStringBuffer[i] = displayDataBuffer[i + offset];
+			 }*/
 
 		}
 
@@ -159,22 +164,23 @@ void HandleDisplayData() {
 
 			if (*displayStringBuffer == 0 || playbackState == stop) {
 				displayBuffer[2] = BLUETOOTH_CHAR;
-				displayBuffer[3] = ' ';
-				displayBuffer[4] = 'B';
-				displayBuffer[5] = 'l';
-				displayBuffer[6] = 'u';
-				displayBuffer[7] = 'e';
-				displayBuffer[8] = 't';
-				displayBuffer[9] = 'o';
-				displayBuffer[10] = 'o';
-				displayBuffer[11] = 't';
-				displayBuffer[12] = 'h';
-				displayBuffer[13] = ' ';
+				memcpy(&displayBuffer[3], (uint8_t*) " Bluetooth ", 11);
+				/*displayBuffer[3] = ' ';
+				 displayBuffer[4] = 'B';
+				 displayBuffer[5] = 'l';
+				 displayBuffer[6] = 'u';
+				 displayBuffer[7] = 'e';
+				 displayBuffer[8] = 't';
+				 displayBuffer[9] = 'o';
+				 displayBuffer[10] = 'o';
+				 displayBuffer[11] = 't';
+				 displayBuffer[12] = 'h';
+				 displayBuffer[13] = ' ';*/
 			} else {
 
 				for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++) {
 					if (displayStringBuffer[i] == 0)
-						displayBuffer[i + 2] = '!';
+						displayBuffer[i + 2] = 0x2E;
 					else
 						displayBuffer[i + 2] = displayStringBuffer[i];
 					//SdisplayBuffer[18] |= 0x03; //track name sign
@@ -183,17 +189,18 @@ void HandleDisplayData() {
 
 			if (playbackState == pause) {
 				displayBuffer[2] = BLUETOOTH_CHAR;
-				displayBuffer[3] = ' ';
-				displayBuffer[4] = 'P';
-				displayBuffer[5] = 'a';
-				displayBuffer[6] = 'u';
-				displayBuffer[7] = 's';
-				displayBuffer[8] = 'e';
-				displayBuffer[9] = 'd';
-				displayBuffer[10] = '.';
-				displayBuffer[11] = '.';
-				displayBuffer[12] = '.';
-				displayBuffer[13] = ' ';
+				memcpy(&displayBuffer[3], (uint8_t*) " Paused... ", 11);
+				/*displayBuffer[3] = ' ';
+				 displayBuffer[4] = 'P';
+				 displayBuffer[5] = 'a';
+				 displayBuffer[6] = 'u';
+				 displayBuffer[7] = 's';
+				 displayBuffer[8] = 'e';
+				 displayBuffer[9] = 'd';
+				 displayBuffer[10] = '.';
+				 displayBuffer[11] = '.';
+				 displayBuffer[12] = '.';
+				 displayBuffer[13] = ' ';*/
 				resetDisplayState();
 			}
 
@@ -209,6 +216,7 @@ void HandleDisplayData() {
 
 	if (displayBuffer[0] == ACC_OFF) {
 
+		Mode_itterupt = MODE_ITTERUPT_CYCLES * 2;
 		greets_counter = 0; // ACC OFF byte for dimm display
 		if (mode == Bluetooth) {
 			btLastState = 1;
@@ -231,9 +239,6 @@ void HandleDisplayData() {
 }
 void SendDisplayData() {
 	uint8_t chksum = 0;
-
-	//displayBuffer[2] = dbgstr[0];
-	//displayBuffer[3] = dbgstr[1];
 
 	for (int i = 0; i < DISPLAY_BUFFER_SIZE - 1; i++) {
 		chksum += displayBuffer[i];

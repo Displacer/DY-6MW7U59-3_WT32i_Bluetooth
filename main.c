@@ -289,7 +289,7 @@ void InitDisplay() {
 	for (uint32_t i = 0; i < 900000; i++) {
 		//Dummy delay for display initialization
 	}
-	Mode_itterupt = MODE_ITTERUPT_CYCLES;
+	Mode_itterupt = MODE_ITTERUPT_CYCLES * 2;
 	SetupPeriph();
 
 	if (mode != Bluetooth)

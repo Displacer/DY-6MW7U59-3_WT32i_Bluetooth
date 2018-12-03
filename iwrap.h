@@ -27,8 +27,8 @@
 
 
 
-#ifndef __IWRAP_H
-#define __IWRAP_H
+#ifndef __IWRAP_H__
+#define __IWRAP_H__
 
 #define EVENT_PLAYBACK_STATUS_CHANGED "AVRCP PDU 31 1 \r\n"
 #define EVENT_TRACK_CHANGED "AVRCP PDU 31 2 \r\n"

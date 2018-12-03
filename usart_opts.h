@@ -5,7 +5,7 @@
 #include <stm32f10x_usart.h>
 
 enum Mode {
-	CD, FM, MW, LW, AUX, Bluetooth, Normal, PowerOff //normal for capability, in future will be deleted
+	CD, FM, MW, LW, AUX, Bluetooth, PowerOff
 } mode;
 
 

@@ -9,6 +9,5 @@
 #define REMOTE_ADC_IN_PIN GPIO_Pin_1
 #define DISPLAY_BREAK_SIGNAL_PIN GPIO_Pin_2
 
-char* dbgstr[12];
 
 #endif

@@ -62,11 +62,11 @@ uint8_t default_command[COMMAND_BUFFER_SIZE] = { 0x41, 0x00, 0x00, 0x00, 0x30,
 		0x00, 0x71 };
 uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 
-uint8_t press_cnt = 0, act_aux = 0;
+uint8_t press_delay = 0, block_input_delay = 0, act_aux = 0;
 
 enum ButtonState {
 	NOT_PRESSED, PRESSED, LONG_PRESSED, RELEASED
-} button_state = NOT_PRESSED;
+} fm_button_state = NOT_PRESSED, cd_button_state = NOT_PRESSED;
 enum EMainFSM {
 	NORMAL_STATE,
 	BT_PREPARE,
@@ -133,35 +133,69 @@ void HandleCommandData() {
 
 	switch (commandBuffer[1]) {
 	case NOTHING:
-		button_state = NOT_PRESSED;
+
+		if (fm_button_state == PRESSED) {
+			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+			commandBuffer[1] = FM_BUTTON;
+			if (press_delay++ < PRESS_DELAY / 4) {
+				SendCommand();
+			} else {
+				fm_button_state = RELEASED;
+				press_delay = 0;
+			}
+		}
+		if (cd_button_state == PRESSED) {
+			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+			commandBuffer[1] = CD_BUTTON;
+			if (press_delay++ < PRESS_DELAY / 4) {
+				SendCommand();
+			} else {
+				cd_button_state = RELEASED;
+				press_delay = 0;
+			}
+		}
 		break;
 	case FM_BUTTON:
-		button_state = PRESSED;
-		if (press_cnt++ > PRESS_DELAY && main_fsm == NORMAL_STATE) {
-			button_state = LONG_PRESSED;
-			//press_cnt = PRESS_DELAY + 10;
+		if (fm_button_state == PRESSED) {
+			break;
 		}
+		fm_button_state = PRESSED;
+		commandBuffer[1] = NOTHING;
+		if (press_delay++ > PRESS_DELAY && main_fsm == NORMAL_STATE) {
+			fm_button_state = LONG_PRESSED;
+			press_delay = 0;
+		}
+		break;
+	case CD_BUTTON:
+		break;
+
 	}
 
 	switch (main_fsm) {
 	case NORMAL_STATE:
-		if (button_state == LONG_PRESSED) {
+		if (fm_button_state == LONG_PRESSED) {
 			main_fsm = BT_PREPARE;
 		}
-		SendCommand();
+		else SendCommand();
 	case BT_PREPARE:
 		memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
 		commandBuffer[1] = CD_BUTTON;
-		if (press_cnt-- > 0)
+		if (press_delay++ < PRESS_DELAY) {
 			SendCommand(); //Activating AUX
-		else
+		} else {
 			main_fsm = BT_ACTIVATE;
+			press_delay = 0;
+		}
+
 	case BT_ACTIVATE:
 		Bluetooth_on();
 		main_fsm = BT_ACTIVE;
 	case BT_ACTIVE:
-		if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON)
+		if (fm_button_state == PRESSED || cd_button_state == PRESSED) {
 			main_fsm = GOING_NORMAL_STATE; // return to normal state
+		}
+		//if (block_input_delay ++ < PRESS_DELAY)
+		//fm_button_state = RELEASED;
 
 		if (commandBuffer[1] == POWER_BUTTON) {
 			if (avrcp_trig == 0) {
@@ -171,7 +205,7 @@ void HandleCommandData() {
 					bt_Play();
 				avrcp_trig = 1;
 			}
-			commandBuffer[1] = 0x00;
+			commandBuffer[1] = NOTHING;
 		} else if (commandBuffer[2] == BACKWARD_BUTTON) {
 			if (avrcp_trig == 0) {
 				bt_Prev();
@@ -219,23 +253,23 @@ void HandleCommandData() {
 
 #elif
 
-	if (act_aux && press_cnt < PRESS_DELAY) {
+	if (act_aux && press_delay < PRESS_DELAY) {
 		for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
 		commandBuffer[i] = default_command[i];
 		commandBuffer[1] = CD_BUTTON;
-		press_cnt++;
+		press_delay++;
 		SendCommand();
 		return;
 	} else if (act_aux) {
 		act_aux = 0;
-		press_cnt = PRESS_DELAY;
+		press_delay = PRESS_DELAY;
 	}
 	if (mode == Bluetooth) {
-		if (press_cnt > 0 || !fm_button_released) //block input for press delay
+		if (press_delay > 0 || !fm_button_released) //block input for press delay
 		{
 			if (commandBuffer[1] != FM_BUTTON)
 			fm_button_released = 1;
-			press_cnt--;
+			press_delay--;
 			for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
 			commandBuffer[i] = default_command[i];
 			SendCommand();
@@ -303,9 +337,9 @@ void HandleCommandData() {
 		if (commandBuffer[1] == FM_BUTTON) { // Hold FM button
 			commandBuffer[1] = NOTHING;
 			fm_button_released = 0;
-			press_cnt++;
-			if (press_cnt > PRESS_DELAY) {
-				press_cnt = 0;
+			press_delay++;
+			if (press_delay > PRESS_DELAY) {
+				press_delay = 0;
 				if (mode != AUX)
 				ActivateAUX();
 				Bluetooth_on();
@@ -314,10 +348,10 @@ void HandleCommandData() {
 			return;
 		}
 
-		if (press_cnt > 0 && !act_aux) {
+		if (press_delay > 0 && !act_aux) {
 			fm_button_released = 1;
 			commandBuffer[1] = FM_BUTTON;
-			press_cnt--;
+			press_delay--;
 		}
 
 		SendCommand();

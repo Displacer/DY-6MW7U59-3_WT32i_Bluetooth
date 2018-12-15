@@ -30,3 +30,13 @@
 *.exe
 *.out
 *.app
+
+Debug
+Release
+*.opensdf
+*.sdf
+*.suo
+*.old
+VisualGDBCache
+CodeDB
+logs

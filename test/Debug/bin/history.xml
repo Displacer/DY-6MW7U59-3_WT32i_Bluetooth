@@ -1,24 +1,25 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <history>
    <processor signature="7.3.1 -mcpu=cortex-m3 -mthumb -g -nostartfiles -Map=test.map -O0 --gc-sections -LC:\CooCox\CoIDE\configuration\ProgramData\DY-6MW7U53-2-bluetooth -TC:\CooCox\CoIDE\configuration\ProgramData\DY-6MW7U53-2-bluetooth/link.ld -g">
-      <target file="test.elf" lastModified="1677a0fffb1">
-         <source file="..\obj\stm32f10x_tim.o" lastModified="1677a0f6419"/>
-         <source file="..\obj\system_stm32f10x.o" lastModified="1677a0f6459"/>
-         <source file="..\obj\startup_stm32f10x_md.o" lastModified="1677a0f6483"/>
-         <source file="..\obj\stm32f10x_gpio.o" lastModified="1677a0f64c4"/>
-         <source file="..\obj\main.o" lastModified="1677a0f651e"/>
-         <source file="..\obj\iwrap.o" lastModified="1677a0f6551"/>
-         <source file="..\obj\stm32f10x_rcc.o" lastModified="1677a0f6596"/>
-         <source file="..\obj\stm32f10x_adc.o" lastModified="1677a0f65e0"/>
-         <source file="..\obj\stm32f10x_usart.o" lastModified="1677a0f6627"/>
-         <source file="..\obj\tea6420.o" lastModified="1677a0f6659"/>
-         <source file="..\obj\usart_opts.o" lastModified="1677a0f668f"/>
-         <source file="..\obj\command_handler.o" lastModified="1677a0ffdcc"/>
-         <source file="..\obj\stm32f10x_dma.o" lastModified="1677a0f6751"/>
-         <source file="..\obj\display_handler.o" lastModified="1677a0f6793"/>
-         <source file="..\obj\misc.o" lastModified="1677a0f67c5"/>
-         <source file="..\obj\parser.o" lastModified="1677a0f680b"/>
-         <source file="..\obj\stm32f10x_i2c.o" lastModified="1677a0f6852"/>
+      <target file="test.elf" lastModified="167b1aafe12">
+         <source file="..\obj\stm32f10x_tim.o" lastModified="167b137c382"/>
+         <source file="..\obj\system_stm32f10x.o" lastModified="167b137c3b5"/>
+         <source file="..\obj\startup_stm32f10x_md.o" lastModified="167b137c3e4"/>
+         <source file="..\obj\stm32f10x_can.o" lastModified="167b137c431"/>
+         <source file="..\obj\stm32f10x_gpio.o" lastModified="167b137c47d"/>
+         <source file="..\obj\main.o" lastModified="167b17962fb"/>
+         <source file="..\obj\iwrap.o" lastModified="167b137c4f5"/>
+         <source file="..\obj\stm32f10x_rcc.o" lastModified="167b137c539"/>
+         <source file="..\obj\stm32f10x_adc.o" lastModified="167b137c581"/>
+         <source file="..\obj\stm32f10x_usart.o" lastModified="167b137c5cb"/>
+         <source file="..\obj\tea6420.o" lastModified="167b137c612"/>
+         <source file="..\obj\usart_opts.o" lastModified="167b1796330"/>
+         <source file="..\obj\command_handler.o" lastModified="167b18991f7"/>
+         <source file="..\obj\stm32f10x_dma.o" lastModified="167b137c6cb"/>
+         <source file="..\obj\display_handler.o" lastModified="167b1aafc2a"/>
+         <source file="..\obj\misc.o" lastModified="167b137c73e"/>
+         <source file="..\obj\parser.o" lastModified="167b1a52bde"/>
+         <source file="..\obj\stm32f10x_i2c.o" lastModified="167b137c7c8"/>
       </target>
    </processor>
 </history>

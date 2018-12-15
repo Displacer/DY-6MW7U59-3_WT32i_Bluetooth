@@ -58,304 +58,385 @@ extern enum PlaybackState playbackState;
 
 uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES; // will check for 1 second for mode changes
 
-uint8_t default_command[COMMAND_BUFFER_SIZE] = { 0x41, 0x00, 0x00, 0x00, 0x30,
-		0x00, 0x71 };
+uint8_t default_command[COMMAND_BUFFER_SIZE] =
+{ 0x41, 0x00, 0x00, 0x00, 0x30, 0x00, 0x71 };
 uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 
 uint8_t press_delay = 0, block_input_delay = 0, act_aux = 0;
 
-enum ButtonState {
-	NOT_PRESSED, PRESSED, LONG_PRESSED, RELEASED
+enum ButtonState
+{
+   NOT_PRESSED, PRESSED, LONG_PRESSED, RELEASED
 } fm_button_state = NOT_PRESSED, cd_button_state = NOT_PRESSED;
-enum EMainFSM {
-	NORMAL_STATE,
-	BT_PREPARE,
-	BT_ACTIVATE,
-	BT_ACTIVE,
-	BT_SHUTTING_DOWN,
-	GOING_NORMAL_STATE,
-	GOING_AUX
-} main_fsm = NORMAL_STATE;
 
-void ActivateAUX() {
-	act_aux = !isAux;
+enum EMainFSM main_fsm = NORMAL_STATE;
+
+void ActivateAUX()
+{
+   if (!isAux)
+      act_aux = 1;
 }
 
-void Bluetooth_on() {
-	ClearDisplayString();
-	mode = Bluetooth;
-	GPIO_SetBits(GPIOA, BT_STBY_PIN);
-	tea6420_Bluetooth();
+void Bluetooth_on()
+{
+   ClearDisplayString();
+   mode = Bluetooth;
+   GPIO_SetBits(GPIOA, BT_STBY_PIN);
+   tea6420_Bluetooth();
 }
-void Bluetooth_off() {
-	ClearDisplayString();
-	resetDisplayState();
-	playbackState = play;
-	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
-	tea6420_AUX();
+void Bluetooth_off()
+{
+   ClearDisplayString();
+   resetDisplayState();
+   playbackState = stop;
+   GPIO_ResetBits(GPIOA, BT_STBY_PIN);
+   tea6420_AUX();
 }
 
-void SendCommand() {
-	uint8_t chksum = 0;
-	for (int i = 0; i < COMMAND_BUFFER_SIZE - 1; i++) {
-		chksum += commandBuffer[i];
-	}
-	commandBuffer[COMMAND_BUFFER_SIZE - 1] = chksum;
-	USART3SendDMA();
+void SendCommand()
+{
+   uint8_t chksum = 0;
+   for (int i = 0; i < COMMAND_BUFFER_SIZE - 1; i++)
+   {
+      chksum += commandBuffer[i];
+   }
+   commandBuffer[COMMAND_BUFFER_SIZE - 1] = chksum;
+   USART3SendDMA();
 }
 
 uint8_t fm_button_released = 1;
 uint8_t avrcp_trig = 0;
 //TODO: Delay for command send
-void HandleCommandData() {
-	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
-		return;
+void HandleCommandData()
+{
+   if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
+      return;
 
-	if (commandBuffer[1] == POWER_BUTTON || commandBuffer[1] == CD_BUTTON
-			|| commandBuffer[1] == FM_BUTTON)
-		Mode_itterupt = MODE_ITTERUPT_CYCLES; // if power/cd/fm pressed
+   if (commandBuffer[1] == POWER_BUTTON || commandBuffer[1] == CD_BUTTON
+         || commandBuffer[1] == FM_BUTTON)
+      Mode_itterupt = MODE_ITTERUPT_CYCLES; // if power/cd/fm pressed
 
-	if (Mode_itterupt > 0) {
-		Mode_itterupt--;
-		if (Mode_itterupt == 0) {
-			GetMode();
-			if (btLastState == 1) {
-				if (mode != AUX)
-					ActivateAUX();
-				Bluetooth_on();
-				btLastState = 0;
-			}
-		}
-	}
+   if (Mode_itterupt > 0)
+   {
+      Mode_itterupt--;
+      if (Mode_itterupt == 0)
+      {
+         GetMode();
+         if (btLastState == 1)
+         {
+            if (mode != AUX)
+               ActivateAUX();
+            main_fsm = BT_ACTIVATE;
+            btLastState = 0;
+         }
+      }
+   }
 
 #define FSM
 #ifdef FSM
 
-	switch (commandBuffer[1]) {
-	case NOTHING:
+   switch (commandBuffer[1])
+   {
+   case NOTHING:
 
-		if (fm_button_state == PRESSED) {
-			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-			commandBuffer[1] = FM_BUTTON;
-			if (press_delay++ < PRESS_DELAY / 4) {
-				SendCommand();
-			} else {
-				fm_button_state = RELEASED;
-				press_delay = 0;
-			}
-		}
-		if (cd_button_state == PRESSED) {
-			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-			commandBuffer[1] = CD_BUTTON;
-			if (press_delay++ < PRESS_DELAY / 4) {
-				SendCommand();
-			} else {
-				cd_button_state = RELEASED;
-				press_delay = 0;
-			}
-		}
-		break;
-	case FM_BUTTON:
-		if (fm_button_state == PRESSED) {
-			break;
-		}
-		fm_button_state = PRESSED;
-		commandBuffer[1] = NOTHING;
-		if (press_delay++ > PRESS_DELAY && main_fsm == NORMAL_STATE) {
-			fm_button_state = LONG_PRESSED;
-			press_delay = 0;
-		}
-		break;
-	case CD_BUTTON:
-		break;
+      if (fm_button_state == PRESSED)
+      {
+         main_fsm = GOING_NORMAL_STATE;
+         memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+         commandBuffer[1] = FM_BUTTON;
+         if (press_delay++ > PRESS_DELAY / 4)
+         {
+            fm_button_state = RELEASED;
+            press_delay = 0;
+         }
+      }
+      if (fm_button_state == LONG_PRESSED)
+      {
+         fm_button_state = RELEASED;
+      }
 
-	}
+      if (cd_button_state == PRESSED)
+      {
+         main_fsm = GOING_NORMAL_STATE;
+         memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+         commandBuffer[1] = CD_BUTTON;
+         if (press_delay++ > PRESS_DELAY / 4)
+         {
+            cd_button_state = RELEASED;
+            press_delay = 0;
+         }
+      }
+      if (cd_button_state == LONG_PRESSED)
+      {
+         cd_button_state = RELEASED;
+      }
+      break;
+   case FM_BUTTON:
+      if (fm_button_state == LONG_PRESSED)
+      {
+         memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+         break;
+      }
+      fm_button_state = PRESSED;
+      commandBuffer[1] = NOTHING;
+      if (press_delay++ > PRESS_DELAY)
+      {
+         fm_button_state = LONG_PRESSED;
+         press_delay = 0;
+      }
+      break;
+   case CD_BUTTON:
+      if (cd_button_state == LONG_PRESSED)
+      {
+         memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+         break;
+      }
+      cd_button_state = PRESSED;
+      commandBuffer[1] = NOTHING;
+      if (press_delay++ > PRESS_DELAY)
+      {
+         cd_button_state = LONG_PRESSED;
+         press_delay = 0;
+      }
+      break;
+   }
 
-	switch (main_fsm) {
-	case NORMAL_STATE:
-		if (fm_button_state == LONG_PRESSED) {
-			main_fsm = BT_PREPARE;
-		}
-		else SendCommand();
-	case BT_PREPARE:
-		memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-		commandBuffer[1] = CD_BUTTON;
-		if (press_delay++ < PRESS_DELAY) {
-			SendCommand(); //Activating AUX
-		} else {
-			main_fsm = BT_ACTIVATE;
-			press_delay = 0;
-		}
+   switch (main_fsm)
+   {
+   case NORMAL_STATE:
+      if (fm_button_state == LONG_PRESSED)
+      {
+         if (isAux)
+            main_fsm = BT_ACTIVATE;
+         else
+            main_fsm = BT_PREPARE;
+      }
+      if (cd_button_state == LONG_PRESSED)
+      {
+         if (!isAux) act_aux = 1; //TODO: убрать костыль
+      }
+      break;
+   case BT_PREPARE:
+      act_aux = 1;
+      main_fsm = BT_ACTIVATE;
+      break;
+   case BT_ACTIVATE:
+      Bluetooth_on();
+      main_fsm = BT_ACTIVE;
+      break;
+   case BT_ACTIVE:
 
-	case BT_ACTIVATE:
-		Bluetooth_on();
-		main_fsm = BT_ACTIVE;
-	case BT_ACTIVE:
-		if (fm_button_state == PRESSED || cd_button_state == PRESSED) {
-			main_fsm = GOING_NORMAL_STATE; // return to normal state
-		}
-		//if (block_input_delay ++ < PRESS_DELAY)
-		//fm_button_state = RELEASED;
+      if (commandBuffer[1] == POWER_BUTTON)
+      {
+         if (avrcp_trig == 0)
+         {
+            bt_PlaybackStatusEventSubscribe();
+            if (playbackState == play)
+               bt_Pause();
+            else
+               bt_Play();
+            avrcp_trig = 1;
+         }
+         commandBuffer[1] = NOTHING;
+      }
+      else if (commandBuffer[2] == BACKWARD_BUTTON)
+      {
+         if (avrcp_trig == 0)
+         {
+            bt_Prev();
+            avrcp_trig = 1;
+         }
+      }
+      else if (commandBuffer[2] == FORWARD_BUTTON)
+      {
+         if (avrcp_trig == 0)
+         {
+            bt_Next();
+            avrcp_trig = 1;
+         }
+      }
+      else
+      {
+         uint8_t adc_val = ADC_GetConversionValue(ADC1) / 100;
+         switch (adc_val)
+         {
+         case 8:
+         case 9:
+            main_fsm = GOING_NORMAL_STATE;
+            break;
+         case 10:
+         case 11:
+            if (avrcp_trig == 0)
+            {
+               bt_Next();
+               avrcp_trig = 1;
+            }
+            break;
+         case 12:
+         case 13:
+            if (avrcp_trig == 0)
+            {
+               bt_Prev();
+               avrcp_trig = 1;
+            }
+            break;
+         default:
+            avrcp_trig = 0;
+            break;
+         }
+      }
+      if (cd_button_state == LONG_PRESSED)
+      {
+         main_fsm = GOING_NORMAL_STATE;
+      }
+      break;
+   case BT_SHUTTING_DOWN:
+      break;
+   case GOING_NORMAL_STATE:
+      Bluetooth_off();
+      main_fsm = NORMAL_STATE;
+      break;
+   }
 
-		if (commandBuffer[1] == POWER_BUTTON) {
-			if (avrcp_trig == 0) {
-				if (playbackState == play)
-					bt_Pause();
-				else
-					bt_Play();
-				avrcp_trig = 1;
-			}
-			commandBuffer[1] = NOTHING;
-		} else if (commandBuffer[2] == BACKWARD_BUTTON) {
-			if (avrcp_trig == 0) {
-				bt_Prev();
-				avrcp_trig = 1;
-			}
-		} else if (commandBuffer[2] == FORWARD_BUTTON) {
-			if (avrcp_trig == 0) {
-				bt_Next();
-				avrcp_trig = 1;
-			}
-		} else {
-			uint8_t adc_val = ADC_GetConversionValue(ADC1) / 100;
-			switch (adc_val) {
-			case 8:
-			case 9:
-				main_fsm = GOING_NORMAL_STATE;
-				break;
-			case 10:
-			case 11:
-				if (avrcp_trig == 0) {
-					bt_Next();
-					avrcp_trig = 1;
-				}
-				break;
-			case 12:
-			case 13:
-				if (avrcp_trig == 0) {
-					bt_Prev();
-					avrcp_trig = 1;
-				}
-				break;
-			default:
-				avrcp_trig = 0;
-				break;
-			}
-		}
-		SendCommand();
-	case BT_SHUTTING_DOWN:
-	case GOING_NORMAL_STATE:
-		Bluetooth_off();
-		main_fsm = NORMAL_STATE;
-	case GOING_AUX:
-		break;
-	}
+   if (act_aux)
+   {
+      memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
+      commandBuffer[1] = CD_BUTTON;
+      if (press_delay++ > PRESS_DELAY)
+      {
+         act_aux = 0;
+         press_delay = 0;
+      }
+   }
 
-#elif
+   SendCommand();
 
-	if (act_aux && press_delay < PRESS_DELAY) {
-		for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
-		commandBuffer[i] = default_command[i];
-		commandBuffer[1] = CD_BUTTON;
-		press_delay++;
-		SendCommand();
-		return;
-	} else if (act_aux) {
-		act_aux = 0;
-		press_delay = PRESS_DELAY;
-	}
-	if (mode == Bluetooth) {
-		if (press_delay > 0 || !fm_button_released) //block input for press delay
-		{
-			if (commandBuffer[1] != FM_BUTTON)
-			fm_button_released = 1;
-			press_delay--;
-			for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
-			commandBuffer[i] = default_command[i];
-			SendCommand();
-			return;
-		}
+#else
 
-		if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON) // return to normal state
-		Bluetooth_off();
+   if (act_aux && press_delay < PRESS_DELAY)
+   {
+      for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
+      commandBuffer[i] = default_command[i];
+      commandBuffer[1] = CD_BUTTON;
+      press_delay++;
+      SendCommand();
+      return;
+   }
+   else if (act_aux)
+   {
+      act_aux = 0;
+      press_delay = PRESS_DELAY;
+   }
+   if (mode == Bluetooth)
+   {
+      if (press_delay > 0 || !fm_button_released) //block input for press delay
+      {
+         if (commandBuffer[1] != FM_BUTTON)
+         fm_button_released = 1;
+         press_delay--;
+         for (int i = 0; i < COMMAND_BUFFER_SIZE; i++)
+         commandBuffer[i] = default_command[i];
+         SendCommand();
+         return;
+      }
 
-		if (commandBuffer[1] == POWER_BUTTON) {
-			if (avrcp_trig == 0) {
-				if (playbackState == play)
-				bt_Pause();
-				else
-				bt_Play();
-				avrcp_trig = 1;
-			}
-			commandBuffer[1] = 0x00;
-		} else if (commandBuffer[2] == BACKWARD_BUTTON) {
-			if (avrcp_trig == 0) {
-				bt_Prev();
-				avrcp_trig = 1;
-			}
-		} else if (commandBuffer[2] == FORWARD_BUTTON) {
-			if (avrcp_trig == 0) {
-				bt_Next();
-				avrcp_trig = 1;
-			}
-		} else {
-			///ADC handler
+      if (commandBuffer[1] == FM_BUTTON || commandBuffer[1] == CD_BUTTON) // return to normal state
+      Bluetooth_off();
 
-			uint8_t adc_val = ADC_GetConversionValue(ADC1) / 100;
-			switch (adc_val) {
-				case 8:
-				case 9:
-				Bluetooth_off();
-				break;
-				case 10:
-				case 11:
-				if (avrcp_trig == 0) {
-					bt_Next();
-					avrcp_trig = 1;
-				}
-				break;
-				case 12:
-				case 13:
-				if (avrcp_trig == 0) {
-					bt_Prev();
-					avrcp_trig = 1;
-				}
-				break;
+      if (commandBuffer[1] == POWER_BUTTON)
+      {
+         if (avrcp_trig == 0)
+         {
+            if (playbackState == play)
+            bt_Pause();
+            else
+            bt_Play();
+            avrcp_trig = 1;
+         }
+         commandBuffer[1] = 0x00;
+      }
+      else if (commandBuffer[2] == BACKWARD_BUTTON)
+      {
+         if (avrcp_trig == 0)
+         {
+            bt_Prev();
+            avrcp_trig = 1;
+         }
+      }
+      else if (commandBuffer[2] == FORWARD_BUTTON)
+      {
+         if (avrcp_trig == 0)
+         {
+            bt_Next();
+            avrcp_trig = 1;
+         }
+      }
+      else
+      {
+         ///ADC handler
 
-				default:
-				avrcp_trig = 0;
-				break;
+         uint8_t adc_val = ADC_GetConversionValue(ADC1) / 100;
+         switch (adc_val)
+         {
+            case 8:
+            case 9:
+            Bluetooth_off();
+            break;
+            case 10:
+            case 11:
+            if (avrcp_trig == 0)
+            {
+               bt_Next();
+               avrcp_trig = 1;
+            }
+            break;
+            case 12:
+            case 13:
+            if (avrcp_trig == 0)
+            {
+               bt_Prev();
+               avrcp_trig = 1;
+            }
+            break;
 
-			}
-		}
+            default:
+            avrcp_trig = 0;
+            break;
 
-		SendCommand();
-		return;
-	}
-	if (mode != Bluetooth) {
+         }
+      }
 
-		if (commandBuffer[1] == FM_BUTTON) { // Hold FM button
-			commandBuffer[1] = NOTHING;
-			fm_button_released = 0;
-			press_delay++;
-			if (press_delay > PRESS_DELAY) {
-				press_delay = 0;
-				if (mode != AUX)
-				ActivateAUX();
-				Bluetooth_on();
-			}
-			SendCommand();
-			return;
-		}
+      SendCommand();
+      return;
+   }
+   if (mode != Bluetooth)
+   {
 
-		if (press_delay > 0 && !act_aux) {
-			fm_button_released = 1;
-			commandBuffer[1] = FM_BUTTON;
-			press_delay--;
-		}
+      if (commandBuffer[1] == FM_BUTTON)
+      { // Hold FM button
+         commandBuffer[1] = NOTHING;
+         fm_button_released = 0;
+         press_delay++;
+         if (press_delay > PRESS_DELAY)
+         {
+            press_delay = 0;
+            if (mode != AUX)
+            ActivateAUX();
+            Bluetooth_on();
+         }
+         SendCommand();
+         return;
+      }
 
-		SendCommand();
-	}
+      if (press_delay > 0 && !act_aux)
+      {
+         fm_button_released = 1;
+         commandBuffer[1] = FM_BUTTON;
+         press_delay--;
+      }
+
+      SendCommand();
+   }
 #endif
 
 }

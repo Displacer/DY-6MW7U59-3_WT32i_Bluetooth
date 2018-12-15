@@ -4,14 +4,13 @@
 #include <stm32f10x.h>
 #include <stm32f10x_usart.h>
 
-enum Mode {
-	CD, FM, MW, LW, AUX, Bluetooth, PowerOff
+enum Mode
+{
+   CD, FM, MW, LW, AUX, Bluetooth, PowerOff
 } mode;
 
-
-
 void UARTSend(USART_TypeDef* usart, const unsigned char *pucBuffer,
-		unsigned long ulCount);
+      unsigned long ulCount);
 void USART1Send(char *buf);
 void USART2SendDMA();
 void USART3SendDMA();

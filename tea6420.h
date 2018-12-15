@@ -10,12 +10,8 @@
 #define GAIN_4 0x08
 #define GAIN_6 0x00
 
-
 void tea6420_init();
 void tea6420_Bluetooth();
 void tea6420_AUX();
-
-
-
 
 #endif

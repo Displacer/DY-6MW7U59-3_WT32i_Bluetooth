@@ -24,9 +24,6 @@
  *
  * */
 
-
-
-
 #ifndef __IWRAP_H__
 #define __IWRAP_H__
 
@@ -39,12 +36,10 @@
 #define AVRCP_PREV "AVRCP BACKWARD \r\n"
 #define AVRCP_GET_PLAY_STATUS "AVRCP PDU 30 \r\n"
 
-
-
-enum PlaybackState {
-	stop, pause, play
+enum PlaybackState
+{
+   stop, pause, play
 } playbackState;
-
 
 void bt_Play();
 void bt_Pause();
@@ -53,6 +48,5 @@ void bt_Prev();
 void bt_TrackChangedEventSubscribe();
 void bt_PlaybackStatusEventSubscribe();
 void bt_GetAVRCP_metadata();
-
 
 #endif

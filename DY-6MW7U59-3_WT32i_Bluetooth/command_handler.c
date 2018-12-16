@@ -51,8 +51,6 @@
 #include "config.h"
 
 extern uint8_t btLastState;
-extern void ClearDisplayString();
-extern void resetDisplayState();
 extern enum PlaybackState playbackState;
 
 uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES;  // will check for 1 second for mode changes
@@ -88,6 +86,7 @@ void Bluetooth_on()
 }
 void Bluetooth_off()
 {	
+	ClearDisplayBtString();
 	bt_Pause();
 	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
 	tea6420_AUX();

@@ -26,7 +26,6 @@ extern uint8_t Mode_itterupt;
 
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T', 'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9D };
 uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
-uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 uint8_t displayStringBuffer[DISPLAY_STRING_SIZE];
 uint8_t displayDataBuffer[DISPLAY_DATA_SIZE];
 uint8_t displayBtDataBuffer[DISPLAY_DATA_SIZE];
@@ -48,11 +47,68 @@ enum displayState
 	reverse_scroll
 } display_state;
 
+
+#define MAX_QUEUE_COUNT_CALLBACKS 10
+int8_t front = 0;
+int8_t rear = -1;
+uint8_t queue_items_count = 0;
+
+typedef struct DelayedCallback_s
+{
+	void(*func)();
+	uint8_t exec_delay;
+	void* nextDelaydeCallback;
+} DelayedCallback_t;
+
+DelayedCallback_t* DelayedCallbacks[MAX_QUEUE_COUNT_CALLBACKS];
+
+uint8_t isFull()
+{
+	if (queue_items_count == MAX_QUEUE_COUNT_CALLBACKS) return 1;
+	else return 0;
+}
+
+void AddDelayedCallback(DelayedCallback_t* delayedCallback)
+{
+	if (!isFull()) {
+	
+		if (rear == MAX_QUEUE_COUNT_CALLBACKS - 1) {
+			rear = -1;            
+		}       
+		DelayedCallbacks[++rear] = delayedCallback;
+		queue_items_count++;
+	}
+}
+
+DelayedCallback_t* PopDelayedCallback()
+{
+	
+};
+
 void ExecuteWithDelay(void(*ptr)(), uint8_t delay)
 {
 	if (exec_delay_timer == 0xFF) exec_delay_timer = 0;
 	exec_delay = delay;
 	func = ptr;	
+}
+
+
+void CheckEvent()
+{
+	if (exec_delay_timer == exec_delay)
+	{
+		(*func)();
+		exec_delay_timer = 0xFF;
+	}
+}
+
+void IncTick()
+{	
+	if (exec_delay_timer != 0xFF)
+	{
+		exec_delay_timer++;		
+	}
+	CheckEvent();	
 }
 
 void GetMode()
@@ -67,7 +123,7 @@ void GetMode()
 		}
 }
 
-int offset;             // in future will be moved to constants
+int offset;               // in future will be moved to constants
 uint8_t offset_step;
 uint8_t delay;
 uint8_t DISPLAY_STRING_DELAY = 10;
@@ -82,7 +138,11 @@ void resetDisplayState()
 void ClearDisplayString()
 {
 	memset(displayDataBuffer, 0x00, DISPLAY_DATA_SIZE);
-	memset(displayStringBuffer, 0x00, DISPLAY_STRING_SIZE);
+}
+
+void ClearDisplayBtString()
+{
+	memset(displayBtDataBuffer, 0x00, DISPLAY_DATA_SIZE);
 }
 void ForceShowString(uint8_t* str)
 {
@@ -96,24 +156,21 @@ void ForceShowString(uint8_t* str)
 		if (force_show_string[i] == 0x00) break;
 	}
 }
+
+
+
+
+
 void HandleDisplayData()
 {
-	if (exec_delay_timer != 0xFF)
-	{
-		exec_delay_timer++;		
-	}
-	if (exec_delay_timer == exec_delay)
-	{
-		(*func)();
-		exec_delay_timer = 0xFF;
-	}
-	static uint8_t frame_delay = 0;
+	IncTick();
+	static uint8_t frame_delay = 0;		
 		
-		
-	if (CheckChksum(displayRxBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
+	if (CheckChksum(displayBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
 		return;
 
-	memcpy(displayBuffer, displayRxBuffer, DISPLAY_BUFFER_SIZE);
+	
+	isAux = memcmp(&displayBuffer[6], (uint8_t*) "AUX", 3) == 0;
 
 	//CD mode change ' on : (for details see table)
 	if(displayBuffer[16] & 0x10 && displayBuffer[11] == '\'')
@@ -121,7 +178,7 @@ void HandleDisplayData()
 		displayBuffer[11] = ':';
 	}
 
-	isAux = memcmp(&displayRxBuffer[6], (uint8_t*) "AUX", 3) == 0;
+	
 
 	if (!force_show)
 	{
@@ -153,7 +210,7 @@ void HandleDisplayData()
 		{
 			resetDisplayState();
 			ClearDisplayString();
-			memcpy(displayDataBuffer, &displayRxBuffer[2], DISPLAY_STRING_SIZE);
+			memcpy(displayDataBuffer, &displayBuffer[2], DISPLAY_STRING_SIZE);
 		}
 	}
 	
@@ -184,12 +241,7 @@ void HandleDisplayData()
 		if (delay > 0)
 			delay--;
 		else
-		{
-			if (force_show)
-			{
-				resetDisplayState();
-				force_show = 0;
-			}
+		{			
 			display_state = reverse_scroll;
 		}
 		break;
@@ -197,17 +249,23 @@ void HandleDisplayData()
 		if (offset != 0)
 			offset--;
 		else
-			display_state = begin;
+		{
+			if (force_show)
+			{
+				resetDisplayState();
+				force_show = 0;
+			}
+			display_state = begin;			
+		}			
 		break;
 	}
-	memcpy(displayStringBuffer, &displayDataBuffer[offset], DISPLAY_STRING_SIZE);
 	
 	for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++)
 	{
-		if (displayStringBuffer[i] == 0)
+		if (displayDataBuffer[offset + i] == 0)
 			displayBuffer[i + 2] = ' ';
 		else
-			displayBuffer[i + 2] = displayStringBuffer[i];
+			displayBuffer[i + 2] = displayDataBuffer[offset + i];
 	}
 	
 	
@@ -221,7 +279,7 @@ void HandleDisplayData()
 	{
 
 		Mode_itterupt = MODE_ITTERUPT_CYCLES * 2;
-		greets_counter = 0;             // ACC OFF byte for dimm display
+		greets_counter = 0;               // ACC OFF byte for dimm display
 		if(main_fsm == BT_ACTIVE)
 		{
 			btLastState = 1;

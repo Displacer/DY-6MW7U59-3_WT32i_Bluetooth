@@ -6,6 +6,9 @@
 #define BLUETOOTH_CHAR 0x86
 #define ACC_OFF 0x40
 
+void resetDisplayState(void);
+void ClearDisplayString(void);
+void ClearDisplayBtString(void);
 void ExecuteWithDelay(void(*ptr)(), uint8_t delay);
 void HandleDisplayData(void);
 void SendDisplayData(void);

@@ -16,7 +16,6 @@
 #include "config.h"
 
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
-extern uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 extern uint8_t Mode_itterupt;
 extern uint8_t parsing;
@@ -339,7 +338,7 @@ void USART2_IRQHandler(void)
 	{
 		if (d_idx < DISPLAY_BUFFER_SIZE)
 		{
-			displayRxBuffer[d_idx++] = USART_ReceiveData(USART2);
+			displayBuffer[d_idx++] = USART_ReceiveData(USART2);
 			TIM2->CNT = 0;
 			d_rcvcplt = 1;
 		}

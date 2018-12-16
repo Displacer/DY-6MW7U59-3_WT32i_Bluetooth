@@ -19,12 +19,7 @@ uint8_t isStrEqual(uint8_t*, uint8_t*);
 int8_t findIndexOfToken(uint8_t*);
 
 
-extern uint8_t displayStringBuffer[DISPLAY_STRING_SIZE];
 extern uint8_t displayBtDataBuffer[DISPLAY_DATA_SIZE];
-extern void resetDisplayState();
-extern void ClearDisplayString();
-extern void ForceShowString(uint8_t* str);
-extern void ExecuteWithDelay(void(*ptr)(), uint8_t delay);
 extern enum PlaybackState playbackState;
 
 struct SongInfo
@@ -97,7 +92,7 @@ void HandleParseData()
 		{
 			if (memcmp(argv[3], (uint8_t*) "A2DP", 4) == 0)
 			{
-				memcpy(bt_device_addr, argv[10], 17);				
+				memcpy(bt_device_addr, argv[10], BT_DEVICE_ADDR_SIZE);				
 			}			
 		}
 		return;
@@ -127,12 +122,10 @@ void HandleParseData()
 	if (memcmp(argv[0], (uint8_t*) "AVRCP", 5) == 0)
 	{
 		if (isStrEqual(argv[2], (uint8_t*) "GET_ELEMENT_ATTRIBUTES_RSP"))
-		{
-
-			memset(displayBtDataBuffer, 0x00, DISPLAY_DATA_SIZE);
+		{			
+			ClearDisplayBtString();
 			if (getSongInfo() == ERROR)
-			{
-				ClearDisplayString();
+			{				
 				return;
 			}
 
@@ -272,7 +265,6 @@ void HandleParseData()
 				bt_TrackChangedEventSubscribe();
 				bt_PlaybackStatusEventSubscribe();
 				bt_GetAVRCP_metadata();
-				//bt_Play();
 			}
 		}
 		return;

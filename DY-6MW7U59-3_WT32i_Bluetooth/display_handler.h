@@ -6,9 +6,11 @@
 #define BLUETOOTH_CHAR 0x86
 #define ACC_OFF 0x40
 
+void ExecuteWithDelay(void(*ptr)(), uint8_t delay);
 void HandleDisplayData(void);
 void SendDisplayData(void);
 void GetMode(void);
+void ForceShowString(uint8_t*);
 uint8_t isAux;
 
 #endif

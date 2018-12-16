@@ -29,10 +29,16 @@ uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 uint8_t displayRxBuffer[DISPLAY_BUFFER_SIZE];
 uint8_t displayStringBuffer[DISPLAY_STRING_SIZE];
 uint8_t displayDataBuffer[DISPLAY_DATA_SIZE];
+uint8_t displayBtDataBuffer[DISPLAY_DATA_SIZE];
 
 int greets_counter = 0;
 uint8_t isAux;
 uint8_t btLastState = 0;
+uint8_t force_show = 0;
+uint8_t* force_show_string;
+uint8_t exec_delay_timer = 0xFF;
+uint8_t exec_delay;
+void(*func)();
 
 enum displayState
 {
@@ -41,6 +47,13 @@ enum displayState
 	end,
 	reverse_scroll
 } display_state;
+
+void ExecuteWithDelay(void(*ptr)(), uint8_t delay)
+{
+	if (exec_delay_timer == 0xFF) exec_delay_timer = 0;
+	exec_delay = delay;
+	func = ptr;	
+}
 
 void GetMode()
 {
@@ -54,7 +67,7 @@ void GetMode()
 		}
 }
 
-int offset;       // in future will be moved to constants
+int offset;             // in future will be moved to constants
 uint8_t offset_step;
 uint8_t delay;
 uint8_t DISPLAY_STRING_DELAY = 10;
@@ -71,8 +84,29 @@ void ClearDisplayString()
 	memset(displayDataBuffer, 0x00, DISPLAY_DATA_SIZE);
 	memset(displayStringBuffer, 0x00, DISPLAY_STRING_SIZE);
 }
+void ForceShowString(uint8_t* str)
+{
+	force_show = 1;
+	force_show_string = str;
+	resetDisplayState();
+	ClearDisplayString();
+	for (int i = 0; i < DISPLAY_DATA_SIZE; i++)
+	{
+		displayDataBuffer[i] = force_show_string[i];
+		if (force_show_string[i] == 0x00) break;
+	}
+}
 void HandleDisplayData()
 {
+	if (exec_delay_timer != 0xFF)
+	{
+		exec_delay_timer++;		
+	}
+	if (exec_delay_timer == exec_delay)
+	{
+		(*func)();
+		exec_delay_timer = 0xFF;
+	}
 	static uint8_t frame_delay = 0;
 		
 		
@@ -89,89 +123,94 @@ void HandleDisplayData()
 
 	isAux = memcmp(&displayRxBuffer[6], (uint8_t*) "AUX", 3) == 0;
 
-	if (main_fsm == BT_ACTIVE || frame_delay < 5)
+	if (!force_show)
 	{
-		if (main_fsm != BT_ACTIVE)
-		{			
-			frame_delay++;
-		}
-		else
+		if (isAux && (main_fsm == BT_ACTIVE  || frame_delay < 5))
 		{
-			frame_delay = 0;
-		}
-		
-		if (*displayDataBuffer != 0x00)
-		{
-			switch (display_state)
-			{
-			case begin:
-				if (delay < DISPLAY_STRING_DELAY)
-					delay++;
-				else
-					display_state = scroll;
-				break;
-			case scroll:
-				if (displayDataBuffer[offset + DISPLAY_STRING_SIZE] != 0)
-				{
-					if (offset_step++ == OFFSET_STEP_DELAY)
-					{
-						offset++;
-						offset_step = 0;
-					}
-				}
-				else
-				{
-					display_state = end;
-				}
-				break;
-			case end:
-				if (delay > 0)
-					delay--;
-				else
-				{
-					display_state = reverse_scroll;
-				}
-				break;
-			case reverse_scroll:
-				if (offset != 0)
-					offset--;
-				else
-					display_state = begin;
-				break;
-			}
-
-			memcpy(displayStringBuffer, &displayDataBuffer[offset], DISPLAY_STRING_SIZE);
-		}
-
-		if (isAux)
-		{
-			if (*displayStringBuffer == 0x00 || playbackState == stop)
-			{
-				displayBuffer[2] = BLUETOOTH_CHAR;
-				memcpy(&displayBuffer[3], (uint8_t*) " Bluetooth ", 11);
+			if (main_fsm != BT_ACTIVE)
+			{			
+				frame_delay++;
 			}
 			else
 			{
-				for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++)
-				{
-					if (displayStringBuffer[i] == 0)
-						displayBuffer[i + 2] = ' ';
-					else
-						displayBuffer[i + 2] = displayStringBuffer[i];
-					//SdisplayBuffer[18] |= 0x03; //track name sign
-				}
+				frame_delay = 0;
 			}
 
-			//if (playbackState == pause)
-			//{
-			//   displayBuffer[2] = BLUETOOTH_CHAR;
-			//   memcpy(&displayBuffer[3], (uint8_t*) " Paused... ", 11);
-			//   resetDisplayState();
-			//}
+			if ((*displayBtDataBuffer == 0x00 || playbackState == stop))
+			{
+				memset(displayDataBuffer, 0x00, DISPLAY_DATA_SIZE);
+				displayDataBuffer[0] = BLUETOOTH_CHAR;
+				memcpy(&displayDataBuffer[1], (uint8_t*) " Bluetooth ", 11);
+				resetDisplayState();
+			}		
+			else
+			{
+				ClearDisplayString();
+				memcpy(displayDataBuffer, displayBtDataBuffer, DISPLAY_DATA_SIZE);
+			}		
 		}
 		else
+		{
 			resetDisplayState();
+			ClearDisplayString();
+			memcpy(displayDataBuffer, &displayRxBuffer[2], DISPLAY_STRING_SIZE);
+		}
 	}
+	
+	
+	switch (display_state)
+	{
+	case begin:
+		if (delay < DISPLAY_STRING_DELAY)
+			delay++;
+		else
+			display_state = scroll;
+		break;
+	case scroll:
+		if (displayDataBuffer[offset + DISPLAY_STRING_SIZE] != 0)
+		{
+			if (offset_step++ == OFFSET_STEP_DELAY)
+			{
+				offset++;
+				offset_step = 0;
+			}
+		}
+		else
+		{
+			display_state = end;
+		}
+		break;
+	case end:
+		if (delay > 0)
+			delay--;
+		else
+		{
+			if (force_show)
+			{
+				resetDisplayState();
+				force_show = 0;
+			}
+			display_state = reverse_scroll;
+		}
+		break;
+	case reverse_scroll:
+		if (offset != 0)
+			offset--;
+		else
+			display_state = begin;
+		break;
+	}
+	memcpy(displayStringBuffer, &displayDataBuffer[offset], DISPLAY_STRING_SIZE);
+	
+	for (uint8_t i = 0; i < DISPLAY_STRING_SIZE; i++)
+	{
+		if (displayStringBuffer[i] == 0)
+			displayBuffer[i + 2] = ' ';
+		else
+			displayBuffer[i + 2] = displayStringBuffer[i];
+	}
+	
+	
 
 	if (greets_counter < 30)
 	{
@@ -182,7 +221,7 @@ void HandleDisplayData()
 	{
 
 		Mode_itterupt = MODE_ITTERUPT_CYCLES * 2;
-		greets_counter = 0;       // ACC OFF byte for dimm display
+		greets_counter = 0;             // ACC OFF byte for dimm display
 		if(main_fsm == BT_ACTIVE)
 		{
 			btLastState = 1;

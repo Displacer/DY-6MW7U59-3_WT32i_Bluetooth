@@ -246,6 +246,8 @@ void HandleCommandData()
 		{
 			if (avrcp_trig == 0)
 			{
+				//bt_GetBtDeviceAddres();
+				//bt_GetDeviceName();
 				bt_Next();
 				avrcp_trig = 1;
 			}

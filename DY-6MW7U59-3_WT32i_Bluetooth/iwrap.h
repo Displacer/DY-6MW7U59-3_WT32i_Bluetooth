@@ -13,11 +13,23 @@
  * AVRCP 0 GET_PLAY_STATUS_RSP 000506b6 0002419c PLAYING
  *                              lenght  position status
  *
+ * Get bt device name 
+ * NAME 40:9C:28:68:A0:05
+ * NAME 40:9C:28:68:A0:05 "iPhone Nick"
+ * NAME ERROR 0x104 00:07:80:FF:FF:F2 HCI_ERROR_PAGE_TIMEOUT
+ * 
+ *
+ *
  * */
 
 #ifndef __IWRAP_H__
 #define __IWRAP_H__
 
+#define BT_DEVICE_ADDR_SIZE 17
+#define BT_DEVICE_NAME_SIZE 14 + 1 //14 - maximum length of nRF51 SDK + 1 for null
+
+
+#define BT_LIST_CMD "LIST \r\n"
 #define EVENT_PLAYBACK_STATUS_CHANGED "AVRCP PDU 31 1 \r\n"
 #define EVENT_TRACK_CHANGED "AVRCP PDU 31 2 \r\n"
 #define AVRCP_GET_ARTIST_TITLE "AVRCP PDU 20 2 1 2 \r\n"
@@ -39,5 +51,7 @@ void bt_Prev();
 void bt_TrackChangedEventSubscribe();
 void bt_PlaybackStatusEventSubscribe();
 void bt_GetAVRCP_metadata();
+void bt_GetBtDeviceAddres();
+void bt_GetDeviceName();
 
 #endif

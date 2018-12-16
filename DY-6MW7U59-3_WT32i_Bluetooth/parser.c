@@ -6,20 +6,25 @@
 #include "string.h"
 
 uint16_t str_idx;
+extern uint8_t bt_device_addr[BT_DEVICE_ADDR_SIZE];
+extern uint8_t bt_device_name[BT_DEVICE_NAME_SIZE];
 uint8_t buf[BUFF_SIZE];
 uint8_t* argv[ARGS_COUNT];
 uint8_t argc;
 uint8_t text_flag;
 uint8_t parsing = 0;
 
-uint16_t _atoi(uint8_t*);
+int16_t _atoi(uint8_t*);
 uint8_t isStrEqual(uint8_t*, uint8_t*);
 int8_t findIndexOfToken(uint8_t*);
 
+
 extern uint8_t displayStringBuffer[DISPLAY_STRING_SIZE];
-extern uint8_t displayDataBuffer[DISPLAY_DATA_SIZE];
+extern uint8_t displayBtDataBuffer[DISPLAY_DATA_SIZE];
 extern void resetDisplayState();
 extern void ClearDisplayString();
+extern void ForceShowString(uint8_t* str);
+extern void ExecuteWithDelay(void(*ptr)(), uint8_t delay);
 extern enum PlaybackState playbackState;
 
 struct SongInfo
@@ -31,11 +36,14 @@ struct SongInfo
 
 uint16_t unicodeToChar(uint16_t w_char);
 
-uint16_t _atoi(uint8_t* str)
+int16_t _atoi(uint8_t* str)
 {
-	uint16_t res = 0;
-	for (uint8_t i = 0; str[i] != '\0'; ++i)
+	int16_t res = 0;
+	for (uint8_t i = 0; str[i] != '\0'; ++i)		
+	{
+		if (str[i] - '0' > 9 || str[i] - '0' < 0) return -1; 
 		res = res * 10 + str[i] - '0';
+	}
 	return res;
 }
 
@@ -78,11 +86,50 @@ void HandleParseData()
 	uint8_t idx = 0;
 	uint16_t unicode_char;
 
+	if (memcmp(argv[0], (uint8_t*) "LIST", 4) == 0)
+	{
+		if (argv[1][0] == '0' && argc == 2)
+		{
+			memset(bt_device_addr, 0x00, BT_DEVICE_ADDR_SIZE);
+			memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);
+		}
+		else if (memcmp(argv[2], (uint8_t*) "CONNECTED", 9) == 0)
+		{
+			if (memcmp(argv[3], (uint8_t*) "A2DP", 4) == 0)
+			{
+				memcpy(bt_device_addr, argv[10], 17);				
+			}			
+		}
+		return;
+	}
+	
+	if (memcmp(argv[0], (uint8_t*) "NAME", 4) == 0)
+	{
+		if (argc == 3)		
+		{
+			for (uint8_t i = 0; i < BT_DEVICE_NAME_SIZE; i++)
+			{				
+				bt_device_name[i] = argv[2][i];
+				if (argv[2][i] == 0x00) break;
+			}
+			uint8_t tmpbuf[BT_DEVICE_NAME_SIZE + 15];
+			memcpy(tmpbuf, "Connected to: ", 14);
+			memcpy(&tmpbuf[14], bt_device_name, BT_DEVICE_NAME_SIZE);
+			ForceShowString(tmpbuf);
+		}
+		else 
+		{
+			memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);			
+		}
+		return;
+	}	
+	
 	if (memcmp(argv[0], (uint8_t*) "AVRCP", 5) == 0)
 	{
 		if (isStrEqual(argv[2], (uint8_t*) "GET_ELEMENT_ATTRIBUTES_RSP"))
 		{
 
+			memset(displayBtDataBuffer, 0x00, DISPLAY_DATA_SIZE);
 			if (getSongInfo() == ERROR)
 			{
 				ClearDisplayString();
@@ -90,7 +137,7 @@ void HandleParseData()
 			}
 
 			cnt = 0;
-			idx = 0;
+			idx = 0;			
 			if (songInfo.Title)
 			{
 				do
@@ -104,23 +151,23 @@ void HandleParseData()
 						unicode_char = unicodeToChar(unicode_char);
 						if (unicode_char & 0xFF00)
 						{
-							displayDataBuffer[cnt] = (uint8_t)(unicode_char >> 8);
+							displayBtDataBuffer[cnt] = (uint8_t)(unicode_char >> 8);
 							cnt++;
-							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+							displayBtDataBuffer[cnt] = (uint8_t) unicode_char;
 						}
 						else
-							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+							displayBtDataBuffer[cnt] = (uint8_t) unicode_char;
 						idx++;
 					}
 					else
-						displayDataBuffer[cnt] = songInfo.Title[idx];
+						displayBtDataBuffer[cnt] = songInfo.Title[idx];
 				} while (songInfo.Title[idx++] != 0 && cnt++ < DISPLAY_DATA_SIZE);
 
 				if (songInfo.Artist)
 				{
-					displayDataBuffer[cnt++] = ' ';
-					displayDataBuffer[cnt++] = '-';
-					displayDataBuffer[cnt++] = ' ';
+					displayBtDataBuffer[cnt++] = ' ';
+					displayBtDataBuffer[cnt++] = '-';
+					displayBtDataBuffer[cnt++] = ' ';
 				}
 			}
 
@@ -139,16 +186,16 @@ void HandleParseData()
 						unicode_char = unicodeToChar(unicode_char);
 						if (unicode_char & 0xFF00)
 						{
-							displayDataBuffer[cnt] = (uint8_t)(unicode_char >> 8);
+							displayBtDataBuffer[cnt] = (uint8_t)(unicode_char >> 8);
 							cnt++;
-							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+							displayBtDataBuffer[cnt] = (uint8_t) unicode_char;
 						}
 						else
-							displayDataBuffer[cnt] = (uint8_t) unicode_char;
+							displayBtDataBuffer[cnt] = (uint8_t) unicode_char;
 						idx++;
 					}
 					else
-						displayDataBuffer[cnt] = songInfo.Artist[idx];
+						displayBtDataBuffer[cnt] = songInfo.Artist[idx];
 				} while (songInfo.Artist[idx++] != 0 && cnt++ < DISPLAY_DATA_SIZE);
 			}
 
@@ -156,7 +203,7 @@ void HandleParseData()
 			cnt++;
 			for (int i = cnt; i < DISPLAY_DATA_SIZE; i++)
 			{
-				displayDataBuffer[i] = 0;
+				displayBtDataBuffer[i] = 0;
 			}
 
 			idx = 0;
@@ -198,13 +245,16 @@ void HandleParseData()
 
 	if (isStrEqual(argv[0], (uint8_t*) "CONNECT"))
 	{
+		
 		if (isStrEqual(argv[2], (uint8_t*) "AVRCP"))
-		{
+		{						
 			bt_TrackChangedEventSubscribe();
 			bt_PlaybackStatusEventSubscribe();
-			bt_GetAVRCP_metadata();
-			bt_Play();
-		}
+			bt_GetAVRCP_metadata();			
+			bt_Play();	
+			bt_GetBtDeviceAddres();
+			ExecuteWithDelay(bt_GetDeviceName, 5);			
+		}			
 		return;
 	}
 
@@ -227,8 +277,14 @@ void HandleParseData()
 		}
 		return;
 	}
+	
+	//resetDisplayState();
+	//ClearDisplayString();
+	//memcpy(displayDataBuffer, bt_device_addr, BT_DEVICE_ADDR_SIZE);
+	//memcpy(displayDataBuffer, buf, 300);
+	//memcpy(displayDataBuffer, bt_device_name, 16);
 }
-uint16_t token_lenght;
+int16_t token_lenght;
 void Parse_init()
 {
 	memset(buf, 0x00, BUFF_SIZE);
@@ -259,26 +315,40 @@ void Parse(uint8_t ch)
 
 	if (text_flag)
 	{
-		if (token_lenght--)
+		if (token_lenght > 0)
+		{			
+			if (token_lenght--)
+			{
+				str_idx++;
+				return;
+			}
+
+			buf[str_idx] = 0;
+			str_idx++;
+			text_flag = 0;
+		}
+		else if (buf[str_idx] != '\"')
 		{
 			str_idx++;
 			return;
 		}
-
-		buf[str_idx] = 0;
-		str_idx++;
-		text_flag = 0;
 	}
 
 	if (buf[str_idx] == '\"')
 	{
-
-		argv[argc - 1] = &buf[str_idx + 1];
-		str_idx++;
-		token_lenght = _atoi(argv[argc - 2]);
-
-		text_flag = 1;
-		return;
+		if (text_flag)
+		{
+			buf[str_idx] = 0;
+			text_flag = 0;			
+		}
+		else
+		{
+			token_lenght = _atoi(argv[argc - 2]);
+			argv[argc - 1] = &buf[str_idx + 1];
+			text_flag = 1;	
+		}		
+		str_idx++;			
+		return;			
 	}
 
 	if (buf[str_idx] == ' ' && !text_flag)

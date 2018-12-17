@@ -20,6 +20,7 @@
 #include "usart_opts.h"
 #include "config.h"
 #include "iwrap.h"
+#include "command_queue.h"
 
 extern enum EMainFSM main_fsm;
 extern uint8_t Mode_itterupt;
@@ -35,9 +36,7 @@ uint8_t isAux;
 uint8_t btLastState = 0;
 uint8_t force_show = 0;
 uint8_t* force_show_string;
-uint8_t exec_delay_timer = 0xFF;
-uint8_t exec_delay;
-void(*func)();
+
 
 enum displayState
 {
@@ -48,68 +47,6 @@ enum displayState
 } display_state;
 
 
-#define MAX_QUEUE_COUNT_CALLBACKS 10
-int8_t front = 0;
-int8_t rear = -1;
-uint8_t queue_items_count = 0;
-
-typedef struct DelayedCallback_s
-{
-	void(*func)();
-	uint8_t exec_delay;
-	void* nextDelaydeCallback;
-} DelayedCallback_t;
-
-DelayedCallback_t* DelayedCallbacks[MAX_QUEUE_COUNT_CALLBACKS];
-
-uint8_t isFull()
-{
-	if (queue_items_count == MAX_QUEUE_COUNT_CALLBACKS) return 1;
-	else return 0;
-}
-
-void AddDelayedCallback(DelayedCallback_t* delayedCallback)
-{
-	if (!isFull()) {
-	
-		if (rear == MAX_QUEUE_COUNT_CALLBACKS - 1) {
-			rear = -1;            
-		}       
-		DelayedCallbacks[++rear] = delayedCallback;
-		queue_items_count++;
-	}
-}
-
-DelayedCallback_t* PopDelayedCallback()
-{
-	
-};
-
-void ExecuteWithDelay(void(*ptr)(), uint8_t delay)
-{
-	if (exec_delay_timer == 0xFF) exec_delay_timer = 0;
-	exec_delay = delay;
-	func = ptr;	
-}
-
-
-void CheckEvent()
-{
-	if (exec_delay_timer == exec_delay)
-	{
-		(*func)();
-		exec_delay_timer = 0xFF;
-	}
-}
-
-void IncTick()
-{	
-	if (exec_delay_timer != 0xFF)
-	{
-		exec_delay_timer++;		
-	}
-	CheckEvent();	
-}
 
 void GetMode()
 {

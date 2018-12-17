@@ -67,6 +67,7 @@
   </ImportGroup>
   <ItemGroup>
     <ClCompile Include="command_handler.c" />
+    <ClCompile Include="command_queue.c" />
     <ClCompile Include="display_handler.c" />
     <ClCompile Include="iwrap.c" />
     <ClCompile Include="main.c" />
@@ -75,6 +76,7 @@
     <ClCompile Include="tea6420.c" />
     <ClCompile Include="usart_opts.c" />
     <ClInclude Include="command_handler.h" />
+    <ClInclude Include="command_queue.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="display_handler.h" />
     <ClInclude Include="iwrap.h" />

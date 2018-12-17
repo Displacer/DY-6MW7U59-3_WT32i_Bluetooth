@@ -4,6 +4,7 @@
 #include "iwrap.h"
 #include "display_handler.h"
 #include "string.h"
+#include "command_queue.h"
 
 uint16_t str_idx;
 extern uint8_t bt_device_addr[BT_DEVICE_ADDR_SIZE];
@@ -211,13 +212,11 @@ void HandleParseData()
 				if (isStrEqual(argv[4], (uint8_t*) "TRACK_CHANGED"))
 				{
 					bt_GetAVRCP_metadata();
-					bt_TrackChangedEventSubscribe();
+					bt_TrackChangedEventSubscribe();					
 					return;
 				}
 				if (isStrEqual(argv[4], (uint8_t*) "PLAYBACK_STATUS_CHANGED"))
 				{
-					bt_PlaybackStatusEventSubscribe();
-
 					if (isStrEqual(argv[5], (uint8_t*) "PLAYING"))
 					{
 						playbackState = play;
@@ -230,6 +229,7 @@ void HandleParseData()
 					{
 						playbackState = stop;
 					}
+					bt_PlaybackStatusEventSubscribe();
 				}
 			}
 		}
@@ -240,13 +240,13 @@ void HandleParseData()
 	{
 		
 		if (isStrEqual(argv[2], (uint8_t*) "AVRCP"))
-		{						
-			bt_TrackChangedEventSubscribe();
-			bt_PlaybackStatusEventSubscribe();
-			bt_GetAVRCP_metadata();			
-			bt_Play();	
-			bt_GetBtDeviceAddres();
-			ExecuteWithDelay(bt_GetDeviceName, 5);			
+		{	
+			ExecuteWithDelay(bt_TrackChangedEventSubscribe, 5);
+			ExecuteWithDelay(bt_PlaybackStatusEventSubscribe, 5);
+			ExecuteWithDelay(bt_GetAVRCP_metadata, 5);			
+			ExecuteWithDelay(bt_GetBtDeviceAddres, 5);
+			ExecuteWithDelay(bt_GetDeviceName, 5);	
+			ExecuteWithDelay(bt_Play, 5);
 		}			
 		return;
 	}
@@ -262,9 +262,9 @@ void HandleParseData()
 			}
 			if (isStrEqual(argv[2], (uint8_t*) "START"))
 			{
-				bt_TrackChangedEventSubscribe();
-				bt_PlaybackStatusEventSubscribe();
-				bt_GetAVRCP_metadata();
+				//bt_TrackChangedEventSubscribe();
+				//bt_PlaybackStatusEventSubscribe();
+				//bt_GetAVRCP_metadata();
 			}
 		}
 		return;

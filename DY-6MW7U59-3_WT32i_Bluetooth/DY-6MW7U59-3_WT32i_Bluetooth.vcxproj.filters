@@ -219,6 +219,9 @@
     <ClCompile Include="usart_opts.c">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="command_queue.c">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="command_handler.h">
@@ -240,6 +243,9 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="usart_opts.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="command_queue.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>

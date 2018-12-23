@@ -3,7 +3,7 @@
 
 #define NULL 0
 #define USART_BREAK_DETECTION_LBD  //if defined, break on rx line will detect via LBD iterrupt, otherwise via ERROR on line.
-#define MODE_ITTERUPT_CYCLES 30 // 30 * 30ms = 0.5 sec
+#define MODE_ITTERUPT_CYCLES 33 // 33 * 30ms = 1 sec
 #define PRESS_DELAY 66 // 2 sec = 30ms * 66
 #define BT_STBY_PIN GPIO_Pin_4
 #define REMOTE_ADC_IN_PIN GPIO_Pin_1

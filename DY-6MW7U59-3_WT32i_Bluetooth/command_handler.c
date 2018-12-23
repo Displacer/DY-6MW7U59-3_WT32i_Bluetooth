@@ -53,7 +53,7 @@
 extern uint8_t btLastState;
 extern enum PlaybackState playbackState;
 
-uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES;  // will check for 1 second for mode changes
+uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES;    // will check for 1 second for mode changes
 
 uint8_t default_command[COMMAND_BUFFER_SIZE] =
 { 0x41, 0x00, 0x00, 0x00, 0x30, 0x00, 0x71 };
@@ -79,14 +79,13 @@ void ActivateAUX()
 
 void Bluetooth_on()
 {
-	ClearDisplayString();
-	resetDisplayState();
+	ClearDisplayBtString();
+	ResetDisplayState();
 	GPIO_SetBits(GPIOA, BT_STBY_PIN);
 	tea6420_Bluetooth();
 }
 void Bluetooth_off()
 {	
-	ClearDisplayBtString();
 	bt_Pause();
 	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
 	tea6420_AUX();
@@ -111,14 +110,14 @@ void HandleCommandData()
 		return;
 
 	if (commandBuffer[1] == POWER_BUTTON || commandBuffer[1] == CD_BUTTON || commandBuffer[1] == FM_BUTTON)
-		Mode_itterupt = MODE_ITTERUPT_CYCLES;  // if power/cd/fm pressed
+		Mode_itterupt = MODE_ITTERUPT_CYCLES;    // if power/cd/fm pressed
 
 	 if(Mode_itterupt > 0)
-	{
+	{	
+		//memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
 		Mode_itterupt--;
 		if (Mode_itterupt == 0)
-		{
-			GetMode();
+		{			
 			if (btLastState == 1)
 			{
 				if (!isAux)
@@ -126,6 +125,7 @@ void HandleCommandData()
 				main_fsm = BT_ACTIVATE;
 				btLastState = 0;
 			}
+			CheckMode();
 		}
 	}
 
@@ -207,7 +207,7 @@ void HandleCommandData()
 		}
 		if (cd_button_state == LONG_PRESSED)
 		{
-			if (!isAux) act_aux = 1;  //TODO: убрать костыль
+			if (!isAux) act_aux = 1;    //TODO: убрать костыль
 		}
 		break;
 	case BT_PREPARE:
@@ -245,8 +245,6 @@ void HandleCommandData()
 		{
 			if (avrcp_trig == 0)
 			{
-				//bt_GetBtDeviceAddres();
-				//bt_GetDeviceName();
 				bt_Next();
 				avrcp_trig = 1;
 			}
@@ -286,8 +284,6 @@ void HandleCommandData()
 			main_fsm = GOING_NORMAL_STATE;
 		}
 		break;
-	case BT_SHUTTING_DOWN:
-		break;
 	case GOING_NORMAL_STATE:
 		Bluetooth_off();
 		main_fsm = NORMAL_STATE;
@@ -304,8 +300,6 @@ void HandleCommandData()
 			press_delay = 0;
 		}
 	}
-
 	SendCommand();
-
 }
 

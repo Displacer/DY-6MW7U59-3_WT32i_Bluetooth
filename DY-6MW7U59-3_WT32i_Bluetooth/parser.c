@@ -111,7 +111,7 @@ void HandleParseData()
 			uint8_t tmpbuf[BT_DEVICE_NAME_SIZE + 15];
 			memcpy(tmpbuf, "Connected to: ", 14);
 			memcpy(&tmpbuf[14], bt_device_name, BT_DEVICE_NAME_SIZE);
-			ForceShowString(tmpbuf);
+			ForceShowString(tmpbuf);			
 		}
 		else 
 		{
@@ -126,7 +126,8 @@ void HandleParseData()
 		{			
 			ClearDisplayBtString();
 			if (getSongInfo() == ERROR)
-			{				
+			{			
+				ForceShowString((uint8_t*)"No metadata :(\0");
 				return;
 			}
 
@@ -201,7 +202,7 @@ void HandleParseData()
 			}
 
 			idx = 0;
-			resetDisplayState();
+			ResetDisplayState();
 
 			return;
 		}
@@ -237,16 +238,15 @@ void HandleParseData()
 	}
 
 	if (isStrEqual(argv[0], (uint8_t*) "CONNECT"))
-	{
-		
+	{		
 		if (isStrEqual(argv[2], (uint8_t*) "AVRCP"))
 		{	
 			ExecuteWithDelay(bt_TrackChangedEventSubscribe, 5);
-			ExecuteWithDelay(bt_PlaybackStatusEventSubscribe, 5);
-			ExecuteWithDelay(bt_GetAVRCP_metadata, 5);			
+			ExecuteWithDelay(bt_PlaybackStatusEventSubscribe, 5);					
 			ExecuteWithDelay(bt_GetBtDeviceAddres, 5);
-			ExecuteWithDelay(bt_GetDeviceName, 5);	
-			ExecuteWithDelay(bt_Play, 5);
+			ExecuteWithDelay(bt_GetDeviceName, 1);
+			ExecuteWithDelay(bt_GetAVRCP_metadata, 1);				
+			ExecuteWithDelay(bt_Play, 5);				
 		}			
 		return;
 	}

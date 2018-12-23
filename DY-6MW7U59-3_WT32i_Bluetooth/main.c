@@ -144,7 +144,7 @@ void SetupPeriph()
 	TIM_TimeBaseStructInit(&TIMER_InitStructure);
 	TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIMER_InitStructure.TIM_Prescaler = 7200;
-	TIMER_InitStructure.TIM_Period = 300;    //30ms
+	TIMER_InitStructure.TIM_Period = 300;     //30ms
 	TIM_TimeBaseInit(TIM2, &TIMER_InitStructure);
 	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM2, ENABLE);
@@ -164,7 +164,7 @@ void SetupPeriph()
 	TIM_TimeBaseStructInit(&TIMER_InitStructure);
 	TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIMER_InitStructure.TIM_Prescaler = 7200;
-	TIMER_InitStructure.TIM_Period = 100;    // 10ms
+	TIMER_InitStructure.TIM_Period = 100;     // 10ms
 	TIM_TimeBaseInit(TIM3, &TIMER_InitStructure);
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM3, ENABLE);
@@ -268,7 +268,6 @@ void SetupPeriph()
 
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-
 }
 
 void InitDisplay()
@@ -367,7 +366,7 @@ void TIM2_IRQHandler(void)
 		if (d_rcvcplt)
 		{
 			HandleDisplayData();
-			USART_ReceiveData(USART2);    //For clear IDLE flag
+			USART_ReceiveData(USART2);     //For clear IDLE flag
 			d_rcvcplt = 0;
 			d_idx = 0;
 		}
@@ -381,7 +380,7 @@ void TIM3_IRQHandler(void)
 		if (c_rcvcplt)
 		{
 			HandleCommandData();
-			USART_ReceiveData(USART3);    //For clear IDLE flag
+			USART_ReceiveData(USART3);     //For clear IDLE flag
 			c_rcvcplt = 0;
 			c_idx = 0;
 		}
@@ -405,10 +404,10 @@ void SetupClock()
 	RCC_DeInit();
 	RCC_HSEConfig(RCC_HSE_ON);
 	while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET) ;
-	RCC_HCLKConfig(RCC_SYSCLK_Div1);    // HCLK   = SYSCLK
-	RCC_PCLK2Config(RCC_HCLK_Div1);    // PCLK2  = HCLK
-	RCC_PCLK1Config(RCC_HCLK_Div2);    // PCLK1  = HCLK/2
-	RCC_ADCCLKConfig(RCC_PCLK2_Div4);    // ADCCLK = PCLK2/4
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);     // HCLK   = SYSCLK
+	RCC_PCLK2Config(RCC_HCLK_Div1);     // PCLK2  = HCLK
+	RCC_PCLK1Config(RCC_HCLK_Div2);     // PCLK1  = HCLK/2
+	RCC_ADCCLKConfig(RCC_PCLK2_Div4);     // ADCCLK = PCLK2/4
 
 	// PLLCLK = 8MHz * 9 = 72 MHz
 	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
@@ -424,7 +423,7 @@ int main(void)
 	SetupPeriph();
 	//InitDisplay();
 
-	while (1)
+	while(1)
 	{
 
 	}

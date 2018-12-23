@@ -1,5 +1,6 @@
 #include <stm32f10x.h>
 #include "command_queue.h"
+#include "display_handler.h"
 #include "config.h"
 
 int8_t front = 0;
@@ -37,7 +38,11 @@ void ExecuteWithDelay(void(*ptr)(), uint8_t delay)
 		DelayedCallbacks[rear].exec_delay = delay;
 		queue_items_count++;
 	}
-	else return;
+	else 
+	{
+		ForceShowString((uint8_t*)"Command queue is full!\0");
+		return;
+	}
 }
 
 

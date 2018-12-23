@@ -48,25 +48,25 @@ enum displayState
 
 
 
-void GetMode()
+void CheckMode()
 {
 	if (GPIO_ReadOutputDataBit(GPIOA, BT_STBY_PIN)) // if bt module activated
 		{
 			if (!(isAux || main_fsm == BT_ACTIVE))
-			{
-				Bluetooth_off();
+			{				
+				ForceShowString((uint8_t*)"BT shutting down from CheckMode! Fix it!\0");
 				main_fsm = GOING_NORMAL_STATE;
 			}			
 		}
 }
 
-int offset;               // in future will be moved to constants
+int offset;                // in future will be moved to constants
 uint8_t offset_step;
 uint8_t delay;
 uint8_t DISPLAY_STRING_DELAY = 10;
 uint8_t OFFSET_STEP_DELAY = 1;
 
-void resetDisplayState()
+void ResetDisplayState()
 {
 	display_state = begin;
 	offset = 0;
@@ -83,9 +83,10 @@ void ClearDisplayBtString()
 }
 void ForceShowString(uint8_t* str)
 {
+	if (force_show) return;
 	force_show = 1;
 	force_show_string = str;
-	resetDisplayState();
+	ResetDisplayState();
 	ClearDisplayString();
 	for (int i = 0; i < DISPLAY_DATA_SIZE; i++)
 	{
@@ -95,7 +96,17 @@ void ForceShowString(uint8_t* str)
 }
 
 
+void SendDisplayData()
+{
+	uint8_t chksum = 0;
 
+	for (int i = 0; i < DISPLAY_BUFFER_SIZE - 1; i++)
+	{
+		chksum += displayBuffer[i];
+	}
+	displayBuffer[DISPLAY_BUFFER_SIZE - 1] = chksum;
+	USART2SendDMA();
+}
 
 
 void HandleDisplayData()
@@ -135,7 +146,7 @@ void HandleDisplayData()
 				memset(displayDataBuffer, 0x00, DISPLAY_DATA_SIZE);
 				displayDataBuffer[0] = BLUETOOTH_CHAR;
 				memcpy(&displayDataBuffer[1], (uint8_t*) " Bluetooth ", 11);
-				resetDisplayState();
+				ResetDisplayState();
 			}		
 			else
 			{
@@ -145,7 +156,7 @@ void HandleDisplayData()
 		}
 		else
 		{
-			resetDisplayState();
+			ResetDisplayState();
 			ClearDisplayString();
 			memcpy(displayDataBuffer, &displayBuffer[2], DISPLAY_STRING_SIZE);
 		}
@@ -189,7 +200,7 @@ void HandleDisplayData()
 		{
 			if (force_show)
 			{
-				resetDisplayState();
+				ResetDisplayState();
 				force_show = 0;
 			}
 			display_state = begin;			
@@ -216,7 +227,7 @@ void HandleDisplayData()
 	{
 
 		Mode_itterupt = MODE_ITTERUPT_CYCLES * 2;
-		greets_counter = 0;               // ACC OFF byte for dimm display
+		greets_counter = 0;                // ACC OFF byte for dimm display
 		if(main_fsm == BT_ACTIVE)
 		{
 			btLastState = 1;
@@ -238,14 +249,4 @@ void HandleDisplayData()
 	      //displayBuffer[14] = 0x00;
 	      SendDisplayData();
 }
-void SendDisplayData()
-{
-	uint8_t chksum = 0;
 
-	for (int i = 0; i < DISPLAY_BUFFER_SIZE - 1; i++)
-	{
-		chksum += displayBuffer[i];
-	}
-	displayBuffer[DISPLAY_BUFFER_SIZE - 1] = chksum;
-	USART2SendDMA();
-}

@@ -16,7 +16,6 @@ enum EMainFSM
 	BT_PREPARE,
 	BT_ACTIVATE,
 	BT_ACTIVE,
-	BT_SHUTTING_DOWN,
 	GOING_NORMAL_STATE,
 };
 void HandleCommandData(void);

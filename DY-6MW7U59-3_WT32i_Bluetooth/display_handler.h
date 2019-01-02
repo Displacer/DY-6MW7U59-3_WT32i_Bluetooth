@@ -1,5 +1,6 @@
 #ifndef __DISPLAYHANDLER_H__
 #define __DISPLAYHANDLER_H__
+#include <stm32f10x.h>
 
 #define DISPLAY_BUFFER_SIZE 23
 #define DISPLAY_STRING_SIZE 12
@@ -10,7 +11,6 @@
 void ResetDisplayState(void);
 void ClearDisplayString(void);
 void ClearDisplayBtString(void);
-void ExecuteWithDelay(void(*ptr)(), uint8_t delay);
 void HandleDisplayData(void);
 void CheckMode(void);
 void ForceShowString(uint8_t*);

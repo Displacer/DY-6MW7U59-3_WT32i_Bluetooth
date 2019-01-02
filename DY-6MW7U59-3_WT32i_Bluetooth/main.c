@@ -17,8 +17,7 @@
 
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
-extern uint8_t Mode_itterupt;
-extern uint8_t parsing;
+extern uint8_t mode_interrupt;
 extern enum EMainFSM main_fsm;
 
 void SetupPeriph()
@@ -289,7 +288,7 @@ void InitDisplay()
 		asm("NOP");
 		//Dummy delay for display initialization
 	}
-	Mode_itterupt = MODE_ITTERUPT_CYCLES * 2;
+	mode_interrupt = MODE_INTERRUPT_CYCLES * 2;
 	SetupPeriph();
 
 	if (main_fsm != BT_ACTIVE)
@@ -303,7 +302,7 @@ void USART1_IRQHandler(void)
 {
 	if ((USART1->SR & USART_FLAG_RXNE) != (u16) RESET)
 	{
-		if (!parsing)
+		if (!isParsing())
 			Parse_init();
 		Parse(USART_ReceiveData(USART1));
 	}

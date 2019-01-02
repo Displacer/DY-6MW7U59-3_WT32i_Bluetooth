@@ -7,5 +7,6 @@
 void Parse_init();
 uint8_t getSongInfo();
 void Parse(uint8_t);
+uint8_t isParsing(void);
 
 #endif

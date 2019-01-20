@@ -11,9 +11,14 @@
 #include "display_handler.h"
 #include "command_handler.h"
 #include "usart_opts.h"
-#include "tea6420.h"
 #include "parser.h"
 #include "config.h"
+
+#ifndef NEW_PCB
+#include "tea6420.h"  
+#endif
+
+
 
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
@@ -209,9 +214,11 @@ void SetupPeriph()
 	USART_DMACmd(USART3, USART_DMAReq_Tx, ENABLE);
 	DMA_ITConfig(DMA1_Channel2, DMA_IT_TC, ENABLE);
 	NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+	
+#ifndef NEW_PCB
 	///-------------------------------------------------
 	///I2C for Audio Matrix
-	///-------------------------------------------------
+	///-------------------------------------------------	
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7;
@@ -228,6 +235,7 @@ void SetupPeriph()
 
 	I2C_Cmd(TEA6420_I2C, ENABLE);
 	I2C_Init(TEA6420_I2C, &I2C_InitStructure);
+#endif
 
 	///-------------------------------------------------
 	///GPIOs for control
@@ -237,15 +245,25 @@ void SetupPeriph()
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
+	GPIO_Init(BT_STBY_PORT, &GPIO_InitStructure);
+	GPIO_ResetBits(BT_STBY_PORT, BT_STBY_PIN);
+	
+#ifdef NEW_PCB
+	GPIO_InitStructure.GPIO_Pin = DISPLAY_BREAK_SIGNAL_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(DISPLAY_BREAK_SIGNAL_PORT, &GPIO_InitStructure);
+	GPIO_ResetBits(DISPLAY_BREAK_SIGNAL_PORT, DISPLAY_BREAK_SIGNAL_PIN);
+				  
+#endif // NEW_PCB
+	
 	///-------------------------------------------------
 	///ADC for remote
 	///-------------------------------------------------
 
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;
 	GPIO_InitStructure.GPIO_Pin = REMOTE_ADC_IN_PIN;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(REMOTE_ADC_IN_PORT, &GPIO_InitStructure);
 
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
@@ -257,7 +275,7 @@ void SetupPeriph()
 	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 	ADC_InitStructure.ADC_NbrOfChannel = 1;
 
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_28Cycles5);
+	ADC_RegularChannelConfig(ADC1, REMOTE_ADC_CHANNEL, 1, ADC_SampleTime_28Cycles5);
 	ADC_Init(ADC1, &ADC_InitStructure);
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_ResetCalibration(ADC1);
@@ -271,31 +289,32 @@ void SetupPeriph()
 
 void InitDisplay()
 {
+#ifdef NEW_PCB
+	GPIO_SetBits(DISPLAY_BREAK_SIGNAL_PORT, DISPLAY_BREAK_SIGNAL_PIN);
+#else
 
-	GPIO_InitTypeDef GPIO_InitStructure;
 	GPIO_DeInit(GPIOA);
 	GPIO_DeInit(GPIOB);
 	USART_DeInit(USART2);
 	USART_DeInit(USART3);
-
-	GPIO_InitStructure.GPIO_Pin = DISPLAY_BREAK_SIGNAL_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	GPIO_ResetBits(GPIOA, DISPLAY_BREAK_SIGNAL_PIN);
+#endif
+	
 	for (uint32_t i = 0; i < 900000; i++)
 	{
 		asm("NOP");
 		//Dummy delay for display initialization
 	}
 	mode_interrupt = MODE_INTERRUPT_CYCLES * 2;
+	
+#ifdef NEW_PCB
+	GPIO_ResetBits(DISPLAY_BREAK_SIGNAL_PORT, DISPLAY_BREAK_SIGNAL_PIN);
+#else
 	SetupPeriph();
-
 	if (main_fsm != BT_ACTIVE)
 		tea6420_AUX();
 	else
 		tea6420_Bluetooth();
-
+#endif
 }
 
 void USART1_IRQHandler(void)
@@ -420,7 +439,6 @@ int main(void)
 {
 	SetupClock();
 	SetupPeriph();
-	//InitDisplay();
 
 	while(1)
 	{

@@ -46,9 +46,13 @@
 #include "command_handler.h"
 #include "display_handler.h"
 #include "usart_opts.h"
-#include "tea6420.h"
 #include "iwrap.h"
 #include "config.h"
+
+#ifndef NEW_PCB
+#include "tea6420.h"
+#endif // !NEW_PCB
+
 
 extern uint8_t btLastState;
 extern enum PlaybackState playbackState;
@@ -79,14 +83,19 @@ void Bluetooth_on()
 {
 	ClearDisplayBtString();
 	ResetDisplayState();
-	GPIO_SetBits(GPIOA, BT_STBY_PIN);
+	GPIO_SetBits(BT_STBY_PORT, BT_STBY_PIN);
+#ifndef NEW_PCB
 	tea6420_Bluetooth();
+#endif // !NEW_PCB
+	
 }
 void Bluetooth_off()
 {	
 	bt_Pause();
-	GPIO_ResetBits(GPIOA, BT_STBY_PIN);
+	GPIO_ResetBits(BT_STBY_PORT, BT_STBY_PIN);
+#ifndef NEW_PCB
 	tea6420_AUX();
+#endif // !NEW_PCB
 }
 
 void SendCommand()

@@ -48,7 +48,7 @@ enum displayState
 
 void CheckMode()
 {
-	if (GPIO_ReadOutputDataBit(GPIOA, BT_STBY_PIN)) // if bt module activated
+	if (GPIO_ReadOutputDataBit(BT_STBY_PORT, BT_STBY_PIN)) // if bt module activated
 		{
 			if (!(isAux && main_fsm == BT_ACTIVE))
 			{				

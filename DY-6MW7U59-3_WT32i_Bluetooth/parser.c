@@ -15,7 +15,6 @@ uint8_t argc;
 uint8_t text_flag;
 uint8_t parsing = 0;
 
-int16_t _atoi(uint8_t*);
 uint8_t isStrEqual(uint8_t*, uint8_t*);
 int8_t findIndexOfToken(uint8_t*);
 
@@ -27,10 +26,14 @@ struct SongInfo
 {
 	uint8_t* Title;
 	uint8_t* Artist;
-	uint8_t* Album;
 } songInfo;
 
 uint16_t unicodeToChar(uint16_t w_char);
+
+uint8_t isParsing()
+{
+	return parsing;
+}
 
 int16_t _atoi(uint8_t* str)
 {
@@ -56,7 +59,6 @@ int8_t findIndexOfToken(uint8_t* token)
 uint8_t getSongInfo()
 {
 	int8_t artist_idx = findIndexOfToken((uint8_t*) "ARTIST");
-	//int8_t album_idx = findIndexOfToken((uint8_t*) "ALBUM");
 	int8_t title_idx = findIndexOfToken((uint8_t*) "TITLE");
 
 	if (artist_idx == -1 && title_idx == -1)
@@ -116,6 +118,21 @@ void HandleParseData()
 		else 
 		{
 			memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);			
+		}
+		return;
+	}	
+	
+	if (memcmp(argv[0], (uint8_t*) "NO", 2) == 0)
+	{
+		if (memcmp(argv[1], (uint8_t*) "CARRIER", 7) == 0)		
+		{
+			if (*bt_device_name == 0x00) return;
+			uint8_t tmpbuf[BT_DEVICE_NAME_SIZE + 20];
+			memcpy(tmpbuf, "Disconnected from: ", 19);
+			memcpy(&tmpbuf[19], bt_device_name, BT_DEVICE_NAME_SIZE);
+			ForceShowString(tmpbuf);	
+			memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);
+			ClearDisplayBtString();
 		}
 		return;
 	}	
@@ -248,25 +265,6 @@ void HandleParseData()
 			ExecuteWithDelay(bt_GetAVRCP_metadata, 1);				
 			ExecuteWithDelay(bt_Play, 5);				
 		}			
-		return;
-	}
-
-	if (isStrEqual(argv[0], (uint8_t*) "A2DP"))
-	{
-		if (isStrEqual(argv[1], (uint8_t*) "STREAMING"))
-		{
-			if (isStrEqual(argv[2], (uint8_t*) "STOP"))
-			{
-				//ClearDisplayString();
-				//resetDisplayState();
-			}
-			if (isStrEqual(argv[2], (uint8_t*) "START"))
-			{
-				//bt_TrackChangedEventSubscribe();
-				//bt_PlaybackStatusEventSubscribe();
-				//bt_GetAVRCP_metadata();
-			}
-		}
 		return;
 	}
 	

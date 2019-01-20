@@ -53,28 +53,26 @@
 extern uint8_t btLastState;
 extern enum PlaybackState playbackState;
 
-uint8_t Mode_itterupt = MODE_ITTERUPT_CYCLES;    // will check for 1 second for mode changes
+uint8_t mode_interrupt = MODE_INTERRUPT_CYCLES;       // will check for 1 second for mode changes
 
 uint8_t default_command[COMMAND_BUFFER_SIZE] =
 { 0x41, 0x00, 0x00, 0x00, 0x30, 0x00, 0x71 };
 uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 
-uint8_t press_delay = 0, act_aux = 0;
+uint8_t press_delay = 0, act_aux = 0, button_val;
 
 enum ButtonState
 {
-	NOT_PRESSED,
 	PRESSED,
 	LONG_PRESSED,
 	RELEASED
-} fm_button_state = NOT_PRESSED, cd_button_state = NOT_PRESSED;
+} button_state = RELEASED;
 
 enum EMainFSM main_fsm = NORMAL_STATE;
 
 void ActivateAUX()
 {
-	if (!isAux)
-		act_aux = 1;
+	act_aux = isAux ? 0 : 1;
 }
 
 void Bluetooth_on()
@@ -109,21 +107,19 @@ void HandleCommandData()
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
 		return;
 
-	if (commandBuffer[1] == POWER_BUTTON || commandBuffer[1] == CD_BUTTON || commandBuffer[1] == FM_BUTTON)
-		Mode_itterupt = MODE_ITTERUPT_CYCLES;    // if power/cd/fm pressed
+	if (commandBuffer[1] & (CD_BUTTON | FM_BUTTON))
+		mode_interrupt = MODE_INTERRUPT_CYCLES;  
 
-	 if(Mode_itterupt > 0)
+	if (mode_interrupt > 0)
 	{	
-		//memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-		Mode_itterupt--;
-		if (Mode_itterupt == 0)
+		mode_interrupt--;
+		if (mode_interrupt == 0)
 		{			
 			if (btLastState == 1)
 			{
-				if (!isAux)
-					ActivateAUX();
 				main_fsm = BT_ACTIVATE;
 				btLastState = 0;
+				return;
 			}
 			CheckMode();
 		}
@@ -132,64 +128,37 @@ void HandleCommandData()
 	switch (commandBuffer[1])
 	{
 	case NOTHING:
-
-		if (fm_button_state == PRESSED)
-		{
-			main_fsm = GOING_NORMAL_STATE;
+		if (button_state == PRESSED)
+		{			
 			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-			commandBuffer[1] = FM_BUTTON;
+			commandBuffer[1] = button_val;
 			if (press_delay++ > 8)
 			{
-				fm_button_state = RELEASED;
+				if (button_val & (FM_BUTTON | CD_BUTTON)) main_fsm = GOING_NORMAL_STATE;
+				button_state = RELEASED;
 				press_delay = 0;
+				button_val = NOTHING;
 			}
 		}
-		if (fm_button_state == LONG_PRESSED)
+		if (button_state == LONG_PRESSED)
 		{
-			fm_button_state = RELEASED;
-		}
-
-		if (cd_button_state == PRESSED)
-		{
-			main_fsm = GOING_NORMAL_STATE;
-			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-			commandBuffer[1] = CD_BUTTON;
-			if (press_delay++ > 8)
-			{
-				cd_button_state = RELEASED;
-				press_delay = 0;
-			}
-		}
-		if (cd_button_state == LONG_PRESSED)
-		{
-			cd_button_state = RELEASED;
-		}
-		break;
-	case FM_BUTTON:
-		if (fm_button_state == LONG_PRESSED)
-		{
-			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
-			break;
-		}
-		fm_button_state = PRESSED;
-		commandBuffer[1] = NOTHING;
-		if (press_delay++ > PRESS_DELAY / 2)
-		{
-			fm_button_state = LONG_PRESSED;
-			press_delay = 0;
+			button_val = NOTHING;
+			button_state = RELEASED;
 		}
 		break;
 	case CD_BUTTON:
-		if (cd_button_state == LONG_PRESSED)
+	case FM_BUTTON:
+		button_val = commandBuffer[1];
+		if (button_state == LONG_PRESSED)
 		{
 			memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
 			break;
 		}
-		cd_button_state = PRESSED;
+		button_state = PRESSED;
 		commandBuffer[1] = NOTHING;
 		if (press_delay++ > PRESS_DELAY / 2)
 		{
-			cd_button_state = LONG_PRESSED;
+			button_state = LONG_PRESSED;
 			press_delay = 0;
 		}
 		break;
@@ -198,28 +167,24 @@ void HandleCommandData()
 	switch (main_fsm)
 	{
 	case NORMAL_STATE:
-		if (fm_button_state == LONG_PRESSED)
+		if (button_state == LONG_PRESSED)
 		{
-			if (isAux)
+			if (button_val == FM_BUTTON)
+			{							
 				main_fsm = BT_ACTIVATE;
-			else
-				main_fsm = BT_PREPARE;
+			}
+			if (button_val == CD_BUTTON)
+			{
+				ActivateAUX();        //TODO: убрать костыль
+			}
 		}
-		if (cd_button_state == LONG_PRESSED)
-		{
-			if (!isAux) act_aux = 1;    //TODO: убрать костыль
-		}
-		break;
-	case BT_PREPARE:
-		act_aux = 1;
-		main_fsm = BT_ACTIVATE;
 		break;
 	case BT_ACTIVATE:
+		ActivateAUX();
 		Bluetooth_on();
 		main_fsm = BT_ACTIVE;
 		break;
 	case BT_ACTIVE:
-
 		if (commandBuffer[1] == POWER_BUTTON)
 		{
 			if (avrcp_trig == 0)
@@ -279,7 +244,7 @@ void HandleCommandData()
 				break;
 			}
 		}
-		if (cd_button_state == LONG_PRESSED)
+		if (button_state == LONG_PRESSED && button_val == CD_BUTTON)
 		{
 			main_fsm = GOING_NORMAL_STATE;
 		}
@@ -289,15 +254,15 @@ void HandleCommandData()
 		main_fsm = NORMAL_STATE;
 		break;
 	}
-
+	static uint8_t aux_press_delay = 0;
 	if (act_aux)
 	{
 		memcpy(commandBuffer, default_command, COMMAND_BUFFER_SIZE);
 		commandBuffer[1] = CD_BUTTON;
-		if (press_delay++ > PRESS_DELAY)
+		if (aux_press_delay++ > PRESS_DELAY)
 		{
 			act_aux = 0;
-			press_delay = 0;
+			aux_press_delay = 0;
 		}
 	}
 	SendCommand();

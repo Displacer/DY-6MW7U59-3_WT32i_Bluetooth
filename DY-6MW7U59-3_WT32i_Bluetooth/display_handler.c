@@ -19,6 +19,7 @@
 #include "config.h"
 #include "iwrap.h"
 #include "command_queue.h"
+#include <stm32f10x_adc.h>
 
 extern enum EMainFSM main_fsm;
 extern uint8_t mode_interrupt;
@@ -101,7 +102,7 @@ void SendDisplayData()
 	USART2SendDMA();
 }
 
-
+extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 void HandleDisplayData()
 {
 	IncTick();
@@ -228,15 +229,44 @@ void HandleDisplayData()
 		main_fsm = NORMAL_STATE;
 	}
 
+	
+	if (displayBuffer[20] & 0x80)
+	{
+		displayBuffer[2] = 'A';
+		displayBuffer[3] = 'D';
+		displayBuffer[4] = 'C';
+		displayBuffer[5] = ':';
+		displayBuffer[6] = ' ';
+		displayBuffer[7] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
+		displayBuffer[8] = (ADC_GetConversionValue(ADC1) / 100) % 10 + 48;
+		displayBuffer[9] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
+		displayBuffer[10] = ADC_GetConversionValue(ADC1) % 10 + 48;
+		displayBuffer[11] = ' ';
+		
+	}
 	// cnt++;
 	// cnt2 = cnt / 5;
 	// displayBuffer[2] = mode + 48;
 	   //displayBuffer[3] = btLastState + 48;
-	   // displayBuffer[4] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
+	 //   displayBuffer[4] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
 	   // displayBuffer[5] = (ADC_GetConversionValue(ADC1) / 100) % 10 + 48;
-	   // displayBuffer[6] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
-	   // displayBuffer[7] = ADC_GetConversionValue(ADC1) % 10 + 48;
+	    //displayBuffer[6] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
+	    //displayBuffer[7] = ADC_GetConversionValue(ADC1) % 10 + 48;
 	      //displayBuffer[14] = 0x00;
+	/*
+	for (uint8_t i = 0, j = 2; i < COMMAND_BUFFER_SIZE; i++)
+	{
+		uint8_t tmp;
+		if (j > 12) continue;
+		tmp = (commandBuffer[i] >> 4);
+		tmp = tmp > 9 ? tmp - 10 + 'A' : tmp + '0';
+		displayBuffer[j++] = tmp;
+		tmp = commandBuffer[i] & 0x0F;
+		tmp = tmp > 9 ? tmp - 10 + 'A' : tmp + '0';
+		displayBuffer[j++] = tmp;
+		
+	}*/
+	
 	 SendDisplayData();
 }
 

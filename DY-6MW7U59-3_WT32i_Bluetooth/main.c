@@ -128,6 +128,7 @@ void SetupPeriph()
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
+	USART_InitStructure.USART_BaudRate = 13800;
 	USART_Init(USART3, &USART_InitStructure);
 	USART_Cmd(USART3, ENABLE);
 
@@ -290,9 +291,8 @@ void SetupPeriph()
 void InitDisplay()
 {
 #ifdef NEW_PCB
-	GPIO_SetBits(DISPLAY_BREAK_SIGNAL_PORT, DISPLAY_BREAK_SIGNAL_PIN);
+	GPIO_SetBits(DISPLAY_BREAK_SIGNAL_PORT, DISPLAY_BREAK_SIGNAL_PIN);	
 #else
-
 	GPIO_DeInit(GPIOA);
 	GPIO_DeInit(GPIOB);
 	USART_DeInit(USART2);

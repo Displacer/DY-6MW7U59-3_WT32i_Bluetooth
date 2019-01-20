@@ -28,7 +28,8 @@
  * 41 20 00 00 30 00 91 CD
  * 41 40 00 00 30 00 B1 FM
  *
- * Remote
+ * Remote 
+ * OLD PCB
  * Mode - 800-900
  * Next - 1000-1100
  * Prev - 1200-1300
@@ -108,7 +109,6 @@ void SendCommand()
 	commandBuffer[COMMAND_BUFFER_SIZE - 1] = chksum;
 	USART3SendDMA();
 }
-
 
 uint8_t avrcp_trig = 0;
 void HandleCommandData()

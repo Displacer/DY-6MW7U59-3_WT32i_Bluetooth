@@ -21,6 +21,7 @@
 <part id="8"/>
 <part id="9"/>
 <part id="10"/>
+<part id="11"/>
 </presentation>
 </folder>
 </info>
@@ -57,9 +58,9 @@
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/stm_lib/src/misc.c"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="0" selectionTopPixel="0"/>
 </editor>
-<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="C:/Users/MSI/Documents/GitHub/DY-6MW7U53-2-bluetooth/DY-6MW7U59-3_WT32i_Bluetooth/main.c" title="main.c" tooltip="C:/Users/MSI/Documents/GitHub/DY-6MW7U53-2-bluetooth/DY-6MW7U59-3_WT32i_Bluetooth/main.c" workbook="DefaultEditorWorkbook">
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="C:/Users/Lenovo/Documents/GitHub/DY-6MW7U59-3_WT32i_Bluetooth/DY-6MW7U59-3_WT32i_Bluetooth/main.c" title="main.c" tooltip="C:/Users/Lenovo/Documents/GitHub/DY-6MW7U59-3_WT32i_Bluetooth/DY-6MW7U59-3_WT32i_Bluetooth/main.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/main.c"/>
-<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="13692" selectionTopPixel="8714"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="13692" selectionTopPixel="7112"/>
 </editor>
 <editor id="org.eclipse.cdt.ui.editor.CEditor" name="system_stm32f10x.c" partName="system_stm32f10x.c" path="C:/Users/MSI/Documents/GitHub/DY-6MW7U53-2-bluetooth/CoIDE project/cmsis_boot/system_stm32f10x.c" title="system_stm32f10x.c" tooltip="C:/Users/MSI/Documents/GitHub/DY-6MW7U53-2-bluetooth/CoIDE project/cmsis_boot/system_stm32f10x.c" workbook="DefaultEditorWorkbook">
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/cmsis_boot/system_stm32f10x.c"/>
@@ -69,13 +70,17 @@
 <input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/config.h"/>
 <editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="331" selectionTopPixel="0"/>
 </editor>
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="command_handler.c" partName="command_handler.c" path="C:/Users/Lenovo/Documents/GitHub/DY-6MW7U59-3_WT32i_Bluetooth/DY-6MW7U59-3_WT32i_Bluetooth/command_handler.c" title="command_handler.c" tooltip="C:/Users/Lenovo/Documents/GitHub/DY-6MW7U59-3_WT32i_Bluetooth/DY-6MW7U59-3_WT32i_Bluetooth/command_handler.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="62" selectionOffset="2334" selectionTopPixel="1617"/>
+</editor>
 </editors>
 <views>
 <view id="org.eclipse.ui.views.PropertySheet" partName="Properties">
 <viewState/>
 </view>
 <view id="org.coocox.builder.ui.views.ProjectView" partName="Project">
-<viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="0">
+<viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="12">
 <expanded>
 <element path="/DY-6MW7U53-2-bluetooth"/>
 <element path="/DY-6MW7U53-2-bluetooth/cmsis_boot"/>
@@ -84,7 +89,7 @@
 <element path="/DY-6MW7U53-2-bluetooth/stm_lib/src"/>
 </expanded>
 <selection>
-<element path="/DY-6MW7U53-2-bluetooth/main.c"/>
+<element path="/DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c"/>
 </selection>
 </viewState>
 </view>
@@ -167,7 +172,7 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@10cc76a" ratio="0.7157309" ratioLeft="1415" ratioRight="562" relationship="4" relative="org.eclipse.ui.internal.ViewStack@fde050">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@10cc76a" ratio="0.71321964" ratioLeft="669" ratioRight="269" relationship="4" relative="org.eclipse.ui.internal.ViewStack@fde050">
 <folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.cdt.ui.callHierarchy" label="Call Hierarchy"/>
@@ -250,8 +255,8 @@
 <hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
 <hide_toolbar_item_id id="org.coocox.builder.ui.build"/>
 <hide_toolbar_item_id id="org.coocox.welcome.ui.action.welcome"/>
-<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideProgramDownloadAction"/>
 <hide_toolbar_item_id id="org.coocox.component.ui.ShowRepositoryAction"/>
+<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideProgramDownloadAction"/>
 <view id="org.coocox.codebugger.trace.ui.traceview"/>
 <view id="org.eclipse.debug.ui.VariableView"/>
 <view id="org.eclipse.ui.views.PropertySheet"/>
@@ -278,7 +283,7 @@
 </folder>
 </info>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@168822a" ratio="0.6992561" ratioLeft="658" ratioRight="283" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1f3c981">
-<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">
 <page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
 <page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.debug.ui.BreakpointView" label="LabelNotFound"/>
@@ -336,13 +341,8 @@
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DY-6MW7U53-2-bluetooth/cmsis_boot/system_stm32f10x.c"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/config.h"/>
 <editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DY-6MW7U53-2-bluetooth/main.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c"/>
 </editors>
-<item historyLabel="display_handler.c" index="1">
-<position info="not_deleted" x="4970" y="0"/>
-</item>
-<item historyLabel="parser.c" index="4">
-<position info="not_deleted" x="481" y="17"/>
-</item>
 <item historyLabel="parser.c" index="4">
 <position info="not_deleted" x="2194" y="0"/>
 </item>
@@ -484,8 +484,14 @@
 <item historyLabel="main.c" index="13">
 <position info="not_deleted" x="13467" y="0"/>
 </item>
-<item active="true" historyLabel="main.c" index="13">
+<item historyLabel="main.c" index="13">
 <position info="not_deleted" x="13694" y="0"/>
+</item>
+<item historyLabel="command_handler.c" index="14">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item active="true" historyLabel="command_handler.c" index="14">
+<position info="not_deleted" x="2334" y="62"/>
 </item>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
@@ -494,11 +500,41 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="config.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/config.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/config.h"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="command_handler.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/command_handler.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="system_stm32f10x.c" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/system_stm32f10x.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/system_stm32f10x.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="DY-6MW7U53-2-bluetooth/main.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/main.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="misc.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/misc.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/misc.c"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="iwrap.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/iwrap.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/iwrap.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/parser.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/parser.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="iwrap.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/iwrap.c">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/iwrap.c"/>
+</file>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="string.h" tooltip="C:\Program Files (x86)\GNU Tools Arm Embedded\7 2018-q2-update\arm-none-eabi\include\string.h">
+<persistable path="C:\Program Files (x86)\GNU Tools Arm Embedded\7 2018-q2-update\arm-none-eabi\include\string.h" project="DY-6MW7U53-2-bluetooth"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="usart_opts.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/usart_opts.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/usart_opts.h"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_adc.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_adc.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_adc.h"/>
 </file>
 <file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="string.h" tooltip="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\string.h">
 <persistable path="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\string.h" project="DY-6MW7U53-2-bluetooth"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="config.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/config.h">
+<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/config.h"/>
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x.h" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x.h">
 <persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/stm32f10x.h"/>
@@ -508,37 +544,6 @@
 </file>
 <file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="misc.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/misc.h">
 <persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/misc.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/parser.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/parser.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="parser.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/parser.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/parser.h"/>
-</file>
-<file factoryID="org.coocox.component.ui.editors.repository.RepositoryElementFactory" id="org.coocox.builder.ui.editors.repository.RepositoryBrowser" name="Repository" tooltip="Repository">
-<persistable>&#x0A;<subPage/>
-</persistable>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="iwrap.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/iwrap.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/iwrap.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="iwrap.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/iwrap.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/iwrap.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_gpio.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_gpio.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/stm32f10x_gpio.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_gpio.c" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/src/stm32f10x_gpio.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/src/stm32f10x_gpio.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="tea6420.h" tooltip="DY-6MW7U53-2-bluetooth/stm_lib/inc/tea6420.h">
-<persistable path="/DY-6MW7U53-2-bluetooth/stm_lib/inc/tea6420.h"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c"/>
-</file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c">
-<persistable path="/DY-6MW7U53-2-bluetooth/cmsis_boot/startup/startup_stm32f10x_md.c"/>
 </file>
 </mruList>
 </workbench>

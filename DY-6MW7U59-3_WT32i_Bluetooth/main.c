@@ -126,9 +126,10 @@ void SetupPeriph()
 	//USART3 Rx PB11
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	USART_InitStructure.USART_BaudRate = 13800;
+#warning Change after modifying schematics
+	USART_InitStructure.USART_BaudRate = 13700;
 	USART_Init(USART3, &USART_InitStructure);
 	USART_Cmd(USART3, ENABLE);
 
@@ -242,6 +243,7 @@ void SetupPeriph()
 	///GPIOs for control
 	///-------------------------------------------------
 
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	GPIO_InitStructure.GPIO_Pin = BT_STBY_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;

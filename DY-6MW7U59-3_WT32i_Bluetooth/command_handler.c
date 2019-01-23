@@ -114,7 +114,10 @@ uint8_t avrcp_trig = 0;
 void HandleCommandData()
 {
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
+	{
+		ForceShowString((uint8_t*)"CMD:Csum err");
 		return;
+	}
 
 	if (commandBuffer[1] & (CD_BUTTON | FM_BUTTON))
 		mode_interrupt = MODE_INTERRUPT_CYCLES;  

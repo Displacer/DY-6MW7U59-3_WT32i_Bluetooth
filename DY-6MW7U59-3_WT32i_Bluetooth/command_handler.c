@@ -48,6 +48,7 @@
 #include "display_handler.h"
 #include "usart_opts.h"
 #include "iwrap.h"
+#include "can.h"
 #include "config.h"
 
 #ifndef NEW_PCB
@@ -258,6 +259,7 @@ void HandleCommandData()
 		}
 		if (button_state == LONG_PRESSED && button_val == CD_BUTTON)
 		{
+			CanBeep(SHORT_BEEP);
 			main_fsm = GOING_NORMAL_STATE;
 		}
 		break;

@@ -7,11 +7,14 @@
 #include <stm32f10x_dma.h>
 #include <stm32f10x_i2c.h>
 #include <stm32f10x_adc.h>
+#include <stm32f10x_can.h>
 #include <misc.h>
+#include "string.h"
 #include "display_handler.h"
 #include "command_handler.h"
 #include "usart_opts.h"
 #include "parser.h"
+#include "can.h"
 #include "config.h"
 
 #ifndef NEW_PCB
@@ -34,6 +37,7 @@ void SetupPeriph()
 	DMA_InitTypeDef DMA_InitStruct;
 	I2C_InitTypeDef I2C_InitStructure;
 	ADC_InitTypeDef ADC_InitStructure;
+	CAN_InitTypeDef CAN_InitStructure;
 
 	///-------------------------------------------------
 	///USART1 for WT32i
@@ -128,8 +132,7 @@ void SetupPeriph()
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-#warning Change after modifying schematics
-	USART_InitStructure.USART_BaudRate = 13700;
+	USART_InitStructure.USART_BaudRate = 14400;
 	USART_Init(USART3, &USART_InitStructure);
 	USART_Cmd(USART3, ENABLE);
 
@@ -150,7 +153,7 @@ void SetupPeriph()
 	TIM_TimeBaseStructInit(&TIMER_InitStructure);
 	TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIMER_InitStructure.TIM_Prescaler = 7200;
-	TIMER_InitStructure.TIM_Period = 300;     //30ms
+	TIMER_InitStructure.TIM_Period = 300;           //30ms
 	TIM_TimeBaseInit(TIM2, &TIMER_InitStructure);
 	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM2, ENABLE);
@@ -170,7 +173,7 @@ void SetupPeriph()
 	TIM_TimeBaseStructInit(&TIMER_InitStructure);
 	TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIMER_InitStructure.TIM_Prescaler = 7200;
-	TIMER_InitStructure.TIM_Period = 100;     // 10ms
+	TIMER_InitStructure.TIM_Period = 100;           // 10ms
 	TIM_TimeBaseInit(TIM3, &TIMER_InitStructure);
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM3, ENABLE);
@@ -288,6 +291,70 @@ void SetupPeriph()
 
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+	
+	///-------------------------------------------------
+	///CAN just for fun
+	///-------------------------------------------------
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);   		
+	RCC_APB2PeriphClockCmd(CAN1_Periph, ENABLE); 
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_CAN1, ENABLE);  		
+	
+	GPIO_InitStructure.GPIO_Pin   = CAN1_RX_SOURCE;
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(CAN1_GPIO_PORT, &GPIO_InitStructure);
+	
+	GPIO_InitStructure.GPIO_Pin   = CAN1_TX_SOURCE;
+	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(CAN1_GPIO_PORT, &GPIO_InitStructure);
+	
+#ifdef CAN1_ReMap
+	GPIO_PinRemapConfig(GPIO_Remap1_CAN1, ENABLE);  			
+#endif
+
+
+	CAN_DeInit(CAN1);
+	CAN_StructInit(&CAN_InitStructure);
+
+	CAN_InitStructure.CAN_TTCM = DISABLE;
+	CAN_InitStructure.CAN_ABOM = DISABLE;
+	CAN_InitStructure.CAN_AWUM = ENABLE;
+	CAN_InitStructure.CAN_NART = DISABLE;
+	CAN_InitStructure.CAN_RFLM = DISABLE;
+	CAN_InitStructure.CAN_TXFP = DISABLE;
+	CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;  			
+	CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
+	CAN_InitStructure.CAN_BS1 = CAN_BS1_13tq;
+	CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
+	CAN_InitStructure.CAN_Prescaler = 27;    //For 36 MHz APB1 Clock only!
+
+
+	CAN_Init(CAN1, &CAN_InitStructure);
+
+	CAN_FilterInitTypeDef CAN_FilterInitStructure;
+	CAN_FilterInitStructure.CAN_FilterNumber = 1;
+	CAN_FilterInitStructure.CAN_FilterMode = CAN_FilterMode_IdMask;
+	CAN_FilterInitStructure.CAN_FilterScale = CAN_FilterScale_32bit;
+	CAN_FilterInitStructure.CAN_FilterIdHigh = 0x0000;
+	CAN_FilterInitStructure.CAN_FilterIdLow = 0x0000;
+	CAN_FilterInitStructure.CAN_FilterMaskIdHigh = 0x0000;
+	CAN_FilterInitStructure.CAN_FilterMaskIdLow = 0x0000;
+	CAN_FilterInitStructure.CAN_FilterFIFOAssignment = CAN_FIFO0;
+	CAN_FilterInitStructure.CAN_FilterActivation = ENABLE;
+	CAN_FilterInit(&CAN_FilterInitStructure);
+
+	// CAN FIFO0 message pending interrupt enable
+	CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
+
+	// NVIC Configuration
+	// Enable CAN1 RX0 interrupt IRQ channel
+	NVIC_InitStructure.NVIC_IRQChannel = USB_LP_CAN1_RX0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 }
 
 void InitDisplay()
@@ -386,7 +453,7 @@ void TIM2_IRQHandler(void)
 		if (d_rcvcplt)
 		{
 			HandleDisplayData();
-			USART_ReceiveData(USART2);     //For clear IDLE flag
+			USART_ReceiveData(USART2);           //For clear IDLE flag
 			d_rcvcplt = 0;
 			d_idx = 0;
 		}
@@ -400,7 +467,7 @@ void TIM3_IRQHandler(void)
 		if (c_rcvcplt)
 		{
 			HandleCommandData();
-			USART_ReceiveData(USART3);     //For clear IDLE flag
+			USART_ReceiveData(USART3);           //For clear IDLE flag
 			c_rcvcplt = 0;
 			c_idx = 0;
 		}
@@ -419,22 +486,43 @@ void DMA1_Channel2_IRQHandler(void)
 	DMA_Cmd(DMA1_Channel2, DISABLE);
 }
 
+void USB_LP_CAN1_RX0_IRQHandler(void)
+{
+	CanRxMsg RxMessage;
+	
+	memset(&RxMessage, NULL, sizeof(CanRxMsg));
+   
+	if (CAN_GetITStatus(CAN1, CAN_IT_FMP0) != RESET)		
+	{
+		CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
+		CanRxHandler(&RxMessage);
+		
+	}
+}
+
 void SetupClock()
 {
 	RCC_DeInit();
 	RCC_HSEConfig(RCC_HSE_ON);
-	while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET) ;
-	RCC_HCLKConfig(RCC_SYSCLK_Div1);     // HCLK   = SYSCLK
-	RCC_PCLK2Config(RCC_HCLK_Div1);     // PCLK2  = HCLK
-	RCC_PCLK1Config(RCC_HCLK_Div2);     // PCLK1  = HCLK/2
-	RCC_ADCCLKConfig(RCC_PCLK2_Div4);     // ADCCLK = PCLK2/4
+	while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET)
+	{
+	}
+	
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);           // HCLK   = SYSCLK  72MHz
+	RCC_PCLK1Config(RCC_HCLK_Div2);            // PCLK1  = HCLK/2  36MHz
+	RCC_PCLK2Config(RCC_HCLK_Div1);            // PCLK2  = HCLK	72MHz
+	RCC_ADCCLKConfig(RCC_PCLK2_Div4);          // ADCCLK = PCLK2/4 18MHz
 
-	// PLLCLK = 8MHz * 9 = 72 MHz
-	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
+	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);    // 8MHz * 9 = 72MHz
 	RCC_PLLCmd(ENABLE);
-	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) ;
+	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) 
+	{		
+	}
+	
 	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
-	while (RCC_GetSYSCLKSource() != 0x08) ;
+	while (RCC_GetSYSCLKSource() != 0x08) 
+	{		
+	}
 }
 
 int main(void)
@@ -442,7 +530,7 @@ int main(void)
 	SetupClock();
 	SetupPeriph();
 
-	while(1)
+	while (1)
 	{
 
 	}

@@ -8,7 +8,19 @@
 #define MODE_INTERRUPT_CYCLES 33 // 33 * 30ms = 1 sec
 #define PRESS_DELAY 66 // 2 sec = 30ms * 66
 
+#define CAN1_ReMap // Закоментировать, если нет ремапинга портов
 
+#ifndef CAN1_ReMap
+#define CAN1_GPIO_PORT			GPIOA
+#define CAN1_RX_SOURCE			GPIO_Pin_11				// RX-порт
+#define CAN1_TX_SOURCE			GPIO_Pin_12				// TX-порт
+#define CAN1_Periph				RCC_APB2Periph_GPIOA	// Порт перифирии
+#else
+#define CAN1_GPIO_PORT			GPIOB
+#define CAN1_RX_SOURCE			GPIO_Pin_8				// RX-порт
+#define CAN1_TX_SOURCE			GPIO_Pin_9				// TX-порт
+#define CAN1_Periph				RCC_APB2Periph_GPIOB	// Порт перифирии
+#endif
 
 
 

@@ -14,7 +14,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{018A78D1-5456-460D-AB2E-BCB0B00A0AC4}</ProjectGuid>
     <BSP_ID>com.sysprogs.arm.stm32</BSP_ID>
-    <BSP_VERSION>2018.08</BSP_VERSION>
+    <BSP_VERSION>2018.12</BSP_VERSION>
     <InPlaceBSPSubdir />
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -66,6 +66,7 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
   <ItemGroup>
+    <ClCompile Include="can.c" />
     <ClCompile Include="command_handler.c" />
     <ClCompile Include="command_queue.c" />
     <ClCompile Include="display_handler.c" />
@@ -75,6 +76,7 @@
     <ClCompile Include="system_stm32f10x.c" />
     <ClCompile Include="tea6420.c" />
     <ClCompile Include="usart_opts.c" />
+    <ClInclude Include="can.h" />
     <ClInclude Include="command_handler.h" />
     <ClInclude Include="command_queue.h" />
     <ClInclude Include="config.h" />

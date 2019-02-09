@@ -1,11 +1,38 @@
 #include "can.h"
 #include "string.h"
 
+uint16_t fuel_consumption;
+uint32_t fuel_cons_cnt;
+uint8_t can_cnt = 0;
+
+float GetLitersPerHour()
+{
+	float res = fuel_consumption * 8.0;
+	res /= 1000.0;
+	return res;
+}
 
 void CanRxHandler(CanRxMsg* RxMessage)
 {
 	if (RxMessage->IDE == CAN_Id_Standard)
 	{
+		if (RxMessage->StdId == CAN_ID_FUEL_CONSUMPTION)		
+		{			
+			if (RxMessage->DLC == 7)
+			{
+				can_cnt++;
+				uint16_t tmp =  RxMessage->Data[0];
+				tmp <<= 8;
+				tmp |= RxMessage->Data[1];
+				fuel_cons_cnt += tmp;
+				if (can_cnt == 10)
+				{
+					can_cnt = 0;
+					fuel_consumption = fuel_cons_cnt / 10;
+					fuel_cons_cnt = 0;					
+				}							
+			}
+		}
 		if (RxMessage->StdId == 0x000)		
 		{
 			RxMessage->DLC = 	0x00;
@@ -33,7 +60,7 @@ void CanSendMessage(CanTxMsg* TxMessage)
 void CanBeep(uint8_t beep_type)
 {
 	CanTxMsg TxMessage;
-	TxMessage.StdId = 0x327;  	
+	TxMessage.StdId = CAN_ID_BEEP;  	
 	TxMessage.ExtId = 0x00;  
 	TxMessage.IDE = CAN_Id_Standard;  				
 	TxMessage.RTR = CAN_RTR_DATA;  					
@@ -43,5 +70,8 @@ void CanBeep(uint8_t beep_type)
 	TxMessage.Data[0] = beep_type;
 	CanSendMessage(&TxMessage);
 	TxMessage.Data[0] = NO_BEEP;
+	CanSendMessage(&TxMessage);
+	CanSendMessage(&TxMessage);
+	CanSendMessage(&TxMessage);
 	CanSendMessage(&TxMessage);
 }

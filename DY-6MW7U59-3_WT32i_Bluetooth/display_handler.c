@@ -20,6 +20,7 @@
 #include "iwrap.h"
 #include "command_queue.h"
 #include <stm32f10x_adc.h>
+#include <stdio.h>
 
 extern enum EMainFSM main_fsm;
 extern uint8_t mode_interrupt;
@@ -232,17 +233,19 @@ void HandleDisplayData()
 	
 	if (displayBuffer[20] & 0x80)
 	{
-		displayBuffer[2] = 'A';
-		displayBuffer[3] = 'D';
-		displayBuffer[4] = 'C';
-		displayBuffer[5] = ':';
-		displayBuffer[6] = ' ';
-		displayBuffer[7] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
-		displayBuffer[8] = (ADC_GetConversionValue(ADC1) / 100) % 10 + 48;
-		displayBuffer[9] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
-		displayBuffer[10] = ADC_GetConversionValue(ADC1) % 10 + 48;
-		displayBuffer[11] = ' ';
-		
+		char str[DISPLAY_STRING_SIZE];
+		sprintf(str, "ADC: %*d", 4, (ADC_GetConversionValue(ADC1)));
+		memcpy(&displayBuffer[2], str, DISPLAY_STRING_SIZE);
+		//displayBuffer[2] = 'A';
+		//displayBuffer[3] = 'D';
+		//displayBuffer[4] = 'C';
+		//displayBuffer[5] = ':';
+		//displayBuffer[6] = ' ';
+		//displayBuffer[7] = (ADC_GetConversionValue(ADC1) / 1000) % 10 + 48;
+		//displayBuffer[8] = (ADC_GetConversionValue(ADC1) / 100) % 10 + 48;
+		//displayBuffer[9] = (ADC_GetConversionValue(ADC1) / 10) % 10 + 48;
+		//displayBuffer[10] = ADC_GetConversionValue(ADC1) % 10 + 48;
+		//displayBuffer[11] = ' ';
 	}
 	// cnt++;
 	// cnt2 = cnt / 5;

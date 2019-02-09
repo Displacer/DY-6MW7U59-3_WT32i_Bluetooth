@@ -3,6 +3,9 @@
 #include <stm32f10x_can.h>
 #include "config.h"
 
+#define CAN_ID_FUEL_CONSUMPTION 0x1A7
+#define CAN_ID_BEEP 0x327
+
 enum beeps
 {
 	NO_BEEP     = 0x00,
@@ -12,6 +15,8 @@ enum beeps
 	LONG_BEEP_2 = 0x08,
 	LONG_BEEP_3 = 0x10
 };
+
+float GetLitersPerHour();
 
 void CanRxHandler(CanRxMsg* RxMessage);
 

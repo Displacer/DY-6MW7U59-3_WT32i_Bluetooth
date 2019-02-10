@@ -13,7 +13,7 @@ void ClearDisplayString(void);
 void ClearDisplayBtString(void);
 void HandleDisplayData(void);
 void CheckMode(void);
-void ForceShowString(uint8_t*);
+void ForceShowString(const char*);
 uint8_t isAux;
 
 #endif

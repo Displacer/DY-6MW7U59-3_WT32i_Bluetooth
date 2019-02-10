@@ -27,9 +27,11 @@
 #ifndef __IWRAP_H__
 #define __IWRAP_H__
 
+#include <stm32f10x.h>
+
 #define BT_DEVICE_ADDR_SIZE 17
 #define BT_DEVICE_NAME_SIZE 14 + 1 //14 - maximum length of nRF51 SDK + 1 for null
-
+#define IWRAP_TX_BUFFER_SIZE 32
 
 #define BT_LIST_CMD "LIST \r\n"
 #define EVENT_PLAYBACK_STATUS_CHANGED "AVRCP PDU 31 1 \r\n"
@@ -40,6 +42,8 @@
 #define AVRCP_NEXT "AVRCP FORWARD \r\n"
 #define AVRCP_PREV "AVRCP BACKWARD \r\n"
 #define AVRCP_GET_PLAY_STATUS "AVRCP PDU 30 \r\n"
+
+uint8_t iwrap_tx_buffer[IWRAP_TX_BUFFER_SIZE];
 
 enum PlaybackState
 {

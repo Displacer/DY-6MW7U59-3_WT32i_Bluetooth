@@ -81,6 +81,17 @@ void ActivateAUX()
 	act_aux = isAux ? 0 : 1;
 }
 
+uint16_t GetRemoteAdcData()
+{
+	uint16_t tmp = 0;
+	for (uint8_t i = 0; i < 10; i++)
+	{
+		tmp += ADC_GetConversionValue(ADC1);
+	}
+	tmp /= 10;
+	return tmp;
+}
+
 void Bluetooth_on()
 {
 	ClearDisplayBtString();
@@ -116,7 +127,7 @@ void HandleCommandData()
 {
 	if (CheckChksum(commandBuffer, COMMAND_BUFFER_SIZE) == ERROR)
 	{
-		ForceShowString((uint8_t*)"CMD:Csum err");
+		ForceShowString("CMD:Csum err");
 		return;
 	}
 
@@ -229,23 +240,21 @@ void HandleCommandData()
 		}
 		else
 		{
-			uint8_t adc_val = ADC_GetConversionValue(ADC1) / 100;
+			uint8_t adc_val = GetRemoteAdcData() / 100;
 			switch (adc_val)
 			{
-			case 8:
-			case 9:
+			case 1:
 				main_fsm = GOING_NORMAL_STATE;
 				break;
-			case 10:
-			case 11:
+			case 2:
+			case 3:
 				if (avrcp_trig == 0)
 				{
 					bt_Next();
 					avrcp_trig = 1;
 				}
 				break;
-			case 12:
-			case 13:
+			case 4:
 				if (avrcp_trig == 0)
 				{
 					bt_Prev();

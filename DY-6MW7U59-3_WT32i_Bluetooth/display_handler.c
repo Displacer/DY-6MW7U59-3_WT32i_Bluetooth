@@ -54,7 +54,7 @@ void CheckMode()
 		{
 			if (!(isAux && main_fsm == BT_ACTIVE))
 			{				
-				ForceShowString((uint8_t*)"BT shutting down from CheckMode! Fix it!\0");
+				ForceShowString("BT shutting down from CheckMode! Fix it!\0");
 				main_fsm = GOING_NORMAL_STATE;
 			}			
 		}
@@ -78,16 +78,19 @@ void ClearDisplayBtString()
 {
 	memset(displayBtDataBuffer, 0x00, DISPLAY_DATA_SIZE);
 }
-void ForceShowString(uint8_t* str)
+void ForceShowString(const char* str)
 {
 	if (force_show) return;	
 	ResetDisplayState();
 	ClearDisplayString();
+	strcpy((char*)displayDataBuffer, str);
+	/*
 	for (int i = 0; i < DISPLAY_DATA_SIZE; i++)
 	{
 		displayDataBuffer[i] = str[i];
 		if (str[i] == 0x00) break;
 	}
+	*/
 	force_show = 1;
 }
 
@@ -102,7 +105,6 @@ void SendDisplayData()
 	displayBuffer[DISPLAY_BUFFER_SIZE - 1] = chksum;
 	USART2SendDMA();
 }
-
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
 void HandleDisplayData()
 {
@@ -110,7 +112,11 @@ void HandleDisplayData()
 	static uint8_t frame_delay = 0;		
 		
 	if (CheckChksum(displayBuffer, DISPLAY_BUFFER_SIZE) == ERROR)
+	{
+		ForceShowString("DIS:Csum err");
 		return;
+	}
+		
 	
 	isAux = memcmp(&displayBuffer[6], (uint8_t*) "AUX", 3) == 0;
 
@@ -230,11 +236,11 @@ void HandleDisplayData()
 		main_fsm = NORMAL_STATE;
 	}
 
-	
+	/*
 	if (displayBuffer[20] & 0x80)
 	{
 		char str[DISPLAY_STRING_SIZE];
-		sprintf(str, "ADC: %*d", 4, (ADC_GetConversionValue(ADC1)));
+		sprintf(str, "ADC: %*d", 4, GetRemoteAdcData());
 		memcpy(&displayBuffer[2], str, DISPLAY_STRING_SIZE);
 		//displayBuffer[2] = 'A';
 		//displayBuffer[3] = 'D';

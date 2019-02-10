@@ -5,6 +5,7 @@
 #include "display_handler.h"
 #include "string.h"
 #include "command_queue.h"
+#include <stdio.h>
 
 uint16_t str_idx;
 extern uint8_t bt_device_addr[BT_DEVICE_ADDR_SIZE];
@@ -103,21 +104,20 @@ void HandleParseData()
 	
 	if (memcmp(argv[0], (uint8_t*) "NAME", 4) == 0)
 	{
+		memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);
 		if (argc == 3)		
-		{
-			for (uint8_t i = 0; i < BT_DEVICE_NAME_SIZE; i++)
-			{				
-				bt_device_name[i] = argv[2][i];
-				if (argv[2][i] == 0x00) break;
-			}
-			uint8_t tmpbuf[BT_DEVICE_NAME_SIZE + 15];
-			memcpy(tmpbuf, "Connected to: ", 14);
-			memcpy(&tmpbuf[14], bt_device_name, BT_DEVICE_NAME_SIZE);
+		{			
+			strcpy((char*)bt_device_name, (char*)argv[2]);
+			//for (uint8_t i = 0; i < BT_DEVICE_NAME_SIZE; i++)
+			//{				
+			//	bt_device_name[i] = argv[2][i];
+			//	if (argv[2][i] == 0x00) break;
+			//}
+			char tmpbuf[BT_DEVICE_NAME_SIZE + 15];
+			sprintf(tmpbuf, "Connected to: %s", bt_device_name);
+			//memcpy(tmpbuf, "Connected to: ", 14);
+			//memcpy(&tmpbuf[14], bt_device_name, BT_DEVICE_NAME_SIZE);
 			ForceShowString(tmpbuf);			
-		}
-		else 
-		{
-			memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);			
 		}
 		return;
 	}	
@@ -127,9 +127,10 @@ void HandleParseData()
 		if (memcmp(argv[1], (uint8_t*) "CARRIER", 7) == 0)		
 		{
 			if (*bt_device_name == 0x00) return;
-			uint8_t tmpbuf[BT_DEVICE_NAME_SIZE + 20];
-			memcpy(tmpbuf, "Disconnected from: ", 19);
-			memcpy(&tmpbuf[19], bt_device_name, BT_DEVICE_NAME_SIZE);
+			char tmpbuf[BT_DEVICE_NAME_SIZE + 20];
+			sprintf(tmpbuf, "Disconnected from: %s", bt_device_name);
+			//memcpy(tmpbuf, "Disconnected from: ", 19);
+			//memcpy(&tmpbuf[19], bt_device_name, BT_DEVICE_NAME_SIZE);
 			ForceShowString(tmpbuf);	
 			memset(bt_device_name, 0x00, BT_DEVICE_NAME_SIZE);
 			ClearDisplayBtString();
@@ -144,7 +145,7 @@ void HandleParseData()
 			ClearDisplayBtString();
 			if (getSongInfo() == ERROR)
 			{			
-				ForceShowString((uint8_t*)"No metadata :(\0");
+				ForceShowString("No metadata :(");
 				return;
 			}
 
@@ -230,7 +231,8 @@ void HandleParseData()
 				if (isStrEqual(argv[4], (uint8_t*) "TRACK_CHANGED"))
 				{
 					bt_GetAVRCP_metadata();
-					bt_TrackChangedEventSubscribe();					
+					//ExecuteWithDelay(bt_GetAVRCP_metadata, 1);
+					ExecuteWithDelay(bt_TrackChangedEventSubscribe, 1);					
 					return;
 				}
 				if (isStrEqual(argv[4], (uint8_t*) "PLAYBACK_STATUS_CHANGED"))

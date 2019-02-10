@@ -16,6 +16,7 @@
 #include "parser.h"
 #include "can.h"
 #include "config.h"
+#include "iwrap.h"
 
 #ifndef NEW_PCB
 #include "tea6420.h"  
@@ -25,6 +26,7 @@
 
 extern uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 extern uint8_t commandBuffer[COMMAND_BUFFER_SIZE];
+//extern uint8_t iwrap_tx_buffer[IWRAP_TX_BUFFER_SIZE];
 extern uint8_t mode_interrupt;
 extern enum EMainFSM main_fsm;
 
@@ -132,7 +134,7 @@ void SetupPeriph()
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	USART_InitStructure.USART_BaudRate = 14400;
+	USART_InitStructure.USART_BaudRate = 14000;
 	USART_Init(USART3, &USART_InitStructure);
 	USART_Cmd(USART3, ENABLE);
 
@@ -153,7 +155,7 @@ void SetupPeriph()
 	TIM_TimeBaseStructInit(&TIMER_InitStructure);
 	TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIMER_InitStructure.TIM_Prescaler = 7200;
-	TIMER_InitStructure.TIM_Period = 300;           //30ms
+	TIMER_InitStructure.TIM_Period = 300;              //30ms
 	TIM_TimeBaseInit(TIM2, &TIMER_InitStructure);
 	TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM2, ENABLE);
@@ -173,7 +175,7 @@ void SetupPeriph()
 	TIM_TimeBaseStructInit(&TIMER_InitStructure);
 	TIMER_InitStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	TIMER_InitStructure.TIM_Prescaler = 7200;
-	TIMER_InitStructure.TIM_Period = 100;           // 10ms
+	TIMER_InitStructure.TIM_Period = 100;              // 10ms
 	TIM_TimeBaseInit(TIM3, &TIMER_InitStructure);
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE);
 	TIM_Cmd(TIM3, ENABLE);
@@ -219,6 +221,20 @@ void SetupPeriph()
 	USART_DMACmd(USART3, USART_DMAReq_Tx, ENABLE);
 	DMA_ITConfig(DMA1_Channel2, DMA_IT_TC, ENABLE);
 	NVIC_EnableIRQ(DMA1_Channel2_IRQn);
+	
+	///-------------------------------------------------
+    ///DMA Tx for USART1
+    ///-------------------------------------------------
+
+    DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t) & (USART1->DR);
+	DMA_InitStruct.DMA_MemoryBaseAddr = (uint32_t) & iwrap_tx_buffer[0];
+	DMA_InitStruct.DMA_BufferSize = IWRAP_TX_BUFFER_SIZE;
+	DMA_Init(DMA1_Channel4, &DMA_InitStruct);
+
+	USART_DMACmd(USART1, USART_DMAReq_Tx, ENABLE);
+	DMA_ITConfig(DMA1_Channel4, DMA_IT_TC, ENABLE);
+	NVIC_EnableIRQ(DMA1_Channel4_IRQn);
+
 	
 #ifndef NEW_PCB
 	///-------------------------------------------------
@@ -328,7 +344,7 @@ void SetupPeriph()
 	CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
 	CAN_InitStructure.CAN_BS1 = CAN_BS1_13tq;
 	CAN_InitStructure.CAN_BS2 = CAN_BS2_2tq;
-	CAN_InitStructure.CAN_Prescaler = 27;    //For 36 MHz APB1 Clock only!
+	CAN_InitStructure.CAN_Prescaler = 27;       //For 36 MHz APB1 Clock only!
 
 
 	CAN_Init(CAN1, &CAN_InitStructure);
@@ -388,11 +404,13 @@ void InitDisplay()
 
 void USART1_IRQHandler(void)
 {
-	if ((USART1->SR & USART_FLAG_RXNE) != (u16) RESET)
+	uint8_t sr = USART1->SR;
+	uint8_t dr = USART1->DR;
+	if ((sr & USART_FLAG_RXNE) != (u16) RESET)
 	{
 		if (!isParsing())
 			Parse_init();
-		Parse(USART_ReceiveData(USART1));
+		Parse(dr);
 	}
 }
 
@@ -400,13 +418,14 @@ uint8_t d_idx, d_rcvcplt = 0;
 
 void USART2_IRQHandler(void)
 {
+	uint8_t sr = USART2->SR;
+	uint8_t dr = USART2->DR;
 
 #ifdef USART_BREAK_DETECTION_LBD
-	if ((USART2->SR & USART_FLAG_LBD) != (u16) RESET) // Break detection handler for display init detection
+	if ((sr & USART_FLAG_LBD) != (u16) RESET) // Break detection handler for display init detection
 		{
 			USART_ClearFlag(USART2, USART_FLAG_LBD);
-			d_rcvcplt = 1;
-			USART_ReceiveData(USART2);
+			d_rcvcplt = 1;			
 			InitDisplay();
 		}
 
@@ -420,11 +439,11 @@ void USART2_IRQHandler(void)
 		}
 #endif
 
-	if ((USART2->SR & USART_FLAG_RXNE) != (u16) RESET)
+	if ((sr & USART_FLAG_RXNE) != (u16) RESET)
 	{
 		if (d_idx < DISPLAY_BUFFER_SIZE)
 		{
-			displayBuffer[d_idx++] = USART_ReceiveData(USART2);
+			displayBuffer[d_idx++] = dr;
 			TIM2->CNT = 0;
 			d_rcvcplt = 1;
 		}
@@ -434,11 +453,13 @@ void USART2_IRQHandler(void)
 uint8_t c_idx, c_rcvcplt = 0;
 void USART3_IRQHandler(void)
 {
-	if ((USART3->SR & USART_FLAG_RXNE) != (u16) RESET)
+	uint8_t sr = USART3->SR;
+	uint8_t dr = USART3->DR;
+	if ((sr & USART_FLAG_RXNE) != (u16) RESET)
 	{
 		if (c_idx < COMMAND_BUFFER_SIZE)
 		{
-			commandBuffer[c_idx++] = USART_ReceiveData(USART3);
+			commandBuffer[c_idx++] = dr;
 			TIM3->CNT = 0;
 			c_rcvcplt = 1;
 		}
@@ -453,7 +474,6 @@ void TIM2_IRQHandler(void)
 		if (d_rcvcplt)
 		{
 			HandleDisplayData();
-			USART_ReceiveData(USART2);           //For clear IDLE flag
 			d_rcvcplt = 0;
 			d_idx = 0;
 		}
@@ -467,7 +487,6 @@ void TIM3_IRQHandler(void)
 		if (c_rcvcplt)
 		{
 			HandleCommandData();
-			USART_ReceiveData(USART3);           //For clear IDLE flag
 			c_rcvcplt = 0;
 			c_idx = 0;
 		}
@@ -486,6 +505,13 @@ void DMA1_Channel2_IRQHandler(void)
 	DMA_Cmd(DMA1_Channel2, DISABLE);
 }
 
+void DMA1_Channel4_IRQHandler(void)
+{
+	DMA_ClearITPendingBit(DMA1_IT_TC4);
+	DMA_Cmd(DMA1_Channel4, DISABLE);
+}
+ 
+
 void USB_LP_CAN1_RX0_IRQHandler(void)
 {
 	CanRxMsg RxMessage;
@@ -495,8 +521,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	if (CAN_GetITStatus(CAN1, CAN_IT_FMP0) != RESET)		
 	{
 		CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
-		CanRxHandler(&RxMessage);
-		
+		CanRxHandler(&RxMessage);		
 	}
 }
 
@@ -508,12 +533,12 @@ void SetupClock()
 	{
 	}
 	
-	RCC_HCLKConfig(RCC_SYSCLK_Div1);           // HCLK   = SYSCLK  72MHz
-	RCC_PCLK1Config(RCC_HCLK_Div2);            // PCLK1  = HCLK/2  36MHz
-	RCC_PCLK2Config(RCC_HCLK_Div1);            // PCLK2  = HCLK	72MHz
-	RCC_ADCCLKConfig(RCC_PCLK2_Div4);          // ADCCLK = PCLK2/4 18MHz
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);              // HCLK   = SYSCLK  72MHz
+	RCC_PCLK1Config(RCC_HCLK_Div2);               // PCLK1  = HCLK/2  36MHz
+	RCC_PCLK2Config(RCC_HCLK_Div1);               // PCLK2  = HCLK	72MHz
+	RCC_ADCCLKConfig(RCC_PCLK2_Div4);             // ADCCLK = PCLK2/4 18MHz
 
-	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);    // 8MHz * 9 = 72MHz
+	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);       // 8MHz * 9 = 72MHz
 	RCC_PLLCmd(ENABLE);
 	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) 
 	{		

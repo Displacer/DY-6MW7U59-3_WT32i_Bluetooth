@@ -134,7 +134,7 @@ void SetupPeriph()
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	USART_InitStructure.USART_BaudRate = 14000;
+	USART_InitStructure.USART_BaudRate = 14400;
 	USART_Init(USART3, &USART_InitStructure);
 	USART_Cmd(USART3, ENABLE);
 
@@ -371,6 +371,7 @@ void SetupPeriph()
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&NVIC_InitStructure);
+	
 }
 
 void InitDisplay()
@@ -418,7 +419,7 @@ uint8_t d_idx, d_rcvcplt = 0;
 
 void USART2_IRQHandler(void)
 {
-	uint8_t sr = USART2->SR;
+	uint16_t sr = USART2->SR;
 	uint8_t dr = USART2->DR;
 
 #ifdef USART_BREAK_DETECTION_LBD
@@ -453,7 +454,7 @@ void USART2_IRQHandler(void)
 uint8_t c_idx, c_rcvcplt = 0;
 void USART3_IRQHandler(void)
 {
-	uint8_t sr = USART3->SR;
+	uint16_t sr = USART3->SR;
 	uint8_t dr = USART3->DR;
 	if ((sr & USART_FLAG_RXNE) != (u16) RESET)
 	{
@@ -522,6 +523,10 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 	{
 		CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 		CanRxHandler(&RxMessage);		
+	}
+	if (CAN_GetITStatus(CAN1, CAN_IT_ERR) != RESET)
+	{
+		CAN_ClearITPendingBit(CAN1, CAN_IT_ERR);
 	}
 }
 

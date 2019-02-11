@@ -21,6 +21,7 @@
 #include "command_queue.h"
 #include <stm32f10x_adc.h>
 #include <stdio.h>
+#include "can.h"
 
 extern enum EMainFSM main_fsm;
 extern uint8_t mode_interrupt;
@@ -275,7 +276,13 @@ void HandleDisplayData()
 		displayBuffer[j++] = tmp;
 		
 	}*/
-	
-	 SendDisplayData();
+	if (memcmp(&displayBuffer[2], "            ", 12) == 0)
+	{
+		uint16_t res = GetLitersPerHour();
+		char tmp[12] = { 0 };
+		sprintf(tmp, "%*d.%d l/h", 2, res / 10, res % 10);
+		strcpy(&displayBuffer[2], tmp);
+	}	
+	SendDisplayData();
 }
 

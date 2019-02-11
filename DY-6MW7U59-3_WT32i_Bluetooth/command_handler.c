@@ -50,6 +50,7 @@
 #include "iwrap.h"
 #include "can.h"
 #include "config.h"
+#include "command_queue.h"
 
 #ifndef NEW_PCB
 #include "tea6420.h"
@@ -59,7 +60,7 @@
 extern uint8_t btLastState;
 extern enum PlaybackState playbackState;
 
-uint8_t mode_interrupt = MODE_INTERRUPT_CYCLES;       // will check for 1 second for mode changes
+uint8_t mode_interrupt = MODE_INTERRUPT_CYCLES;          // will check for 1 second for mode changes
 
 uint8_t default_command[COMMAND_BUFFER_SIZE] =
 { 0x41, 0x00, 0x00, 0x00, 0x30, 0x00, 0x71 };
@@ -78,7 +79,14 @@ enum EMainFSM main_fsm = NORMAL_STATE;
 
 void ActivateAUX()
 {
-	act_aux = isAux ? 0 : 1;
+	if (isAux)
+	{
+		act_aux = 0;
+	}
+	else
+	{
+		act_aux = 1;
+	}	
 }
 
 uint16_t GetRemoteAdcData()
@@ -199,25 +207,29 @@ void HandleCommandData()
 			}
 			if (button_val == CD_BUTTON)
 			{
-				ActivateAUX();        //TODO: убрать костыль
+				ActivateAUX();           //TODO: убрать костыль
 			}
 		}
 		break;
 	case BT_ACTIVATE:
 		ActivateAUX();
+		if (isAux)
+		{
+			CanBeep(SHORT_BEEP);
+		}
 		Bluetooth_on();
 		main_fsm = BT_ACTIVE;
 		break;
 	case BT_ACTIVE:
 		if (commandBuffer[1] == POWER_BUTTON)
-		{
+		{			
 			if (avrcp_trig == 0)
 			{
 				bt_PlaybackStatusEventSubscribe();
 				if (playbackState == play)
-					bt_Pause();
+					ExecuteWithDelay(bt_Pause, 1);
 				else
-					bt_Play();
+					ExecuteWithDelay(bt_Play, 1);
 				avrcp_trig = 1;
 			}
 			commandBuffer[1] = NOTHING;

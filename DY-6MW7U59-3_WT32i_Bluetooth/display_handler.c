@@ -26,6 +26,8 @@
 extern enum EMainFSM main_fsm;
 extern uint8_t mode_interrupt;
 
+enum EDisplayMode display_mode = DISPLAY_NORMAL;
+
 uint8_t defaultScreen[DISPLAY_BUFFER_SIZE] = { 0x21, 0xFE, '-', 'M', 'I', 'T', 'S', 'U', 'B', 'I', 'S', 'H', 'I', '-', 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9D };
 uint8_t displayBuffer[DISPLAY_BUFFER_SIZE];
 uint8_t displayDataBuffer[DISPLAY_DATA_SIZE];
@@ -33,7 +35,6 @@ uint8_t displayBtDataBuffer[DISPLAY_DATA_SIZE];
 
 uint8_t greets_counter = 0;
 uint8_t btLastState = 0;
-uint8_t force_show = 0;
 int16_t offset;              
 uint8_t offset_step;
 uint8_t delay;
@@ -65,7 +66,7 @@ void CheckMode()
 
 void ResetDisplayState()
 {
-	if (force_show) return;
+	if (display_mode == DISPLAY_FORCE_MESSAGE) return;
 	display_state = begin;
 	offset = 0;
 	delay = 0;
@@ -81,18 +82,11 @@ void ClearDisplayBtString()
 }
 void ForceShowString(const char* str)
 {
-	if (force_show) return;	
+	if (display_mode == DISPLAY_FORCE_MESSAGE) return;	
 	ResetDisplayState();
 	ClearDisplayString();
 	strcpy((char*)displayDataBuffer, str);
-	/*
-	for (int i = 0; i < DISPLAY_DATA_SIZE; i++)
-	{
-		displayDataBuffer[i] = str[i];
-		if (str[i] == 0x00) break;
-	}
-	*/
-	force_show = 1;
+	display_mode = DISPLAY_FORCE_MESSAGE;
 }
 
 
@@ -120,21 +114,16 @@ void HandleDisplayData()
 		
 	
 	isAux = memcmp(&displayBuffer[6], (uint8_t*) "AUX", 3) == 0;
-
-	//CD mode change ' on : (for details see table)
-	if(displayBuffer[16] & 0x10 && displayBuffer[11] == '\'')
-	{
-		displayBuffer[11] = ':';
-	}
 	
-	if (!isAux && force_show)
-	{		
-		force_show = 0;
-		ResetDisplayState();
-	}
-
-	if (!force_show)
+	switch (display_mode)
 	{
+	case DISPLAY_NORMAL:
+		//CD mode change ' on : (for details see table)
+		if(displayBuffer[16] & 0x10 && displayBuffer[11] == '\'')
+		{
+			displayBuffer[11] = ':';
+		}
+		
 		ClearDisplayString();
 		if (isAux && (main_fsm == BT_ACTIVE  || frame_delay < 5))
 		{
@@ -163,7 +152,31 @@ void HandleDisplayData()
 			ResetDisplayState();
 			memcpy(displayDataBuffer, &displayBuffer[2], DISPLAY_STRING_SIZE);
 		}
+		
+		break;
+	case DISPLAY_FORCE_MESSAGE:
+		if (!isAux)
+		{		
+			display_mode = DISPLAY_NORMAL;
+			ResetDisplayState();
+		}
+		break;
+	case DISPLAY_SETTINGS:
+		break;
+	case DISPLAY_OTHER:
+		if (memcmp(&displayBuffer[2], "            ", 12) == 0)
+		{
+			uint16_t res = GetLitersPerHour();
+			char tmp[12] = { 0 };
+			sprintf(tmp, "%*d.%d l/h", 2, res / 10, res % 10);
+			strcpy(&displayBuffer[2], tmp);
+		}	
+		break;
+	default:
+		break;
 	}
+
+
 	
 	
 	switch (display_state)
@@ -201,9 +214,9 @@ void HandleDisplayData()
 			offset--;
 		else
 		{
-			if (force_show)
+			if (display_mode == DISPLAY_FORCE_MESSAGE)
 			{
-				force_show = 0;
+				display_mode = DISPLAY_NORMAL;
 			}
 			display_state = begin;			
 		}			
@@ -276,13 +289,7 @@ void HandleDisplayData()
 		displayBuffer[j++] = tmp;
 		
 	}*/
-	if (memcmp(&displayBuffer[2], "            ", 12) == 0)
-	{
-		uint16_t res = GetLitersPerHour();
-		char tmp[12] = { 0 };
-		sprintf(tmp, "%*d.%d l/h", 2, res / 10, res % 10);
-		strcpy(&displayBuffer[2], tmp);
-	}	
+	
 	SendDisplayData();
 }
 

@@ -8,6 +8,15 @@
 #define BLUETOOTH_CHAR 0x86
 #define ACC_OFF 0x40
 
+enum EDisplayMode
+{
+	DISPLAY_NORMAL,
+	DISPLAY_FORCE_MESSAGE,
+	DISPLAY_SETTINGS,
+	DISPLAY_OTHER
+};
+
+
 void ResetDisplayState(void);
 void ClearDisplayString(void);
 void ClearDisplayBtString(void);
